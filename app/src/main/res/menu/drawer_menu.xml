@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/productsFragment"
+        android:title="@string/our_products" />
+    <item
+        android:id="@+id/our_location"
+        android:title="@string/our_location" />
+    <item
+        android:id="@+id/about_us"
+        android:title="@string/about_us" />
+<!--    TODO activate these items -->
+<!--    TODO adding icons to every item-->
+</menu>

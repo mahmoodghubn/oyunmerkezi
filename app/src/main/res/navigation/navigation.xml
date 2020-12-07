@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/navigation"
+    app:startDestination="@id/gamesFragment">
+
+    <fragment
+        android:id="@+id/gamesFragment"
+        android:name="com.example.oyunmerkezi2.GamesFragment"
+        android:label="fragment_games"
+        tools:layout="@layout/fragment_games" >
+        <action
+            android:id="@+id/action_gamesFragment_to_detailFragment"
+            app:destination="@id/detailFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/detailFragment"
+        android:name="com.example.oyunmerkezi2.DetailFragment"
+        android:label="fragment_detail"
+        tools:layout="@layout/fragment_detail" >
+        <argument
+            android:name="game"
+            app:argType="com.example.oyunmerkezi2.database.Game" />
+    </fragment>
+    <fragment
+        android:id="@+id/filterFragment"
+        android:name="com.example.oyunmerkezi2.FilterFragment"
+        android:label="@string/fragment_filter_label"
+        tools:layout="@layout/fragment_filter" />
+    <fragment
+        android:id="@+id/orderByFragment"
+        android:name="com.example.oyunmerkezi2.fragments.OrderByFragment"
+        android:label="@string/fragment_order_by_label"
+        tools:layout="@layout/fragment_order_by" />
+    <fragment
+        android:id="@+id/languageFragment"
+        android:name="com.example.oyunmerkezi2.fragments.LanguageFragment"
+        android:label="@string/fragment_language_label"
+        tools:layout="@layout/fragment_language" />
+    <fragment
+        android:id="@+id/productsFragment"
+        android:name="com.example.oyunmerkezi2.fragments.ProductsFragment"
+        android:label="fragment_products"
+        tools:layout="@layout/fragment_products" />
+</navigation>
