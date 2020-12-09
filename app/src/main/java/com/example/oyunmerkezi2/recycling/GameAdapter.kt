@@ -1,6 +1,7 @@
 package com.example.oyunmerkezi2.recycling
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
@@ -8,7 +9,7 @@ import com.example.oyunmerkezi2.R
 
 import com.example.oyunmerkezi2.database.Game
 
-class GameAdapter : RecyclerView.Adapter<TextItemViewHolder>() {
+class GameAdapter : RecyclerView.Adapter<GameAdapter.ViewHolder>() {
 
     var data = listOf<Game>()
         set(value) {
@@ -18,18 +19,23 @@ class GameAdapter : RecyclerView.Adapter<TextItemViewHolder>() {
 
     override fun getItemCount() = data.size
 
-    override fun onBindViewHolder(holder: TextItemViewHolder, position: Int) {
+    override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         val item = data[position]
-        holder.textView.text = item.gameName
+        holder.gameNameTextView.text = item.gameName
+        holder.gamePriceTextView.text = item.sellingPrice.toString()
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TextItemViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
 
         val layoutInflater = LayoutInflater.from(parent.context)
         val view = layoutInflater
-            .inflate(R.layout.text_item_view, parent, false) as TextView
+            .inflate(R.layout.list_item_view, parent, false)
 
-        return TextItemViewHolder(view)
+        return ViewHolder(view)
+    }
+    class ViewHolder(itemView: View): RecyclerView.ViewHolder(itemView){
+        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
+        val gamePriceTextView:TextView = itemView.findViewById(R.id.game_price)
     }
 }
-class TextItemViewHolder(val textView: TextView): RecyclerView.ViewHolder(textView)
+
