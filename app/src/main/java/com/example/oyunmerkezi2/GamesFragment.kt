@@ -80,7 +80,7 @@ class GamesFragment : Fragment() {
         binding.gameLest.adapter = adapter
         gamesViewModel.games?.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.data = it
+                adapter.submitList(it)
             }
         })
         setHasOptionsMenu(true)

@@ -4,23 +4,19 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.recyclerview.widget.DiffUtil
+import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.oyunmerkezi2.R
 
 import com.example.oyunmerkezi2.database.Game
+class GameAdapter : ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()){
 
-class GameAdapter : RecyclerView.Adapter<GameAdapter.ViewHolder>() {
 
-    var data = listOf<Game>()
-        set(value) {
-            field = value
-            notifyDataSetChanged()
-        }
 
-    override fun getItemCount() = data.size
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = data[position]
+        val item = getItem(position)
         holder.bind(item)
     }
 
@@ -50,6 +46,15 @@ class GameAdapter : RecyclerView.Adapter<GameAdapter.ViewHolder>() {
         }
     }
 
+    class GameDiffCallback :
+        DiffUtil.ItemCallback<Game>() {
+        override fun areItemsTheSame(oldItem: Game, newItem: Game): Boolean {
+            return oldItem.gameId == newItem.gameId
+        }
 
+        override fun areContentsTheSame(oldItem: Game, newItem: Game): Boolean {
+            return oldItem == newItem
+        }
+    }
 }
 
