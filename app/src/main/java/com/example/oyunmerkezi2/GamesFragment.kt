@@ -6,6 +6,7 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -14,6 +15,7 @@ import com.example.oyunmerkezi2.database.GameDatabase
 import com.example.oyunmerkezi2.database.GamesViewModel
 import com.example.oyunmerkezi2.database.GamesViewModelFactory
 import com.example.oyunmerkezi2.databinding.FragmentGamesBinding
+import com.example.oyunmerkezi2.recycling.GameAdapter
 
 class GamesFragment : Fragment() {
 
@@ -37,6 +39,8 @@ class GamesFragment : Fragment() {
         val application = requireNotNull(this.activity).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
         val viewModelFactory = GamesViewModelFactory(dataSource, application)
+
+
 
         val gamesViewModel =
             ViewModelProvider(
@@ -72,7 +76,13 @@ class GamesFragment : Fragment() {
 
 
         }
-
+        val adapter = GameAdapter()
+        binding.gameLest.adapter = adapter
+        gamesViewModel.games?.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.data = it
+            }
+        })
         setHasOptionsMenu(true)
         return binding.root
     }
