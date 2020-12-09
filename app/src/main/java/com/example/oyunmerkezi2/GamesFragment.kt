@@ -6,11 +6,13 @@ import android.os.Bundle
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.ui.NavigationUI
-import com.example.oyunmerkezi2.GamesFragmentDirections
-import com.example.oyunmerkezi2.R
 import com.example.oyunmerkezi2.database.Game
+import com.example.oyunmerkezi2.database.GameDatabase
+import com.example.oyunmerkezi2.database.GamesViewModel
+import com.example.oyunmerkezi2.database.GamesViewModelFactory
 import com.example.oyunmerkezi2.databinding.FragmentGamesBinding
 
 class GamesFragment : Fragment() {
@@ -32,6 +34,21 @@ class GamesFragment : Fragment() {
             Navigation.createNavigateOnClickListener(R.id.action_gamesFragment_to_detailFragment)
         )*/
         //passing argument to detail fragment
+        val application = requireNotNull(this.activity).application
+        val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
+        val viewModelFactory = GamesViewModelFactory(dataSource, application)
+
+        val gamesViewModel =
+            ViewModelProvider(
+                this, viewModelFactory).get(GamesViewModel::class.java)
+        binding.lifecycleOwner = this
+
+        binding.gamesViewModel = gamesViewModel
+
+
+
+
+
         game = Game(gameName="call of duty",sellingPrice = 99,buyingPrice = 70)
         binding.playButton.setOnClickListener { v: View ->
             v.findNavController()
