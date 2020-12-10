@@ -1,15 +1,15 @@
 package com.example.oyunmerkezi2.recycling
 
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.example.oyunmerkezi2.R
 
 import com.example.oyunmerkezi2.database.Game
+import com.example.oyunmerkezi2.databinding.ListItemViewBinding
+
 class GameAdapter : ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()){
 
 
@@ -26,20 +26,23 @@ class GameAdapter : ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()
         return ViewHolder.from(parent)
     }
 
-    class ViewHolder private constructor(itemView: View): RecyclerView.ViewHolder(itemView){
-        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
-        val gamePriceTextView:TextView = itemView.findViewById(R.id.game_price)
+    class ViewHolder private constructor(val binding: ListItemViewBinding)
+        : RecyclerView.ViewHolder(binding.root){
+//        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
+//        val gamePriceTextView:TextView = itemView.findViewById(R.id.game_price)
         fun bind(
         item: Game
         ) {
-            gameNameTextView.text = item.gameName
-            gamePriceTextView.text = item.sellingPrice.toString()
+//            gameNameTextView.text = item.gameName
+//            gamePriceTextView.text = item.sellingPrice.toString()
+            binding.game = item
+            binding.executePendingBindings()
         }
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
-                val view = layoutInflater
-                    .inflate(R.layout.list_item_view, parent, false)
+                val view = ListItemViewBinding
+                    .inflate(layoutInflater, parent, false)
 
                 return ViewHolder(view)
             }
