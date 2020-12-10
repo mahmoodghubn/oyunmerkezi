@@ -4,11 +4,13 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
+import android.widget.Toast
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.oyunmerkezi2.database.Game
 import com.example.oyunmerkezi2.database.GameDatabase
@@ -16,10 +18,10 @@ import com.example.oyunmerkezi2.database.GamesViewModel
 import com.example.oyunmerkezi2.database.GamesViewModelFactory
 import com.example.oyunmerkezi2.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi2.recycling.GameAdapter
+import com.example.oyunmerkezi2.recycling.GameListener
 
 class GamesFragment : Fragment() {
 
-    private lateinit var game: Game
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -50,18 +52,6 @@ class GamesFragment : Fragment() {
         binding.gamesViewModel = gamesViewModel
 
 
-
-
-
-        game = Game(gameName="call of duty",sellingPrice = 99,buyingPrice = 70)
-        binding.playButton.setOnClickListener { v: View ->
-            v.findNavController()
-                .navigate(
-                    GamesFragmentDirections.actionGamesFragmentToDetailFragment(
-                        game
-                    )
-                )
-        }
         val number = "+905465399410"
         val url = "https://api.whatsapp.com/send?phone=$number"
         val i = Intent(Intent.ACTION_VIEW)
@@ -76,7 +66,16 @@ class GamesFragment : Fragment() {
 
 
         }
-        val adapter = GameAdapter()
+        val adapter = GameAdapter(GameListener {
+                gameId ->  gamesViewModel.onGameClicked(gameId)
+        })
+        gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer {game ->
+            game?.let {
+                this.findNavController().navigate(GamesFragmentDirections
+                    .actionGamesFragmentToDetailFragment(game))
+                gamesViewModel.onGameDetailsNavigated()
+            }
+        })
         binding.gameLest.adapter = adapter
         gamesViewModel.games?.observe(viewLifecycleOwner, Observer {
             it?.let {

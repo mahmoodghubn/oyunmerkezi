@@ -3,14 +3,13 @@ package com.example.oyunmerkezi2
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.oyunmerkezi2.database.Game
 
-public class DetailViewModel(game: Game):ViewModel(){
-    private val _gameName = MutableLiveData<Game>()
-    val score: LiveData<Game>
-        get() = _gameName
+public class DetailViewModel(gameId: Long):ViewModel(){
+    private val _gameId = MutableLiveData<Long>()
+    val gameId: LiveData<Long>
+        get() = _gameId
 
     init {
-        _gameName.value = game
+        _gameId.value = gameId
     }
 }

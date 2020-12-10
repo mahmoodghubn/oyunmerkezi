@@ -5,19 +5,16 @@ import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.oyunmerkezi2.R
 
 import com.example.oyunmerkezi2.database.Game
 import com.example.oyunmerkezi2.databinding.ListItemViewBinding
 
-class GameAdapter : ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()){
-
-
+class GameAdapter(val clickListener: GameListener) :
+    ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()) {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        val item = getItem(position)
-        holder.bind(item)
+        holder.bind(clickListener, getItem(position)!!)
     }
 
 
@@ -26,18 +23,21 @@ class GameAdapter : ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()
         return ViewHolder.from(parent)
     }
 
-    class ViewHolder private constructor(val binding: ListItemViewBinding)
-        : RecyclerView.ViewHolder(binding.root){
-//        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
+    class ViewHolder private constructor(val binding: ListItemViewBinding) :
+        RecyclerView.ViewHolder(binding.root) {
+        //        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
 //        val gamePriceTextView:TextView = itemView.findViewById(R.id.game_price)
         fun bind(
-        item: Game
+            clickListener: GameListener,
+            item: Game
         ) {
 //            gameNameTextView.text = item.gameName
 //            gamePriceTextView.text = item.sellingPrice.toString()
             binding.game = item
+            binding.clickListener = clickListener
             binding.executePendingBindings()
         }
+
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
                 val layoutInflater = LayoutInflater.from(parent.context)
@@ -61,3 +61,6 @@ class GameAdapter : ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()
     }
 }
 
+class GameListener(val clickListener: (gameId: Long) -> Unit) {
+    fun onClick(game: Game) = clickListener(game.gameId)
+}

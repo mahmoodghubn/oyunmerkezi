@@ -4,7 +4,6 @@ import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.*
 
 class GamesViewModel(
@@ -51,6 +50,14 @@ class GamesViewModel(
         }
     }
 
+    private val _navigateToDetails = MutableLiveData<Long>()
+    val navigateToDetails
+        get() = _navigateToDetails
+    fun onGameClicked(id: Long){
+        _navigateToDetails.value = id
+    } fun onGameDetailsNavigated() {
+        _navigateToDetails.value = null
+    }
 
 
 }

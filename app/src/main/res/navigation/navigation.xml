@@ -20,8 +20,8 @@
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" >
         <argument
-            android:name="game"
-            app:argType="com.example.oyunmerkezi2.database.Game" />
+            android:name="gameId"
+            app:argType="long" />
     </fragment>
     <fragment
         android:id="@+id/filterFragment"
