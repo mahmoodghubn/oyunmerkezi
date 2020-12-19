@@ -60,10 +60,6 @@ class GamesViewModel(
     init {
         val myRef = Firebase.database.getReference("game")
         myRef.addChildEventListener(mChildEventListener)
-//        myRef.push().setValue(Game(gameId = 1, "gta 5", 99, 70))
-//        myRef.push().setValue(Game(gameId = 2, "spider man", 109, 80))
-//        myRef.push().setValue(Game(gameId = 3, "batman", 119, 90))
-//        myRef.push().setValue(Game(gameId = 4, "assassins", 199, 50))
     }
 
     private suspend fun getGame(gameId: Long): Game? {
