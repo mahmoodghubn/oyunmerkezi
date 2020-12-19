@@ -1,4 +1,4 @@
-package com.example.oyunmerkezi2.database
+package com.example.oyunmerkezi3.database
 
 import android.app.Application
 import androidx.lifecycle.ViewModel

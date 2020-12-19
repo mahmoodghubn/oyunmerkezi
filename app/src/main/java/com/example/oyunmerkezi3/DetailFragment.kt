@@ -1,4 +1,4 @@
-package com.example.oyunmerkezi2
+package com.example.oyunmerkezi3
 
 import android.os.Bundle
 import androidx.fragment.app.Fragment
@@ -8,11 +8,8 @@ import android.view.ViewGroup
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.fragment.navArgs
-import com.example.oyunmerkezi2.DetailFragmentArgs
-import com.example.oyunmerkezi2.DetailViewModel
-import com.example.oyunmerkezi2.DetailViewModelFactory
-import com.example.oyunmerkezi2.R
-import com.example.oyunmerkezi2.databinding.FragmentDetailBinding
+import com.example.oyunmerkezi3.DetailFragmentArgs
+import com.example.oyunmerkezi3.databinding.FragmentDetailBinding
 
 class DetailFragment : Fragment() {
     private lateinit var binding: FragmentDetailBinding

@@ -1,8 +1,8 @@
-package com.example.oyunmerkezi2
+package com.example.oyunmerkezi3
 
 import android.widget.TextView
 import androidx.databinding.BindingAdapter
-import com.example.oyunmerkezi2.database.Game
+import com.example.oyunmerkezi3.database.Game
 
 @BindingAdapter("sellingPrice")
 fun TextView.setSleepDurationFormatted(item: Game?) {

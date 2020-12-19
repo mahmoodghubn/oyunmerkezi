@@ -1,4 +1,4 @@
-package com.example.oyunmerkezi2
+package com.example.oyunmerkezi3
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4

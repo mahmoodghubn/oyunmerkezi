@@ -1,4 +1,4 @@
-package com.example.oyunmerkezi2
+package com.example.oyunmerkezi3
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -9,7 +9,7 @@ import androidx.navigation.NavDestination
 import androidx.navigation.findNavController
 import androidx.navigation.ui.AppBarConfiguration
 import androidx.navigation.ui.NavigationUI
-import com.example.oyunmerkezi2.databinding.ActivityMainBinding
+import com.example.oyunmerkezi3.databinding.ActivityMainBinding
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -19,6 +19,7 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         @Suppress("UNUSED_VARIABLE")
         val binding = DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
+        setContentView(binding.root)
         drawerLayout = binding.drawerLayout
 
         val navController = this.findNavController(R.id.myNavHostFragment)

@@ -1,4 +1,4 @@
-package com.example.oyunmerkezi2.recycling
+package com.example.oyunmerkezi3.recycling
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
@@ -6,8 +6,8 @@ import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
-import com.example.oyunmerkezi2.database.Game
-import com.example.oyunmerkezi2.databinding.ListItemViewBinding
+import com.example.oyunmerkezi3.database.Game
+import com.example.oyunmerkezi3.databinding.ListItemViewBinding
 
 class GameAdapter(val clickListener: GameListener) :
     ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()) {

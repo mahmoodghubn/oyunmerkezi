@@ -1,11 +1,7 @@
-package com.example.oyunmerkezi2.database
+package com.example.oyunmerkezi3.database
 
 import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.room.Dao
-import androidx.room.Insert
-import androidx.room.Query
-import androidx.room.Update
+import androidx.room.*
 
 @Dao
 interface GameDatabaseDao {
@@ -16,8 +12,11 @@ interface GameDatabaseDao {
     @Update
     fun update(game:Game)
 
+    @Delete
+    fun delete(game: Game)
+
     @Query("SELECT * from game_table WHERE gameId = :key")
-    fun get(key: Long): Game?
+    suspend fun get(key: Long):Game?
 
     @Query("SELECT * FROM game_table ORDER BY gameId DESC")
     fun getAllGames(): LiveData<List<Game>?>

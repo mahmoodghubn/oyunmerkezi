@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/gamesFragment"
-        android:name="com.example.oyunmerkezi2.GamesFragment"
+        android:name="com.example.oyunmerkezi3.GamesFragment"
         android:label="fragment_games"
         tools:layout="@layout/fragment_games" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
-        android:name="com.example.oyunmerkezi2.DetailFragment"
+        android:name="com.example.oyunmerkezi3.DetailFragment"
         android:label="fragment_detail"
         tools:layout="@layout/fragment_detail" >
         <argument
@@ -25,22 +25,22 @@
     </fragment>
     <fragment
         android:id="@+id/filterFragment"
-        android:name="com.example.oyunmerkezi2.FilterFragment"
+        android:name="com.example.oyunmerkezi3.FilterFragment"
         android:label="@string/fragment_filter_label"
         tools:layout="@layout/fragment_filter" />
     <fragment
         android:id="@+id/orderByFragment"
-        android:name="com.example.oyunmerkezi2.fragments.OrderByFragment"
+        android:name="com.example.oyunmerkezi3.fragments.OrderByFragment"
         android:label="@string/fragment_order_by_label"
         tools:layout="@layout/fragment_order_by" />
     <fragment
         android:id="@+id/languageFragment"
-        android:name="com.example.oyunmerkezi2.fragments.LanguageFragment"
+        android:name="com.example.oyunmerkezi3.fragments.LanguageFragment"
         android:label="@string/fragment_language_label"
         tools:layout="@layout/fragment_language" />
     <fragment
         android:id="@+id/productsFragment"
-        android:name="com.example.oyunmerkezi2.fragments.ProductsFragment"
+        android:name="com.example.oyunmerkezi3.fragments.ProductsFragment"
         android:label="fragment_products"
         tools:layout="@layout/fragment_products" />
 </navigation>

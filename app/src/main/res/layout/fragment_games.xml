@@ -3,11 +3,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
 xmlns:app="http://schemas.android.com/apk/res-auto"
 xmlns:tools="http://schemas.android.com/tools"
-tools:context="com.example.oyunmerkezi2.GamesFragment">
+tools:context="com.example.oyunmerkezi3.GamesFragment">
     <data>
         <variable
             name="gamesViewModel"
-            type="com.example.oyunmerkezi2.database.GamesViewModel" />
+            type="com.example.oyunmerkezi3.database.GamesViewModel" />
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout
     android:id="@+id/titleConstraint"
@@ -24,16 +24,16 @@ tools:context="com.example.oyunmerkezi2.GamesFragment">
 
 
 
-    <Button
+    <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/sendButton"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:scaleType="fitCenter"
+        android:layout_margin="16dp"
         android:text="send message"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"/>
+        app:layout_constraintBottom_toBottomOf="parent"/>
 
 </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

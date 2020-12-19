@@ -1,8 +1,7 @@
-package com.example.oyunmerkezi2
+package com.example.oyunmerkezi3
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.oyunmerkezi2.database.Game
 
 class DetailViewModelFactory(private val gameId: Long) : ViewModelProvider.Factory {
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {

@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "597655684631",
+    "project_id": "firegame-58e95",
+    "storage_bucket": "firegame-58e95.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:597655684631:android:7a6f325c917672265afe52",
+        "android_client_info": {
+          "package_name": "com.example.oyunmerkezi3"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "597655684631-cl5e9muuhij1oc7nuti07qv0fv4jlh2m.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD3hn7punseeYrVpEmEkXnwaG-nE-sQCrs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "597655684631-cl5e9muuhij1oc7nuti07qv0fv4jlh2m.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

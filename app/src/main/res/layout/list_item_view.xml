@@ -7,10 +7,10 @@
 
         <variable
             name="game"
-            type="com.example.oyunmerkezi2.database.Game" />
+            type="com.example.oyunmerkezi3.database.Game" />
         <variable
             name="clickListener"
-            type="com.example.oyunmerkezi2.recycling.GameListener"/>
+            type="com.example.oyunmerkezi3.recycling.GameListener"/>
 
     </data>
 <androidx.constraintlayout.widget.ConstraintLayout

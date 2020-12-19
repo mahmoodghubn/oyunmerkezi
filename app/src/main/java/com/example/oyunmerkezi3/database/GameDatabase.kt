@@ -1,4 +1,4 @@
-package com.example.oyunmerkezi2.database
+package com.example.oyunmerkezi3.database
 
 import androidx.room.Database
 import androidx.room.RoomDatabase

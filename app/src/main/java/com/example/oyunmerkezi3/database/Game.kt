@@ -1,11 +1,14 @@
-package com.example.oyunmerkezi2.database
+package com.example.oyunmerkezi3.database
 
 import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-import kotlinx.android.parcel.Parcelize
-import java.net.URL
+//import kotlinx.parcelize
+import kotlinx.parcelize.Parcelize
+
+
+
 @Parcelize
 @Entity(tableName = "game_table")
 data class Game(
