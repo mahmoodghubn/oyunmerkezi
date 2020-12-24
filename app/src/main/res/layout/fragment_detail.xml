@@ -2,25 +2,36 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
 
         <variable
             name="detailViewModel"
             type="com.example.oyunmerkezi3.DetailViewModel" />
     </data>
+
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".DetailFragment">
+        <!--  Youtube Player Fragment  -->
+        <fragment
+            android:id="@+id/youtube_player_fragment"
+            android:name="com.google.android.youtube.player.YouTubePlayerFragment"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"/>
+
+
 
         <TextView
             android:id="@+id/game_title_text"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_height="wrap_content"
+            android:text="@{detailViewModel.game.URL}"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"
-            android:text="@{detailViewModel.gameId.toString()}" />
+            app:layout_constraintTop_toBottomOf="@id/youtube_player_fragment" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

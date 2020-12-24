@@ -28,14 +28,6 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:videoThumbnailImageView="@{game}"/>
-<!--    <TextView-->
-<!--        android:id="@+id/URL"-->
-<!--        android:layout_width="wrap_content"-->
-<!--        android:layout_height="wrap_content"-->
-<!--        app:layout_constraintTop_toTopOf="parent"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        tools:text="dfdf"-->
-<!--        app:gameName="@{game}"/>-->
     <TextView
         android:id="@+id/game_name"
         android:layout_width="wrap_content"

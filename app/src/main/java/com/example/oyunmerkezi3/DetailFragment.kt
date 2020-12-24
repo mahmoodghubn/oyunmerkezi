@@ -31,7 +31,7 @@ class DetailFragment : Fragment() {
 
         //passing the variable from the games fragment to detail fragment by using view model factory to initialize view model
         viewModelFactory =
-            DetailViewModelFactory(detailFragmentArgs.gameId)
+            DetailViewModelFactory(detailFragmentArgs.game)
         viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
 
         //using data binding and avoid using ui controller to get data from view model

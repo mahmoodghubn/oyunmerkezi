@@ -67,8 +67,8 @@ class GamesFragment : Fragment() {
 
 
         }
-        val adapter = GameAdapter(GameListener { gameId ->
-            gamesViewModel.onGameClicked(gameId)
+        val adapter = GameAdapter(GameListener { game ->
+            gamesViewModel.onGameClicked(game)
         })
         gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
             game?.let {

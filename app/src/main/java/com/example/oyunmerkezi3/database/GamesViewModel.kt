@@ -9,9 +9,6 @@ import com.example.oyunmerkezi3.utils.Utils
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
-import com.google.firebase.database.ktx.database
-import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
 
 
@@ -100,12 +97,12 @@ class GamesViewModel(
         }
     }
 
-    private val _navigateToDetails = MutableLiveData<Long>()
+    private val _navigateToDetails = MutableLiveData<Game>()
     val navigateToDetails
         get() = _navigateToDetails
 
-    fun onGameClicked(id: Long) {
-        _navigateToDetails.value = id
+    fun onGameClicked(game: Game) {
+        _navigateToDetails.value = game
     }
 
     fun onGameDetailsNavigated() {

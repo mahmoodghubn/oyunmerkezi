@@ -58,6 +58,6 @@ class GameAdapter(private val clickListener: GameListener) :
     }
 }
 
-class GameListener(val clickListener: (gameId: Long) -> Unit) {
-    fun onClick(game: Game) = clickListener(game.gameId)
+class GameListener(val clickListener: (game: Game) -> Unit) {
+    fun onClick(game: Game) = clickListener(game)
 }
