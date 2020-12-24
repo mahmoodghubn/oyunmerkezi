@@ -9,7 +9,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.databinding.ListItemViewBinding
 
-class GameAdapter(val clickListener: GameListener) :
+class GameAdapter(private val clickListener: GameListener) :
     ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()) {
 
 
@@ -25,14 +25,10 @@ class GameAdapter(val clickListener: GameListener) :
 
     class ViewHolder private constructor(val binding: ListItemViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        //        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
-//        val gamePriceTextView:TextView = itemView.findViewById(R.id.game_price)
         fun bind(
             clickListener: GameListener,
             item: Game
         ) {
-//            gameNameTextView.text = item.gameName
-//            gamePriceTextView.text = item.sellingPrice.toString()
             binding.game = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -40,6 +36,7 @@ class GameAdapter(val clickListener: GameListener) :
 
         companion object {
             fun from(parent: ViewGroup): ViewHolder {
+
                 val layoutInflater = LayoutInflater.from(parent.context)
                 val view = ListItemViewBinding
                     .inflate(layoutInflater, parent, false)

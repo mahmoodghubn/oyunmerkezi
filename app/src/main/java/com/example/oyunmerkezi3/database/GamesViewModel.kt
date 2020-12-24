@@ -1,17 +1,19 @@
 package com.example.oyunmerkezi3.database
 
 import android.app.Application
-import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
+import com.example.oyunmerkezi3.utils.Utils
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import com.google.firebase.database.ktx.database
 import com.google.firebase.ktx.Firebase
 import kotlinx.coroutines.*
+
 
 class GamesViewModel(
     val database: GameDatabaseDao,
@@ -26,17 +28,11 @@ class GamesViewModel(
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     var games: LiveData<List<Game>?>? = database.getAllGames()
-    private var game = MutableLiveData<Game?>()
-
-    val arrayList = MutableLiveData<ArrayList<Game>>()
-
-    //private var games = MutableLiveData<List<Game>?>()
-    //private var games : LiveData<List<Game>?>? = null
-    private val mChildEventListener = object : ChildEventListener {
+    public val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val downloadedGame = dataSnapshot.getValue(Game::class.java)
             viewModelScope.launch {
-                if( getGame(downloadedGame!!.gameId)==null) {
+                if (getGame(downloadedGame!!.gameId) == null) {
                     insertGame(downloadedGame)
                 }
             }
@@ -50,16 +46,17 @@ class GamesViewModel(
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
             val game = dataSnapshot.getValue(Game::class.java)
             deleteGame(game!!)
-
         }
 
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
+
         override fun onCancelled(databaseError: DatabaseError) {}
     }
 
     init {
-        val myRef = Firebase.database.getReference("game")
-        myRef.addChildEventListener(mChildEventListener)
+        val mPlaceRef = Utils.databaseRef?.child("game")
+        mPlaceRef?.addChildEventListener(mChildEventListener)
+        mPlaceRef!!.keepSynced(true)
     }
 
     private suspend fun getGame(gameId: Long): Game? {
@@ -69,6 +66,7 @@ class GamesViewModel(
     private fun insertGame(game: Game) {
         uiScope.launch {
             insert(game)
+
         }
     }
 
@@ -102,7 +100,6 @@ class GamesViewModel(
         }
     }
 
-
     private val _navigateToDetails = MutableLiveData<Long>()
     val navigateToDetails
         get() = _navigateToDetails
@@ -114,20 +111,4 @@ class GamesViewModel(
     fun onGameDetailsNavigated() {
         _navigateToDetails.value = null
     }
-
-
 }
-
-//    private fun getGame(gameId: Long) {
-////        uiScope.launch {
-////            game.value = get(gameId)
-////        }
-//
-//        viewModelScope.launch {
-//            game.value = get(gameId)
-//        }
-//    }
-//         return withContext(Dispatchers.IO) {
-//            database.get(gameId)
-//        }
-//return database.get(gameId)

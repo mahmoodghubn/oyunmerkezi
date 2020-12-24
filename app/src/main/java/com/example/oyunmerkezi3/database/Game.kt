@@ -16,13 +16,16 @@ data class Game(
     var gameId: Long = 0L,
 
     @ColumnInfo
-    var gameName:String = "",
+    var gameName: String = "",
 
     @ColumnInfo
-    var sellingPrice:Int = 0,
+    var sellingPrice: Int = 0,
 
     @ColumnInfo
-    var buyingPrice:Int = 0
+    var buyingPrice: Int = 0,
+
+    @ColumnInfo
+    var URL: String = ""
 
 //    @ColumnInfo
 //    var favorite:Boolean = false,
