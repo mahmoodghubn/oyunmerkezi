@@ -18,10 +18,7 @@ import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
 
-
 class GamesFragment : Fragment() {
-
-
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
@@ -32,42 +29,16 @@ class GamesFragment : Fragment() {
             inflater,
             R.layout.fragment_games, container, false
         )
-        //The complete onClickListener with Navigation using createNavigateOnClickListener
-        /*binding.playButton.setOnClickListener(
-            Navigation.createNavigateOnClickListener(R.id.action_gamesFragment_to_detailFragment)
-        )*/
-        //passing argument to detail fragment
-
-//        myRef.addValueEventListener(object : ValueEventListener {
-//            override fun onDataChange(dataSnapshot: DataSnapshot) {
-//                // This method is called once with the initial value and again
-//                // whenever data at this location is updated.
-//                val value = dataSnapshot.child("game").children//getValue<Game>()
-//                for (element in value) {
-//                    var game: Game = element.getValue() as Game
-//                    Log.d("dfsfffffffffffffffffs2", "Value is: ${game.gameName}")
-//
-//                }
-//            }
-//
-//            override fun onCancelled(error: DatabaseError) {
-//            }
-//        })
-//        myRef.setValue("Hello, World!")
         val application = requireNotNull(this.activity).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
         val viewModelFactory = GamesViewModelFactory(dataSource, application)
-
-
 
         val gamesViewModel =
             ViewModelProvider(
                 this, viewModelFactory
             ).get(GamesViewModel::class.java)
         binding.lifecycleOwner = this
-
         binding.gamesViewModel = gamesViewModel
-
 
         val number = "+905465399410"
         val url = "https://api.whatsapp.com/send?phone=$number"
@@ -78,13 +49,12 @@ class GamesFragment : Fragment() {
             //TODO need test by uninstalling whatsapp
 
         }
-        binding.sendButton.setOnClickListener(){
+        binding.sendButton.setOnClickListener() {
             getShareIntent(intent)
 
-
         }
-        val adapter = GameAdapter(GameListener { gameId ->
-            gamesViewModel.onGameClicked(gameId)
+        val adapter = GameAdapter(GameListener { game ->
+            gamesViewModel.onGameClicked(game)
         })
         gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
             game?.let {
@@ -108,7 +78,6 @@ class GamesFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu, menu)
-
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -118,7 +87,6 @@ class GamesFragment : Fragment() {
 
     // Creating our Share Intent
     private fun getShareIntent(intent: Intent) {
-
         startActivity(intent)
     }
 }

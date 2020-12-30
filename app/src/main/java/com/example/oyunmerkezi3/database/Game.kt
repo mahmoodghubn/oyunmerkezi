@@ -22,6 +22,9 @@ data class Game(
     var sellingPrice:Int = 0,
 
     @ColumnInfo
+    var URL:String = "",
+
+    @ColumnInfo
     var buyingPrice:Int = 0
 
 //    @ColumnInfo

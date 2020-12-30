@@ -25,14 +25,10 @@ class GameAdapter(val clickListener: GameListener) :
 
     class ViewHolder private constructor(val binding: ListItemViewBinding) :
         RecyclerView.ViewHolder(binding.root) {
-        //        val gameNameTextView:TextView = itemView.findViewById(R.id.game_name)
-//        val gamePriceTextView:TextView = itemView.findViewById(R.id.game_price)
         fun bind(
             clickListener: GameListener,
             item: Game
         ) {
-//            gameNameTextView.text = item.gameName
-//            gamePriceTextView.text = item.sellingPrice.toString()
             binding.game = item
             binding.clickListener = clickListener
             binding.executePendingBindings()
@@ -61,6 +57,6 @@ class GameAdapter(val clickListener: GameListener) :
     }
 }
 
-class GameListener(val clickListener: (gameId: Long) -> Unit) {
-    fun onClick(game: Game) = clickListener(game.gameId)
+class GameListener(val clickListener: (game: Game) -> Unit) {
+    fun onClick(game: Game) = clickListener(game)
 }
