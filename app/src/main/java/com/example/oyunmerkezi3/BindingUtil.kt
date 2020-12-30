@@ -34,7 +34,6 @@ fun ImageView.setThumbnail(item: Game?) {
                 .load(imgUri)
                 .into(this)
         }
-
     } catch (e: MalformedURLException) {
         e.printStackTrace();
     }
