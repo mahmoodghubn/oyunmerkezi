@@ -11,8 +11,8 @@
         android:label="fragment_games"
         tools:layout="@layout/fragment_games" >
         <action
-            android:id="@+id/action_gamesFragment_to_detailFragment"
-            app:destination="@id/detailFragment" />
+            android:id="@+id/action_gamesFragment_to_detailActivity"
+            app:destination="@id/detailActivity" />
     </fragment>
     <fragment
         android:id="@+id/detailFragment"
@@ -43,4 +43,12 @@
         android:name="com.example.oyunmerkezi3.fragments.ProductsFragment"
         android:label="fragment_products"
         tools:layout="@layout/fragment_products" />
+    <activity
+        android:id="@+id/detailActivity"
+        android:name="com.example.oyunmerkezi3.activity.DetailActivity"
+        android:label="DetailActivity" >
+        <argument
+            android:name="game"
+            app:argType="com.example.oyunmerkezi3.database.Game" />
+    </activity>
 </navigation>

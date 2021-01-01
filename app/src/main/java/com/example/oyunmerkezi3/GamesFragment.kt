@@ -74,7 +74,7 @@ class GamesFragment : Fragment() {
             game?.let {
                 this.findNavController().navigate(
                     GamesFragmentDirections
-                        .actionGamesFragmentToDetailFragment(game)
+                        .actionGamesFragmentToDetailActivity(game)
                 )
                 gamesViewModel.onGameDetailsNavigated()
             }
