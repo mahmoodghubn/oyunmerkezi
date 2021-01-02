@@ -21,9 +21,6 @@ tools:context="com.example.oyunmerkezi3.GamesFragment">
         app:layout_constraintStart_toStartOf="parent"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
 
-
-
-
     <com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
         android:id="@+id/sendButton"
         android:layout_width="0dp"

@@ -29,7 +29,7 @@
             android:id="@+id/game_title_text"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="@{detailViewModel.game.URL}"
+            android:text="@{detailViewModel.game.URL[0]}"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/youtube_player_fragment" />
 

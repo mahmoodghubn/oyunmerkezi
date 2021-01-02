@@ -1,6 +1,7 @@
 package com.example.oyunmerkezi3.database
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -25,7 +26,7 @@ class GamesViewModel(
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
     var games: LiveData<List<Game>?>? = database.getAllGames()
-    public val mChildEventListener = object : ChildEventListener {
+     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val downloadedGame = dataSnapshot.getValue(Game::class.java)
             viewModelScope.launch {

@@ -25,7 +25,7 @@ data class Game(
     var buyingPrice: Int = 0,
 
     @ColumnInfo
-    var URL: String = ""
+    var URL: List<String>
 
 //    @ColumnInfo
 //    var favorite:Boolean = false,
@@ -65,4 +65,11 @@ data class Game(
 
 //    @ColumnInfo
 //    var region:String
-):Parcelable
+):Parcelable{
+    constructor() : this(0,
+        "",
+        0,
+        0,
+        emptyList()
+    )
+}

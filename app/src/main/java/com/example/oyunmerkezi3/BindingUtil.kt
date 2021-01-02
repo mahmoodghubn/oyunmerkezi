@@ -30,14 +30,14 @@ fun YouTubeThumbnailView.setThumbnail(item: Game?) {
 
     item?.let {
         this.initialize(
-            "API KEY",
+            "AIzaSyCbfkNTBYJp0JEp8hM4J0TCEm_EcnIvwig",
             object : YouTubeThumbnailView.OnInitializedListener {
                 override fun onInitializationSuccess(
                     youTubeThumbnailView: YouTubeThumbnailView,
                     youTubeThumbnailLoader: YouTubeThumbnailLoader
                 ) {
                     //when initialization is sucess, set the video id to thumbnail to load
-                    youTubeThumbnailLoader.setVideo(item.URL)
+                    youTubeThumbnailLoader.setVideo(item.URL[0])
                     youTubeThumbnailLoader.setOnThumbnailLoadedListener(object :
                         OnThumbnailLoadedListener {
                         override fun onThumbnailLoaded(

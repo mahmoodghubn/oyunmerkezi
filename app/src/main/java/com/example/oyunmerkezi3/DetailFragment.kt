@@ -25,20 +25,14 @@ class DetailFragment : Fragment() {
             container,
             false
         )
-        //getting the argument from the games fragment
-        //val args = DetailFragmentArgs.fromBundle(requireArguments())
         val detailFragmentArgs by navArgs<DetailFragmentArgs>()
-
-        //passing the variable from the games fragment to detail fragment by using view model factory to initialize view model
         viewModelFactory =
             DetailViewModelFactory(detailFragmentArgs.game)
         viewModel = ViewModelProvider(this, viewModelFactory).get(DetailViewModel::class.java)
 
-        //using data binding and avoid using ui controller to get data from view model
         binding.detailViewModel = viewModel
         binding.lifecycleOwner = this
 
-//        return inflater.inflate(R.layout.fragment_detail, container, false)
         return binding.root
 
     }
