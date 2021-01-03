@@ -30,7 +30,7 @@ fun YouTubeThumbnailView.setThumbnail(item: Game?) {
 
     item?.let {
         this.initialize(
-            "API",
+            "AIzaSyCbfkNTBYJp0JEp8hM4J0TCEm_EcnIvwig",
             object : YouTubeThumbnailView.OnInitializedListener {
                 override fun onInitializationSuccess(
                     youTubeThumbnailView: YouTubeThumbnailView,

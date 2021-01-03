@@ -8,6 +8,8 @@ import androidx.navigation.navArgs
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
+import com.example.oyunmerkezi3.recycling.VideoAdapter
+import com.example.oyunmerkezi3.recycling.VideoListener
 import com.google.android.youtube.player.*
 
 private var youTubePlayer: YouTubePlayer? = null
@@ -27,6 +29,11 @@ class DetailActivity : AppCompatActivity() {
         val detailActivityArgs by navArgs<DetailActivityArgs>()
         game = detailActivityArgs.game
         initializeYoutubePlayer()
+        val adapter = VideoAdapter(VideoListener { url ->
+            onVideoClicked(url)
+        })
+        binding.videoList.adapter = adapter
+        adapter.submitList(game.URL)
     }
 
     private fun initializeYoutubePlayer() {
@@ -34,7 +41,7 @@ class DetailActivity : AppCompatActivity() {
             fragmentManager.findFragmentById(R.id.youtube_player_fragment) as YouTubePlayerFragment
         if (youTubePlayerFragment == null) return
         youTubePlayerFragment!!.initialize(
-            "API",
+            "AIzaSyCbfkNTBYJp0JEp8hM4J0TCEm_EcnIvwig",
             object : YouTubePlayer.OnInitializedListener {
                 override fun onInitializationSuccess(
                     provider: YouTubePlayer.Provider, player: YouTubePlayer,
@@ -56,5 +63,8 @@ class DetailActivity : AppCompatActivity() {
                     Log.e("Detail Activity", "Youtube Player View initialization failed")
                 }
             })
+    }
+    fun onVideoClicked(game: String) {
+
     }
 }
