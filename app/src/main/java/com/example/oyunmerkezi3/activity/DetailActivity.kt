@@ -30,7 +30,7 @@ class DetailActivity : AppCompatActivity() {
         game = detailActivityArgs.game
         initializeYoutubePlayer()
         val adapter = VideoAdapter(VideoListener { url ->
-            onVideoClicked(url)
+            youTubePlayer?.loadVideo(url);
         })
         binding.videoList.adapter = adapter
         adapter.submitList(game.URL)
@@ -64,7 +64,5 @@ class DetailActivity : AppCompatActivity() {
                 }
             })
     }
-    fun onVideoClicked(game: String) {
 
-    }
 }
