@@ -4,10 +4,8 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
-//import kotlinx.parcelize
 import kotlinx.parcelize.Parcelize
-
-
+import java.util.*
 
 @Parcelize
 @Entity(tableName = "game_table")
@@ -25,51 +23,87 @@ data class Game(
     var buyingPrice: Int = 0,
 
     @ColumnInfo
-    var URL: List<String>
+    var URL: List<String>,
+
+    @ColumnInfo
+    var favorite: Boolean = false,
+
+    @ColumnInfo
+    var about: String = "",
+
+    @ColumnInfo
+    var age: Int = 3,
+
+    @ColumnInfo
+    var gameRating: Float = 0F,
+//
+    @ColumnInfo
+    var stock: Boolean = false,
+//
+    @ColumnInfo
+    var hours: Int = 1,
+
+    @ColumnInfo
+    var publishedDate: Date = Date(1990, 1, 1),
+
+    @ColumnInfo
+    var online: Online,
+
+    @ColumnInfo
+    var category: Category,
 
 //    @ColumnInfo
-//    var favorite:Boolean = false,
+//    var region: Region,
 
-//    @ColumnInfo
-//    var about:String = "",
+    @ColumnInfo
+    var playerNo: List<Int>,
 
-//    @ColumnInfo
-//    var age:Int = 3,
-
-//    @ColumnInfo
-//    var playNo:Int = 1
-
-//    @ColumnInfo(name = "rating")
-//    var gameRating: Int = 0,
-
-//    @ColumnInfo
-//    var inStock:Boolean = true
-
-//    @ColumnInfo
-//    var hours:Int = 1
-
-//    @ColumnInfo
-//    var date:Int = 1
-
-//    @ColumnInfo
-//    var language:String = "turkish",
-
-//    @ColumnInfo
-//    var comments:String = ""
-
-//    @ColumnInfo
-//    var category: String,
-
-//    @ColumnInfo
-//    var videoUrl:String = ""
-
-//    @ColumnInfo
-//    var region:String
-):Parcelable{
-    constructor() : this(0,
+    @ColumnInfo
+    var language: Language
+) : Parcelable {
+    constructor() : this(
+        0,
         "",
         0,
         0,
-        emptyList()
-    )
+        emptyList(),
+        false,
+        "",
+        3,
+        0F,
+        false,
+        1,
+        Date(1990, 1, 1),
+        Online.Online,
+        Category.Race,
+//        Region.R0
+        emptyList(),
+        Language.Turkish
+        )
+}
+
+enum class Region {
+    R0,R1,R2,R3,R4,R5,R6
+}
+
+enum class Online {
+    Online, Offline, Both
+}
+
+enum class Language {
+    Arabic, Dutch, English, French, German, Greek, Hebrew, Hindi, Irish, Italian,
+    Norwegian, Persian, Polish, Portuguese, Romanian, Russian,
+    Serbian, Spanish, Swedish, Turkish
+}
+
+enum class Category {
+    ActionWar,
+    Sport,
+    Race,
+    FightingBoxing,
+    Platform,
+    Strategy,
+    FearThriller,
+    RPG,
+    VR
 }

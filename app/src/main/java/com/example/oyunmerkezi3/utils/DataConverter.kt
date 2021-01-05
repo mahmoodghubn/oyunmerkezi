@@ -1,8 +1,12 @@
 package com.example.oyunmerkezi3.utils
 
 import androidx.room.TypeConverter
+import com.example.oyunmerkezi3.database.Category
+import com.example.oyunmerkezi3.database.Language
+import com.example.oyunmerkezi3.database.Online
+import java.util.*
 
-object  DataConverter  {
+object DataConverter {
     @TypeConverter
     @JvmStatic
     fun toList(strings: String): List<String> {
@@ -20,7 +24,79 @@ object  DataConverter  {
         var result = ""
         strings.forEachIndexed { index, element ->
             result += element
-            if(index != (strings.size-1)){
+            if (index != (strings.size - 1)) {
+                result += ","
+            }
+        }
+        return result
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromTimestamp(value: Long?): Date? {
+        return value?.let { Date(it) }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun dateToTimestamp(date: Date?): Long? {
+        return date?.time?.toLong()
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun onlineToString(date: Online?): String {
+        return date!!.name
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromStringToOnline(value: String): Online? {
+        return Online.values().find { it.name == value }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun categoryToString(date: Category?): String {
+        return date!!.name
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromStringToCategory(value: String): Category? {
+        return Category.values().find { it.name == value }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun languageToString(date: Language?): String {
+        return date!!.name
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromStringToLanguage(value: String): Language? {
+        return Language.values().find { it.name == value }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun toIntList(strings: String): List<Int> {
+        val list = mutableListOf<Int>()
+        val array = strings.split(",")
+        for (item in array) {
+            list.add(item.toInt())
+        }
+        return list
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromIntListToString(strings: List<Int>): String {
+        var result = ""
+        strings.forEachIndexed { index, element ->
+            result += element
+            if (index != (strings.size - 1)) {
                 result += ","
             }
         }
