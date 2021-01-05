@@ -69,14 +69,26 @@ object DataConverter {
 
     @TypeConverter
     @JvmStatic
-    fun languageToString(date: Language?): String {
-        return date!!.name
+    fun languageToString(languages: List<Language>?): String {
+        var result = ""
+        languages!!.forEachIndexed { index, element ->
+            result += element.name
+            if (index != (languages.size - 1)) {
+                result += ","
+            }
+        }
+        return result
     }
 
     @TypeConverter
     @JvmStatic
-    fun fromStringToLanguage(value: String): Language? {
-        return Language.values().find { it.name == value }
+    fun fromStringToLanguage(strings: String): List<Language>? {
+        val list = mutableListOf<Language>()
+        val array = strings.split(",")
+        for (s in array) {
+            list.add(Language.values().find { it.name == s }!!)
+        }
+        return list
     }
 
     @TypeConverter

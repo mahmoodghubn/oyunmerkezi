@@ -59,7 +59,10 @@ data class Game(
     var playerNo: List<Int>,
 
     @ColumnInfo
-    var language: Language
+    var language: List<Language>,
+
+    @ColumnInfo
+    var caption: List<Language>
 ) : Parcelable {
     constructor() : this(
         0,
@@ -78,14 +81,15 @@ data class Game(
         Category.Race,
 //        Region.R0
         emptyList(),
-        Language.Turkish
-        )
+        listOf(Language.Turkish,Language.English),
+        listOf(Language.Turkish,Language.English)
+    )
 }
 
-enum class Region {
-    R0,R1,R2,R3,R4,R5,R6
-}
-
+//enum class Region {
+//    R0,R1,R2,R3,R4,R5,R6
+//}
+//
 enum class Online {
     Online, Offline, Both
 }
