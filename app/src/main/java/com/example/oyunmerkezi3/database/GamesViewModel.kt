@@ -1,21 +1,17 @@
 package com.example.oyunmerkezi3.database
 
 import android.app.Application
-import android.util.Log
-import androidx.lifecycle.AndroidViewModel
-import androidx.lifecycle.LiveData
-import androidx.lifecycle.MutableLiveData
-import androidx.lifecycle.viewModelScope
+import androidx.lifecycle.*
 import com.example.oyunmerkezi3.utils.Utils
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import kotlinx.coroutines.*
 
-
 class GamesViewModel(
     val database: GameDatabaseDao,
-    application: Application
+    application: Application,
+    x: Int//this value comes from the orderBy fragment to determine which order chose
 ) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
@@ -25,11 +21,17 @@ class GamesViewModel(
     }
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    var games: LiveData<List<Game>?>? = database.getAllGames()
-     private val mChildEventListener = object : ChildEventListener {
+
+    //games variable is observable by games fragment and contain the list of games from the database
+    var games: LiveData<List<Game>?> = Transformations.map(database.getAllGames()) {
+        it?.sortedBy { it.gameId }
+    }
+
+    //chilEvenListener is listening to changes in firebase database
+    private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val downloadedGame = dataSnapshot.getValue(Game::class.java)
-            viewModelScope.launch {
+            uiScope.launch {
                 if (getGame(downloadedGame!!.gameId) == null) {
                     insertGame(downloadedGame)
                 }
@@ -52,6 +54,61 @@ class GamesViewModel(
     }
 
     init {
+
+        games = when (x) {
+            1 -> {
+                Transformations.map(games) {
+                    it?.sortedBy { it.gameName }
+                }
+            }
+            2 -> {
+                Transformations.map(games) {
+                    it?.sortedByDescending { it.gameName }
+                }
+            }
+            3 -> {
+                Transformations.map(games) {
+                    it?.sortedBy { it.publishedDate }
+                }
+            }
+            4 -> {
+                Transformations.map(games)
+                {
+                    it?.sortedByDescending { it.publishedDate }
+                }
+            }
+            5 -> {
+                Transformations.map(games) {
+                    it?.sortedBy { it.sellingPrice }
+                }
+            }
+            6 -> {
+                Transformations.map(games) {
+                    it?.sortedByDescending { it.sellingPrice }
+                }
+            }
+            7 -> {
+                Transformations.map(games) {
+                    it?.sortedBy { it.hours }
+                }
+            }
+            8 -> {
+                Transformations.map(games) {
+                    it?.sortedByDescending { it.hours }
+                }
+            }
+            9 -> {
+                Transformations.map(games) {
+                    it?.sortedBy { it.gameRating }
+                }
+            }
+            else -> {
+                Transformations.map(games) {
+                    it?.sortedByDescending { it.hours }
+                }
+            }
+        }
+
         val mPlaceRef = Utils.databaseRef?.child("game")
         mPlaceRef?.addChildEventListener(mChildEventListener)
         mPlaceRef!!.keepSynced(true)
@@ -106,6 +163,7 @@ class GamesViewModel(
         _navigateToDetails.value = game
     }
 
+    //when finish navigating call this function
     fun onGameDetailsNavigated() {
         _navigateToDetails.value = null
     }

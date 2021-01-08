@@ -1,14 +1,70 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
     tools:context=".fragments.OrderByFragment">
 
-    <!-- TODO: Update blank fragment layout -->
-    <TextView
+    <FrameLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:text="@string/hello_order_fragment" />
+        android:layout_height="match_parent">
 
-</FrameLayout>
+        <RadioGroup
+            android:id="@+id/radio_group"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content">
+
+            <RadioButton
+                android:id="@+id/alphabetic"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alphabetic" />
+
+            <RadioButton
+                android:id="@+id/alphabetic_re"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/alphabetic_re" />
+
+            <RadioButton
+                android:id="@+id/newer"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/newer" />
+
+            <RadioButton
+                android:id="@+id/older"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/older" />
+
+            <RadioButton
+                android:id="@+id/expensive"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/expensive" />
+
+            <RadioButton
+                android:id="@+id/cheap"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/cheap" />
+
+            <RadioButton
+                android:id="@+id/hours"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hours" />
+
+            <RadioButton
+                android:id="@+id/hours_re"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/hours_re" />
+
+            <RadioButton
+                android:id="@+id/high_rate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/high_rate" />
+        </RadioGroup>
+    </FrameLayout>
+</layout>
