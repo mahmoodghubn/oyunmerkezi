@@ -16,6 +16,9 @@
         <argument
             android:name="x"
             app:argType="integer" />
+        <argument
+            android:name="gameFilter"
+            app:argType="com.example.oyunmerkezi3.utils.GameFilter" />
     </fragment>
     <activity
         android:id="@+id/detailActivity"
@@ -32,6 +35,15 @@
         tools:layout="@layout/fragment_order_by" >
         <action
             android:id="@+id/action_orderByFragment_to_gamesFragment2"
+            app:destination="@id/gamesFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/filterFragment2"
+        android:name="com.example.oyunmerkezi3.fragments.FilterFragment"
+        android:label="fragment_filter"
+        tools:layout="@layout/fragment_filter" >
+        <action
+            android:id="@+id/action_filterFragment2_to_gamesFragment"
             app:destination="@id/gamesFragment" />
     </fragment>
 </navigation>

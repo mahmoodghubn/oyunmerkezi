@@ -17,6 +17,7 @@ import com.example.oyunmerkezi3.database.GamesViewModelFactory
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
+import com.example.oyunmerkezi3.utils.GameFilter
 
 class GamesFragment : Fragment() {
 
@@ -32,9 +33,10 @@ class GamesFragment : Fragment() {
 
         //x value comes from orderBy fragment to determine the order of the games in games list
         val x:Int = this.arguments?.getInt("x") ?:0
+        val filter:GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
         val application = requireNotNull(this.activity).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
-        val viewModelFactory = GamesViewModelFactory(dataSource, application,x)
+        val viewModelFactory = GamesViewModelFactory(dataSource, application,x,filter)
 
         val gamesViewModel =
             ViewModelProvider(
