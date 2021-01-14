@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".fragments.FilterFragment">
 
-    <FrameLayout
+    <androidx.coordinatorlayout.widget.CoordinatorLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
@@ -140,32 +140,48 @@
                         android:text="@string/year" />
                 </RadioGroup>
 
-                <Spinner
-                    android:id="@+id/category_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                <TextView
+                    android:id="@+id/category_text_view"
+                    style="@style/TextViewStyle"
+                    android:text="@string/game_category"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/radio_group_date" />
 
-                <Spinner
-                    android:id="@+id/language_spinner"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
-                    android:layout_marginTop="16dp"
+                <TextView
+                    android:id="@+id/chosen_category"
+                    style="@style/TextViewStyle"
+                    android:layout_marginTop="0dp"
+                    android:gravity="top"
+                    android:textSize="12dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/category_spinner" />
+                    app:layout_constraintTop_toBottomOf="@id/category_text_view" />
+
+                <TextView
+                    android:id="@+id/language_text_view"
+                    style="@style/TextViewStyle"
+                    android:text="@string/game_language"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chosen_category" />
+
+                <TextView
+                    android:id="@+id/chosen_language"
+                    style="@style/TextViewStyle"
+                    android:layout_marginTop="0dp"
+                    android:gravity="top"
+                    android:textSize="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/language_text_view" />
 
                 <RatingBar
                     android:id="@+id/game_rating"
+                    style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/language_spinner" />
+                    app:layout_constraintTop_toBottomOf="@id/chosen_language" />
+
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -179,5 +195,8 @@
             android:layout_marginEnd="16dp"
             android:layout_marginBottom="16dp"
             android:text="@string/apply" />
-    </FrameLayout>
+
+        <include layout="@layout/bottom_sheet" />
+
+    </androidx.coordinatorlayout.widget.CoordinatorLayout>
 </layout>

@@ -12,12 +12,16 @@ import androidx.navigation.fragment.findNavController
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Category
 import com.example.oyunmerkezi3.database.Language
+import com.example.oyunmerkezi3.databinding.BottomSheetBinding
 import com.example.oyunmerkezi3.databinding.FragmentFilterBinding
 import com.example.oyunmerkezi3.utils.GameFilter
+import com.google.android.material.bottomsheet.BottomSheetDialog
+import com.example.oyunmerkezi3.bottomSheet.CategoryAdapter
 
 
 class FilterFragment : Fragment() {
 
+    private lateinit var listView: ListView
     private var minPrice: Int? = null
     private var maxPrice: Int? = null
     private var minHours: Int? = null
@@ -39,49 +43,56 @@ class FilterFragment : Fragment() {
             R.layout.fragment_filter, container, false
         )
 
-        val adapter = this.context?.let { it1 ->
-            ArrayAdapter<Category>(
-                it1,
-                android.R.layout.simple_spinner_item,
-                Category.values()
+        binding.categoryTextView.setOnClickListener(View.OnClickListener {
+            val bottomSheet = BottomSheetDialog(this.requireContext())
+            val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
+                layoutInflater,
+                R.layout.bottom_sheet,
+                null,
+                false
             )
-        }
-        binding.categorySpinner.adapter = adapter
-        binding.categorySpinner.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View, position: Int, id: Long
-            ) {
+            listView = bindingSheet.categoryListView
+            val listItems = arrayListOf<String>()
+            for (item in Category.values()) {
+                listItems.add(item.name)
+            }
+
+            val adapter1 = CategoryAdapter(requireContext(), listItems)
+            listView.adapter = adapter1
+            bottomSheet.setContentView(bindingSheet.root)
+            bottomSheet.show()
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val selectedCategory: String = listItems[position]
+                binding.chosenCategory.text = selectedCategory
                 category = Category.values()[position]
+                bottomSheet.hide()
             }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                category = null
-            }
-        }
-
-        val adapter2 = this.context?.let { it1 ->
-            ArrayAdapter<Language>(
-                it1,
-                android.R.layout.simple_spinner_item,
-                Language.values()
+        })
+        binding.languageTextView.setOnClickListener(View.OnClickListener {
+            val bottomSheet = BottomSheetDialog(this.requireContext())
+            val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
+                layoutInflater,
+                R.layout.bottom_sheet,
+                null,
+                false
             )
-        }
-        binding.languageSpinner.adapter = adapter2
-        binding.languageSpinner.onItemSelectedListener = object :
-            AdapterView.OnItemSelectedListener {
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View, position: Int, id: Long
-            ) {
-                language = Language.values()[position]
+            listView = bindingSheet.categoryListView
+            val listItems = arrayListOf<String>()
+            for (item in Language.values()) {
+                listItems.add(item.name)
             }
 
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                language = null
+            val adapter1 = CategoryAdapter(requireContext(), listItems)
+            listView.adapter = adapter1
+            bottomSheet.setContentView(bindingSheet.root)
+            bottomSheet.show()
+            listView.setOnItemClickListener { _, _, position, _ ->
+                val selectedLanguage: String = listItems[position]
+                binding.chosenLanguage.text = selectedLanguage
+                language = Language.values()[position]
+                bottomSheet.hide()
             }
-        }
+        })
 
         radioGroup = binding.radioGroupDate
         radioGroup!!.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { _, checkedId ->
@@ -135,17 +146,17 @@ class FilterFragment : Fragment() {
             // we didn't handle false case so we only need true or null
             val offline: Boolean? = if (binding.online.isChecked) {
                 true
-            }else{
+            } else {
                 null
             }
             val inStock: Boolean? = if (binding.online.isChecked) {
                 true
-            }else{
+            } else {
                 null
             }
             val favorite: Boolean? = if (binding.favorite.isChecked) {
                 true
-            }else{
+            } else {
                 null
             }
             val filter = GameFilter(

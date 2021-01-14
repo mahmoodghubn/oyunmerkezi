@@ -43,4 +43,6 @@
     <string name="year">last year</string>
     <string name="publishing">publish date</string>
     <string name="apply">apply</string>
+    <string name="game_category">Game Category</string>
+    <string name="game_language">Game Language</string>
 </resources>
