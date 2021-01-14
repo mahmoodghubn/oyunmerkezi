@@ -31,12 +31,10 @@ class GamesFragment : Fragment() {
             R.layout.fragment_games, container, false
         )
 
-        //x value comes from orderBy fragment to determine the order of the games in games list
-        val x:Int = this.arguments?.getInt("x") ?:0
         val filter:GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
         val application = requireNotNull(this.activity).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
-        val viewModelFactory = GamesViewModelFactory(dataSource, application,x,filter)
+        val viewModelFactory = GamesViewModelFactory(dataSource, application,filter)
 
         val gamesViewModel =
             ViewModelProvider(

@@ -172,15 +172,30 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/language_text_view" />
 
+                <TextView
+                    android:id="@+id/oder_by_text_view"
+                    style="@style/TextViewStyle"
+                    android:text="@string/game_oder"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chosen_language" />
+
+                <TextView
+                    android:id="@+id/chosen_order"
+                    style="@style/TextViewStyle"
+                    android:layout_marginTop="0dp"
+                    android:gravity="top"
+                    android:textSize="12dp"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/oder_by_text_view" />
+
                 <RatingBar
                     android:id="@+id/game_rating"
-                    style="?android:attr/ratingBarStyleSmall"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginStart="16dp"
                     android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chosen_language" />
+                    app:layout_constraintTop_toBottomOf="@id/chosen_order" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>

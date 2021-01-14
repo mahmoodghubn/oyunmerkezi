@@ -5,9 +5,6 @@
         android:id="@+id/filterFragment2"
         android:title="@string/filter" />
     <item
-        android:id="@+id/orderByFragment"
-        android:title="@string/order" />
-    <item
         android:id="@+id/languageFragment"
         android:title="@string/language" />
 </menu>

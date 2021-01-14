@@ -45,4 +45,6 @@
     <string name="apply">apply</string>
     <string name="game_category">Game Category</string>
     <string name="game_language">Game Language</string>
+    <string name="game_oder">Games Order</string>
+    <string name="reset">Reset</string>
 </resources>

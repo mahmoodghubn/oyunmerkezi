@@ -1,14 +1,14 @@
 package com.example.oyunmerkezi3.fragments
 
 import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.*
 import android.widget.RatingBar.OnRatingBarChangeListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
+import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
+import androidx.navigation.ui.NavigationUI
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Category
 import com.example.oyunmerkezi3.database.Language
@@ -26,6 +26,7 @@ class FilterFragment : Fragment() {
     private var maxPrice: Int? = null
     private var minHours: Int? = null
     private var maxHours: Int? = null
+    private var orderBy: Int? = null
     private var age: Int? = null
     private var category: Category? = null
     private var language: Language? = null
@@ -33,12 +34,16 @@ class FilterFragment : Fragment() {
     private var radioGroup: RadioGroup? = null
     private var gameRate: Float? = null
     private var publishDate: Int? = null
+    private var offline: Boolean? = null
+    private var inStock: Boolean? = null
+    private var favorite: Boolean? = null
+    private lateinit var binding: FragmentFilterBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val binding: FragmentFilterBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_filter, container, false
         )
@@ -94,6 +99,38 @@ class FilterFragment : Fragment() {
             }
         })
 
+        binding.oderByTextView.setOnClickListener(View.OnClickListener {
+            val bottomSheet = BottomSheetDialog(this.requireContext())
+            val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
+                layoutInflater,
+                R.layout.bottom_sheet,
+                null,
+                false
+            )
+            listView = bindingSheet.categoryListView
+            val listItems = arrayListOf<String>(
+                "A--Z",
+                "Z--A",
+                "new game to old",
+                "old game to new",
+                "low price to high",
+                "high price to low",
+                "short game to long",
+                "long game to short",
+                "game rate"
+            )
+            val adapter1 = CategoryAdapter(requireContext(), listItems)
+            listView.adapter = adapter1
+            bottomSheet.setContentView(bindingSheet.root)
+            bottomSheet.show()
+            listView.setOnItemClickListener { _, _, position, _ ->
+
+                val selectedOrder: String = listItems[position]
+                binding.chosenOrder.text = selectedOrder
+                orderBy = position
+                bottomSheet.hide()
+            }
+        })
         radioGroup = binding.radioGroupDate
         radioGroup!!.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { _, checkedId ->
             publishDate = when (checkedId) {
@@ -144,17 +181,17 @@ class FilterFragment : Fragment() {
 
             // we do not want to pass false value because do not need false value and
             // we didn't handle false case so we only need true or null
-            val offline: Boolean? = if (binding.online.isChecked) {
+            offline = if (binding.online.isChecked) {
                 true
             } else {
                 null
             }
-            val inStock: Boolean? = if (binding.online.isChecked) {
+            inStock = if (binding.online.isChecked) {
                 true
             } else {
                 null
             }
-            val favorite: Boolean? = if (binding.favorite.isChecked) {
+            favorite = if (binding.favorite.isChecked) {
                 true
             } else {
                 null
@@ -172,14 +209,61 @@ class FilterFragment : Fragment() {
                 gameRate,
                 category,
                 language,
-                publishDate
+                publishDate,
+                orderBy
             )
 
             val args = Bundle()
             args.putParcelable("filter", filter)
             this.findNavController().setGraph(R.navigation.navigation, args)
         }
-
+        setHasOptionsMenu(true)
         return binding.root
     }
+
+    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+        super.onCreateOptionsMenu(menu, inflater)
+        inflater.inflate(R.menu.filter_menu, menu)
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.reset) {
+            minPrice = null
+            maxPrice = null
+            minHours = null
+            maxHours = null
+            age = null
+            playersNo = null
+            offline = null
+            favorite = null
+            inStock = null
+            gameRate = null
+            category = null
+            language = null
+            publishDate = null
+            orderBy = null
+            binding?.let {
+                it.minPrice.setText("")
+                it.maxPrice.setText("")
+                it.minimumHours.setText("")
+                it.maximumHours.setText("")
+                it.ageValue.setText("")
+                it.playersValue.setText("")
+                it.online.isChecked = false
+                it.inStock.isChecked = false
+                it.favorite.isChecked = false
+                it.gameRating.rating = 0F
+                binding.radioGroupDate.clearCheck()
+                binding.chosenLanguage.text = ""
+                binding.chosenOrder.text = ""
+                binding.chosenCategory.text = ""
+            }
+        }
+
+        return super.onOptionsItemSelected(item)
+    }
+//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+//        return NavigationUI.onNavDestinationSelected(item, requireView().findNavController())
+//                || super.onOptionsItemSelected(item)
+//    }
 }

@@ -14,9 +14,6 @@
             android:id="@+id/action_gamesFragment_to_detailActivity"
             app:destination="@id/detailActivity" />
         <argument
-            android:name="x"
-            app:argType="integer" />
-        <argument
             android:name="gameFilter"
             app:argType="com.example.oyunmerkezi3.utils.GameFilter" />
     </fragment>
@@ -28,15 +25,6 @@
             android:name="game"
             app:argType="com.example.oyunmerkezi3.database.Game" />
     </activity>
-    <fragment
-        android:id="@+id/orderByFragment"
-        android:name="com.example.oyunmerkezi3.fragments.OrderByFragment"
-        android:label="@string/order_by"
-        tools:layout="@layout/fragment_order_by" >
-        <action
-            android:id="@+id/action_orderByFragment_to_gamesFragment2"
-            app:destination="@id/gamesFragment" />
-    </fragment>
     <fragment
         android:id="@+id/filterFragment2"
         android:name="com.example.oyunmerkezi3.fragments.FilterFragment"

@@ -13,7 +13,6 @@ import kotlinx.coroutines.*
 class GamesViewModel(
     val database: GameDatabaseDao,
     application: Application,
-    x: Int,//this value comes from the orderBy fragment to determine which order chose
     filterGame: GameFilter?
 ) : AndroidViewModel(application) {
 
@@ -58,7 +57,6 @@ class GamesViewModel(
 
     init {
         filterGame?.let { filter(it) }
-        orderBy(x)
         val mPlaceRef = Utils.databaseRef?.child("game")
         mPlaceRef?.addChildEventListener(mChildEventListener)
         mPlaceRef!!.keepSynced(true)
@@ -120,55 +118,50 @@ class GamesViewModel(
 
     private fun orderBy(x: Int) {
         games = when (x) {
-            1 -> {
+            0 -> {
                 Transformations.map(games) {
                     it?.sortedBy { it.gameName }
                 }
             }
-            2 -> {
+            1 -> {
                 Transformations.map(games) {
                     it?.sortedByDescending { it.gameName }
                 }
             }
-            3 -> {
+            2 -> {
                 Transformations.map(games) {
                     it?.sortedBy { it.publishedDate }
                 }
             }
-            4 -> {
+            3 -> {
                 Transformations.map(games)
                 {
                     it?.sortedByDescending { it.publishedDate }
                 }
             }
-            5 -> {
+            4 -> {
                 Transformations.map(games) {
                     it?.sortedBy { it.sellingPrice }
                 }
             }
-            6 -> {
+            5 -> {
                 Transformations.map(games) {
                     it?.sortedByDescending { it.sellingPrice }
                 }
             }
-            7 -> {
+            6 -> {
                 Transformations.map(games) {
                     it?.sortedBy { it.hours }
                 }
             }
-            8 -> {
+            7 -> {
                 Transformations.map(games) {
                     it?.sortedByDescending { it.hours }
-                }
-            }
-            9 -> {
-                Transformations.map(games) {
-                    it?.sortedBy { it.gameRating }
                 }
             }
             else -> {
                 Transformations.map(games) {
-                    it?.sortedByDescending { it.hours }
+                    it?.sortedBy { it.gameRating }
                 }
             }
         }
@@ -255,6 +248,9 @@ class GamesViewModel(
             {
                 it?.filter { it.publishedDate >= cal.dateBefore() }
             }
+        }
+        gameFilter.orderBy?.let {
+            orderBy(it)
         }
     }
 }

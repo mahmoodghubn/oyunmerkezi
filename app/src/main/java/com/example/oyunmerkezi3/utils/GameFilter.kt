@@ -19,7 +19,8 @@ data class GameFilter(
     val gameRate: Float?,
     val category: Category?,
     val language: Language?,
-    val publishDate: Int?
+    val publishDate: Int?,
+    val orderBy:Int?
 ) :
     Parcelable {
 
