@@ -26,9 +26,6 @@ data class Game(
     var URL: List<String>,
 
     @ColumnInfo
-    var favorite: Boolean = false,
-
-    @ColumnInfo
     var about: String = "",
 
     @ColumnInfo
@@ -36,10 +33,10 @@ data class Game(
 
     @ColumnInfo
     var gameRating: Float = 0F,
-//
+
     @ColumnInfo
     var stock: Boolean = false,
-//
+
     @ColumnInfo
     var hours: Int = 1,
 
@@ -52,8 +49,8 @@ data class Game(
     @ColumnInfo
     var category: Category,
 
-//    @ColumnInfo
-//    var region: Region,
+    @ColumnInfo
+    var platform: Platform,
 
     @ColumnInfo
     var playerNo: List<Int>,
@@ -70,7 +67,6 @@ data class Game(
         0,
         0,
         emptyList(),
-        false,
         "",
         3,
         0F,
@@ -79,25 +75,19 @@ data class Game(
         Date(1990, 1, 1),
         Online.Online,
         Category.Race,
-//        Region.R0
+        Platform.PS4,
         emptyList(),
-        listOf(Language.Turkish,Language.English),
-        listOf(Language.Turkish,Language.English)
+        listOf(Language.Turkish, Language.English),
+        listOf(Language.Turkish, Language.English)
     )
 }
 
-//enum class Region {
-//    R0,R1,R2,R3,R4,R5,R6
-//}
-//
 enum class Online {
     Online, Offline, Both
 }
 
 enum class Language {
-    Arabic, Dutch, English, French, German, Greek, Hebrew, Hindi, Irish, Italian,
-    Norwegian, Persian, Polish, Portuguese, Romanian, Russian,
-    Serbian, Spanish, Swedish, Turkish
+    Turkish, Arabic, English, French, German, Italian, Russian, Spanish, Japanese
 }
 
 enum class Category {
@@ -110,4 +100,8 @@ enum class Category {
     FearThriller,
     RPG,
     VR
+}
+
+enum class Platform{
+    PS3, PS4, PS5, XBoxOne, XBoxX
 }

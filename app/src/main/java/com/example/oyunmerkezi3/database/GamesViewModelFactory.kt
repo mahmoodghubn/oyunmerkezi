@@ -8,11 +8,12 @@ import com.example.oyunmerkezi3.utils.GameFilter
 class GamesViewModelFactory(
     private val dataSource: GameDatabaseDao,
     private val application: Application,
-    private val filterGame:GameFilter?) : ViewModelProvider.Factory {
+    private val platform:String,
+    private val filterGame: GameFilter?) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(GamesViewModel::class.java)) {
-            return GamesViewModel(dataSource, application,filterGame) as T
+            return GamesViewModel(dataSource, application,platform,filterGame) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }

@@ -21,6 +21,7 @@ interface GameDatabaseDao {
     @Query("SELECT * FROM game_table ORDER BY gameId DESC")
     fun getAllGames(): LiveData<List<Game>?>
 
-//    @Query("SELECT * FROM game_table ORDER BY gameId DESC LIMIT 1")
-//    fun getNewest(): Game?
+    @Query("SELECT * from game_table WHERE platform = :platform")
+    fun getPlatform(platform: String):LiveData<List<Game>?>
+
 }

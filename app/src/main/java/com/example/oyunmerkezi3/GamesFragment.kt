@@ -18,6 +18,7 @@ import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
 import com.example.oyunmerkezi3.utils.GameFilter
+import com.google.android.material.chip.Chip
 
 class GamesFragment : Fragment() {
 
@@ -31,15 +32,60 @@ class GamesFragment : Fragment() {
             R.layout.fragment_games, container, false
         )
 
-        val filter:GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
+        val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
         val application = requireNotNull(this.activity).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
-        val viewModelFactory = GamesViewModelFactory(dataSource, application,filter)
+        val viewModelFactory = GamesViewModelFactory(
+            dataSource,
+            application,
+            "PS3",
+            filter
+        )//TODO update the default of platform
 
         val gamesViewModel =
             ViewModelProvider(
                 this, viewModelFactory
             ).get(GamesViewModel::class.java)
+
+        val adapter = GameAdapter(GameListener { game ->
+            gamesViewModel.onGameClicked(game)
+        })
+        binding.gameLest.adapter = adapter
+        gamesViewModel.games?.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.submitList(it)
+            }
+        })
+
+        val chipGroup = binding.platformList
+        val inflater2 = LayoutInflater.from(chipGroup.context)
+        val platforms = listOf<String>(
+            "PS3",
+            "PS4",
+            "PS5",
+            "XBox One"
+        )//TODO update the default values of this list from drawer layout
+        val children = platforms.map { regionName ->
+            val chip = inflater2.inflate(R.layout.platform, chipGroup, false) as Chip
+            chip.text = regionName
+            chip.tag = regionName
+            chip.setOnCheckedChangeListener { button, isChecked ->
+                if (isChecked) {
+
+                    gamesViewModel.onFilterChanged(button.text as String)
+                    gamesViewModel.games2?.observe(viewLifecycleOwner, Observer {
+                        it?.let {
+                            adapter.submitList(it)
+                        }
+                    })
+                }
+            }
+            chip
+        }
+        chipGroup.removeAllViews()
+        for (chip in children) {
+            chipGroup.addView(chip)
+        }
 
         binding.lifecycleOwner = this
         binding.gamesViewModel = gamesViewModel
@@ -58,11 +104,7 @@ class GamesFragment : Fragment() {
             getShareIntent(intent)
         }
 
-        val adapter = GameAdapter(GameListener { game ->
-            gamesViewModel.onGameClicked(game)
-        })
-
-        //observing the navigateToDetails valeu in gamesViewModel to navigate to detail view when clicking on a game
+        //observing the navigateToDetails value in gamesViewModel to navigate to detail view when clicking on a game
         gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
             game?.let {
                 this.findNavController().navigate(
@@ -70,13 +112,6 @@ class GamesFragment : Fragment() {
                         .actionGamesFragmentToDetailActivity(game)
                 )
                 gamesViewModel.onGameDetailsNavigated()
-            }
-        })
-
-        binding.gameLest.adapter = adapter
-        gamesViewModel.games?.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.submitList(it)
             }
         })
 

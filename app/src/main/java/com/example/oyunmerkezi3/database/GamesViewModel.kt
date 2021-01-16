@@ -8,11 +8,13 @@ import com.example.oyunmerkezi3.utils.Utils
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.*
 
 class GamesViewModel(
     val database: GameDatabaseDao,
     application: Application,
+    platform: String,
     filterGame: GameFilter?
 ) : AndroidViewModel(application) {
 
@@ -23,11 +25,13 @@ class GamesViewModel(
     }
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
+    private var plat = platform
 
     //games variable is observable by games fragment and contain the list of games from the database
-    var games: LiveData<List<Game>?> = Transformations.map(database.getAllGames()) {
+    var games: LiveData<List<Game>?> = Transformations.map(database.getPlatform(plat)) {
         it?.sortedBy { it.gameId }
     }
+    var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
 
     //childEvenListener is listening to changes in firebase database
     private val mChildEventListener = object : ChildEventListener {
@@ -55,11 +59,14 @@ class GamesViewModel(
         override fun onCancelled(databaseError: DatabaseError) {}
     }
 
+    private var mPlaceRef: DatabaseReference =
+        Utils.databaseRef?.child("platforms")!!.child(platform)
+
     init {
         filterGame?.let { filter(it) }
-        val mPlaceRef = Utils.databaseRef?.child("game")
-        mPlaceRef?.addChildEventListener(mChildEventListener)
-        mPlaceRef!!.keepSynced(true)
+        //TODO fix the bug this block of code get called every time we filter games and that load extra data
+        mPlaceRef.addChildEventListener(mChildEventListener)
+        mPlaceRef.keepSynced(true)
     }
 
     private suspend fun getGame(gameId: Long): Game? {
@@ -69,7 +76,6 @@ class GamesViewModel(
     private fun insertGame(game: Game) {
         uiScope.launch {
             insert(game)
-
         }
     }
 
@@ -167,7 +173,10 @@ class GamesViewModel(
         }
     }
 
-    private fun filter(gameFilter: GameFilter) {
+    fun filter(gameFilter: GameFilter) {
+//        games = Transformations.map(games){
+//            it?.filter { it.platform.name == plat }
+//        }
         gameFilter.minPrice?.let {
             games = Transformations.map(games)
             {
@@ -204,12 +213,6 @@ class GamesViewModel(
                 it?.filter { gameFilter.playersNo in it.playerNo }
             }
         }
-        gameFilter.favorite?.let {
-            games = Transformations.map(games)
-            {
-                it?.filter { it.favorite == gameFilter.favorite }
-            }
-        }
         gameFilter.inStock?.let {
             games = Transformations.map(games)
             {
@@ -233,7 +236,7 @@ class GamesViewModel(
         gameFilter.category?.let {
             games = Transformations.map(games)
             {
-                it?.filter { gameFilter.category == it.category }
+                it?.filter { it.category == gameFilter.category }
             }
         }
         gameFilter.gameRate?.let {
@@ -252,5 +255,19 @@ class GamesViewModel(
         gameFilter.orderBy?.let {
             orderBy(it)
         }
+
+    }
+
+    fun onFilterChanged(filter: String) {
+//        mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(filter)
+//        mPlaceRef?.addChildEventListener(mChildEventListener)
+//        mPlaceRef!!.keepSynced(true)
+        games = database.getPlatform(filter)
+        games2.addSource(games) { exerciseList ->
+            games2.removeSource(games)
+            games2.setValue(exerciseList)
+        }
+        //TODO understanding exerciseList variable
+        plat = filter
     }
 }

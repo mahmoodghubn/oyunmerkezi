@@ -4,6 +4,7 @@ import androidx.room.TypeConverter
 import com.example.oyunmerkezi3.database.Category
 import com.example.oyunmerkezi3.database.Language
 import com.example.oyunmerkezi3.database.Online
+import com.example.oyunmerkezi3.database.Platform
 import java.util.*
 
 object DataConverter {
@@ -53,6 +54,18 @@ object DataConverter {
     @JvmStatic
     fun fromStringToOnline(value: String): Online? {
         return Online.values().find { it.name == value }
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun platformToString(date: Platform?): String {
+        return date!!.name
+    }
+
+    @TypeConverter
+    @JvmStatic
+    fun fromStringToPlatform(value: String): Platform? {
+        return Platform.values().find { it.name == value }
     }
 
     @TypeConverter
