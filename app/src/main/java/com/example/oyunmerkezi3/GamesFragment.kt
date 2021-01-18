@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -19,6 +20,7 @@ import com.example.oyunmerkezi3.database.GamesViewModelFactory
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
+import com.example.oyunmerkezi3.shared_preferences.SharedPreferenceBooleanLiveData
 import com.example.oyunmerkezi3.utils.GameFilter
 import com.google.android.material.chip.Chip
 
@@ -73,6 +75,24 @@ class GamesFragment : Fragment() {
             }
         })
 
+        //observing the changes in shared preferences and delete and download data accordingly
+        var sharedPreferenceStringLiveData: SharedPreferenceBooleanLiveData
+        for (platformItem in platformsArray) {
+            sharedPreferenceStringLiveData =
+                SharedPreferenceBooleanLiveData(platformSharedPreferences, platformItem, false)
+            sharedPreferenceStringLiveData.getBooleanLiveData(platformItem, false)
+                .observe(viewLifecycleOwner, Observer {checked ->
+                    // we download the data
+                    if (checked!!) {
+                        Log.i("asdfgjh;",platformItem+checked.toString())
+//                        gamesViewModel.downloadDataFromFireBaseWhenSharedPreferenceChange(platformItem)
+                    } else {// delete the data from database
+                        Log.i("asdfgjh;",platformItem+checked.toString())
+
+//                        gamesViewModel.deletePlatformFromDataBaseWhenSharedPreferenceChanges(platformItem)
+                    }
+                })
+        }
         val chipGroup = binding.platformList
         val inflater2 = LayoutInflater.from(chipGroup.context)
         val platforms = arrayListOf<String>()

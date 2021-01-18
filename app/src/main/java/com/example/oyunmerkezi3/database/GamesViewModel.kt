@@ -1,6 +1,7 @@
 package com.example.oyunmerkezi3.database
 
 import android.app.Application
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.oyunmerkezi3.utils.CalendarUtil
 import com.example.oyunmerkezi3.utils.GameFilter
@@ -37,9 +38,12 @@ class GamesViewModel(
     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val downloadedGame = dataSnapshot.getValue(Game::class.java)
+            Log.i("mahmoodGet",downloadedGame!!.gameName)
             uiScope.launch {
                 if (getGame(downloadedGame!!.gameId) == null) {
                     insertGame(downloadedGame)
+                    Log.i("mahmoodInsert",downloadedGame.gameName)
+
                 }
             }
         }
@@ -256,9 +260,6 @@ class GamesViewModel(
     }
 
     fun onFilterChanged(filter: String) {
-        mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(filter)
-        mPlaceRef.addChildEventListener(mChildEventListener)
-        mPlaceRef.keepSynced(true)
         games = database.getPlatform(filter)
         games2.addSource(games) { exerciseList ->
             games2.removeSource(games)
@@ -266,5 +267,22 @@ class GamesViewModel(
         }
         //TODO understanding exerciseList variable
         plat = filter
+    }
+    fun downloadDataFromFireBaseWhenSharedPreferenceChange(platform:String){
+        mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(platform)
+        mPlaceRef.addChildEventListener(mChildEventListener)
+        mPlaceRef.keepSynced(true)
+    }
+
+    fun deletePlatformFromDataBaseWhenSharedPreferenceChanges(platform: String) {
+        uiScope.launch {
+            delete(platform)
+        }
+    }
+
+    private suspend fun delete(platform: String) {
+        withContext(Dispatchers.IO) {
+            database.deletePlatform(platform)
+        }
     }
 }

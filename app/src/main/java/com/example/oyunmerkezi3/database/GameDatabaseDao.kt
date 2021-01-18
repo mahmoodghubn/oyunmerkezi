@@ -24,4 +24,7 @@ interface GameDatabaseDao {
     @Query("SELECT * from game_table WHERE platform = :platform")
     fun getPlatform(platform: String):LiveData<List<Game>?>
 
+    @Query("DELETE from game_table WHERE platform = :platform")
+    fun deletePlatform(platform: String)
+
 }
