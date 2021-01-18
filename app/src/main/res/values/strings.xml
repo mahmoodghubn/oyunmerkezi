@@ -47,4 +47,20 @@
     <string name="game_language">Game Language</string>
     <string name="game_oder">Games Order</string>
     <string name="reset">Reset</string>
+    <string name="platforms">platforms</string>
+    <string name="PS3" translatable="false">PS3</string>
+    <string name="PS4" translatable="false">PS4</string>
+    <string name="PS5" translatable="false">PS5</string>
+    <string name="XBoxOne" translatable="false">XBox One</string>
+    <string name="XBoxX" translatable="false">XBox X</string>
+    <string name="XBoxX_Added">XBox X Added</string>
+    <string name="XBoxX_Removed">XBox X Removed</string>
+    <string name="PS3_Removed">PS3 Removed</string>
+    <string name="PS3_Added">PS3 Added</string>
+    <string name="PS4_Removed">PS4 Removed</string>
+    <string name="PS4_Added">PS4 Added</string>
+    <string name="PS5_Removed">PS5 Removed</string>
+    <string name="PS5_Added">PS5 Added</string>
+    <string name="XBoxOne_Removed">XBox One Removed</string>
+    <string name="XBoxOne_Added">XBox One Added</string>
 </resources>

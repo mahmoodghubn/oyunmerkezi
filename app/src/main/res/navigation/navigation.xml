@@ -34,4 +34,12 @@
             android:id="@+id/action_filterFragment2_to_gamesFragment"
             app:destination="@id/gamesFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/settingsFragment2"
+        android:name="com.example.oyunmerkezi3.fragments.SettingsFragment"
+        android:label="SettingsFragment" >
+        <action
+            android:id="@+id/action_settingsFragment2_to_gamesFragment"
+            app:destination="@id/gamesFragment" />
+    </fragment>
 </navigation>

@@ -1,6 +1,7 @@
 package com.example.oyunmerkezi3
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
@@ -11,6 +12,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.preference.PreferenceManager
 import com.example.oyunmerkezi3.database.GameDatabase
 import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.database.GamesViewModelFactory
@@ -31,6 +33,20 @@ class GamesFragment : Fragment() {
             inflater,
             R.layout.fragment_games, container, false
         )
+        val activePlatforms = arrayListOf<Pair<String, Boolean>>()
+        val platformsArray: Array<String> = resources.getStringArray(
+            R.array.platforms
+        )
+
+        val platformSharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(requireContext())
+        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
+        val editor: SharedPreferences.Editor = platformSharedPreferences.edit()
+        platformSharedPreferences.let { it1 ->
+            for (item in platformsArray) {
+                activePlatforms.add(Pair(item, it1.getBoolean(item, false)))
+            }
+        }
 
         val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
         val application = requireNotNull(this.activity).application
@@ -38,9 +54,9 @@ class GamesFragment : Fragment() {
         val viewModelFactory = GamesViewModelFactory(
             dataSource,
             application,
-            "PS3",
+            currentPlatform!!,
             filter
-        )//TODO update the default of platform
+        )
 
         val gamesViewModel =
             ViewModelProvider(
@@ -51,7 +67,7 @@ class GamesFragment : Fragment() {
             gamesViewModel.onGameClicked(game)
         })
         binding.gameLest.adapter = adapter
-        gamesViewModel.games?.observe(viewLifecycleOwner, Observer {
+        gamesViewModel.games.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
             }
@@ -59,34 +75,41 @@ class GamesFragment : Fragment() {
 
         val chipGroup = binding.platformList
         val inflater2 = LayoutInflater.from(chipGroup.context)
-        val platforms = listOf<String>(
-            "PS3",
-            "PS4",
-            "PS5",
-            "XBox One"
-        )//TODO update the default values of this list from drawer layout
-        val children = platforms.map { regionName ->
-            val chip = inflater2.inflate(R.layout.platform, chipGroup, false) as Chip
-            chip.text = regionName
-            chip.tag = regionName
-            chip.setOnCheckedChangeListener { button, isChecked ->
-                if (isChecked) {
-
-                    gamesViewModel.onFilterChanged(button.text as String)
-                    gamesViewModel.games2?.observe(viewLifecycleOwner, Observer {
-                        it?.let {
-                            adapter.submitList(it)
-                        }
-                    })
-                }
+        val platforms = arrayListOf<String>()
+        for (item in activePlatforms) {
+            if (item.second) {
+                platforms.add(item.first)
             }
-            chip
         }
-        chipGroup.removeAllViews()
-        for (chip in children) {
-            chipGroup.addView(chip)
+        val children: List<Chip>
+        if (platforms.size > 1) {
+            children = platforms.map { regionName ->
+                val chip = inflater2.inflate(R.layout.platform, chipGroup, false) as Chip
+                chip.text = regionName
+                chip.tag = regionName
+                chipGroup.addView(chip)
+                if (regionName == currentPlatform) {
+                    chip.isChecked = true
+                }
+                chip.setOnCheckedChangeListener { button, isChecked ->
+                    if (isChecked) {
+                        editor.putString("current", button.text as String)
+                        editor.apply()
+                        gamesViewModel.onFilterChanged(button.text as String)
+                        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
+                            it?.let {
+                                adapter.submitList(it)
+                            }
+                        })
+                    }
+                }
+                chip
+            }
+            chipGroup.removeAllViews()
+            for (chip in children) {
+                chipGroup.addView(chip)
+            }
         }
-
         binding.lifecycleOwner = this
         binding.gamesViewModel = gamesViewModel
 

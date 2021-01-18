@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="platforms">
+        <item>@string/PS3</item>
+        <item>@string/PS4</item>
+        <item>@string/PS5</item>
+        <item>@string/XBoxOne</item>
+        <item>@string/XBoxX</item>
+    </string-array>
+
+    <string-array name="filter">
+        <item>A--Z</item>
+        <item>Z--A</item>
+        <item>new game to old</item>
+        <item>old game to new</item>
+        <item>low price to high</item>
+        <item>high price to low</item>
+        <item>short game to long</item>
+        <item>long game to short</item>
+        <item>game rate</item>
+    </string-array>
+</resources>

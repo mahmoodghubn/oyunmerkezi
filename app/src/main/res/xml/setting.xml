@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/PS3"
+        android:summaryOff="@string/PS3_Removed"
+        android:summaryOn="@string/PS3_Added"
+        android:title="@string/PS3" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/PS4"
+        android:summaryOff="@string/PS4_Removed"
+        android:summaryOn="@string/PS4_Added"
+        android:title="@string/PS4" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/PS5"
+        android:summaryOff="@string/PS5_Removed"
+        android:summaryOn="@string/PS5_Added"
+        android:title="@string/PS5" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/XBoxOne"
+        android:summaryOff="@string/XBoxOne_Removed"
+        android:summaryOn="@string/XBoxOne_Added"
+        android:title="@string/XBoxOne" />
+    <CheckBoxPreference
+        android:defaultValue="true"
+        android:key="@string/XBoxX"
+        android:summaryOff="@string/XBoxX_Removed"
+        android:summaryOn="@string/XBoxX_Added"
+        android:title="@string/XBoxX" />
+</PreferenceScreen>

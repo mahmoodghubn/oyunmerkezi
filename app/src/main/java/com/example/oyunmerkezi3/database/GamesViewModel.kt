@@ -173,10 +173,7 @@ class GamesViewModel(
         }
     }
 
-    fun filter(gameFilter: GameFilter) {
-//        games = Transformations.map(games){
-//            it?.filter { it.platform.name == plat }
-//        }
+    private fun filter(gameFilter: GameFilter) {
         gameFilter.minPrice?.let {
             games = Transformations.map(games)
             {
@@ -241,8 +238,8 @@ class GamesViewModel(
         }
         gameFilter.gameRate?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.gameRating >= gameFilter.gameRate }
+            { it1 ->
+                it1?.filter { it.gameRating >= gameFilter.gameRate }
             }
         }
         gameFilter.publishDate?.let {
@@ -259,9 +256,9 @@ class GamesViewModel(
     }
 
     fun onFilterChanged(filter: String) {
-//        mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(filter)
-//        mPlaceRef?.addChildEventListener(mChildEventListener)
-//        mPlaceRef!!.keepSynced(true)
+        mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(filter)
+        mPlaceRef.addChildEventListener(mChildEventListener)
+        mPlaceRef.keepSynced(true)
         games = database.getPlatform(filter)
         games2.addSource(games) { exerciseList ->
             games2.removeSource(games)

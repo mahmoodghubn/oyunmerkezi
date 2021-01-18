@@ -6,9 +6,7 @@ import android.widget.*
 import android.widget.RatingBar.OnRatingBarChangeListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
-import androidx.navigation.ui.NavigationUI
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Category
 import com.example.oyunmerkezi3.database.Language
@@ -42,7 +40,7 @@ class FilterFragment : Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
-    ): View? {
+    ): View {
         binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_filter, container, false
@@ -108,17 +106,11 @@ class FilterFragment : Fragment() {
                 false
             )
             listView = bindingSheet.categoryListView
-            val listItems = arrayListOf<String>(
-                "A--Z",
-                "Z--A",
-                "new game to old",
-                "old game to new",
-                "low price to high",
-                "high price to low",
-                "short game to long",
-                "long game to short",
-                "game rate"
-            )
+            val listItems: ArrayList<String> = resources.getStringArray(
+                R.array.filter
+            ).toCollection(ArrayList())
+
+
             val adapter1 = CategoryAdapter(requireContext(), listItems)
             listView.adapter = adapter1
             bottomSheet.setContentView(bindingSheet.root)
@@ -242,7 +234,7 @@ class FilterFragment : Fragment() {
             language = null
             publishDate = null
             orderBy = null
-            binding?.let {
+            binding.let {
                 it.minPrice.setText("")
                 it.maxPrice.setText("")
                 it.minimumHours.setText("")
@@ -262,8 +254,4 @@ class FilterFragment : Fragment() {
 
         return super.onOptionsItemSelected(item)
     }
-//    override fun onOptionsItemSelected(item: MenuItem): Boolean {
-//        return NavigationUI.onNavDestinationSelected(item, requireView().findNavController())
-//                || super.onOptionsItemSelected(item)
-//    }
 }

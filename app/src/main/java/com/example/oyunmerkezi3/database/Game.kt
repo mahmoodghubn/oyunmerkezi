@@ -102,6 +102,29 @@ enum class Category {
     VR
 }
 
-enum class Platform{
+enum class Platform {
     PS3, PS4, PS5, XBoxOne, XBoxX
 }
+
+object SingletonPlatform {
+    private var platformBool = arrayListOf(
+        Platform.PS3,
+        Platform.PS4,
+        Platform.PS5,
+        Platform.XBoxOne,
+        Platform.XBoxX
+    )
+//    init {
+//        currentPlatform(0)
+//    }
+//    fun currentPlatform(index:Int):Pair<Platform,Boolean> {
+//        return platformBool[index]
+//    }
+//    fun setCurrentPlat(boolArrayList :ArrayList<Pair<Platform,Boolean>>){
+//        for ((index, item) in boolArrayList.withIndex()){
+//            platformBool[index] = item
+//        }
+//    }
+}
+
+
