@@ -8,6 +8,14 @@
         <item>@string/XBoxX</item>
     </string-array>
 
+    <string-array name="old_shared_preference">
+        <item>@string/Old_PS3</item>
+        <item>@string/Old_PS4</item>
+        <item>@string/Old_PS5</item>
+        <item>@string/Old_XBoxOne</item>
+        <item>@string/Old_XBoxX</item>
+    </string-array>
+
     <string-array name="filter">
         <item>A--Z</item>
         <item>Z--A</item>
@@ -19,4 +27,9 @@
         <item>long game to short</item>
         <item>game rate</item>
     </string-array>
+    <string name="Old_PS3">Old_PS3</string>
+    <string name="Old_PS4">Old_PS4</string>
+    <string name="Old_PS5">Old_PS5</string>
+    <string name="Old_XBoxOne">Old_XBoxOne</string>
+    <string name="Old_XBoxX">Old_XBoxX</string>
 </resources>

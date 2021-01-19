@@ -16,7 +16,7 @@ class GamesViewModel(
     val database: GameDatabaseDao,
     application: Application,
     platform: String,
-    filterGame: GameFilter?
+    downloaded: Boolean
 ) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
@@ -38,11 +38,11 @@ class GamesViewModel(
     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val downloadedGame = dataSnapshot.getValue(Game::class.java)
-            Log.i("mahmoodGet",downloadedGame!!.gameName)
+            Log.i("mahmoodGet", downloadedGame!!.gameName)
             uiScope.launch {
                 if (getGame(downloadedGame!!.gameId) == null) {
                     insertGame(downloadedGame)
-                    Log.i("mahmoodInsert",downloadedGame.gameName)
+                    Log.i("mahmoodInsert", downloadedGame.gameName)
 
                 }
             }
@@ -67,10 +67,11 @@ class GamesViewModel(
         Utils.databaseRef?.child("platforms")!!.child(platform)
 
     init {
-        filterGame?.let { filter(it) }
-        //TODO fix the bug this block of code get called every time we filter games and that load extra data
-        mPlaceRef.addChildEventListener(mChildEventListener)
-        mPlaceRef.keepSynced(true)
+
+        if (!downloaded) {
+            mPlaceRef.addChildEventListener(mChildEventListener)
+            mPlaceRef.keepSynced(true)
+        }
     }
 
     private suspend fun getGame(gameId: Long): Game? {
@@ -177,7 +178,7 @@ class GamesViewModel(
         }
     }
 
-    private fun filter(gameFilter: GameFilter) {
+    fun filter(gameFilter: GameFilter) {
         gameFilter.minPrice?.let {
             games = Transformations.map(games)
             {
@@ -268,7 +269,8 @@ class GamesViewModel(
         //TODO understanding exerciseList variable
         plat = filter
     }
-    fun downloadDataFromFireBaseWhenSharedPreferenceChange(platform:String){
+
+    fun downloadDataFromFireBaseWhenSharedPreferenceChange(platform: String) {
         mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(platform)
         mPlaceRef.addChildEventListener(mChildEventListener)
         mPlaceRef.keepSynced(true)

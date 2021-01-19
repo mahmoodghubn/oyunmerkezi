@@ -4,23 +4,18 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import androidx.preference.PreferenceManager
 import com.example.oyunmerkezi3.database.GameDatabase
-import com.example.oyunmerkezi3.database.GamesViewModel
-import com.example.oyunmerkezi3.database.GamesViewModelFactory
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
-import com.example.oyunmerkezi3.shared_preferences.SharedPreferenceBooleanLiveData
 import com.example.oyunmerkezi3.utils.GameFilter
 import com.google.android.material.chip.Chip
 
@@ -35,39 +30,25 @@ class GamesFragment : Fragment() {
             inflater,
             R.layout.fragment_games, container, false
         )
-        val activePlatforms = arrayListOf<Pair<String, Boolean>>()
-        val platformsArray: Array<String> = resources.getStringArray(
-            R.array.platforms
-        )
-
-        val platformSharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(requireContext())
-        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
-        val editor: SharedPreferences.Editor = platformSharedPreferences.edit()
-        platformSharedPreferences.let { it1 ->
-            for (item in platformsArray) {
-                activePlatforms.add(Pair(item, it1.getBoolean(item, false)))
-            }
-        }
+        val activity: MainActivity = activity as MainActivity
+        val gamesViewModel = activity.gamesViewModel
+        val platformSharedPreferences = activity.platformSharedPreferences
+        val editor: SharedPreferences.Editor = activity.editor
 
         val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
-        val application = requireNotNull(this.activity).application
-        val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
-        val viewModelFactory = GamesViewModelFactory(
-            dataSource,
-            application,
-            currentPlatform!!,
-            filter
-        )
+        filter?.let { gamesViewModel.filter(it) }
 
-        val gamesViewModel =
-            ViewModelProvider(
-                this, viewModelFactory
-            ).get(GamesViewModel::class.java)
+        val platformsArray: Array<String> = resources.getStringArray(R.array.platforms)
+        val platformsArrayFromSharedPreference = arrayListOf<Pair<String, Boolean>>()
 
-        val adapter = GameAdapter(GameListener { game ->
-            gamesViewModel.onGameClicked(game)
-        })
+        platformSharedPreferences.let { it1 ->
+            for (item in platformsArray) {
+                platformsArrayFromSharedPreference.add(Pair(item, it1.getBoolean(item, false)))
+            }
+        }
+        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
+
+        val adapter = GameAdapter(GameListener { game -> gamesViewModel.onGameClicked(game) })
         binding.gameLest.adapter = adapter
         gamesViewModel.games.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -75,35 +56,17 @@ class GamesFragment : Fragment() {
             }
         })
 
-        //observing the changes in shared preferences and delete and download data accordingly
-        var sharedPreferenceStringLiveData: SharedPreferenceBooleanLiveData
-        for (platformItem in platformsArray) {
-            sharedPreferenceStringLiveData =
-                SharedPreferenceBooleanLiveData(platformSharedPreferences, platformItem, false)
-            sharedPreferenceStringLiveData.getBooleanLiveData(platformItem, false)
-                .observe(viewLifecycleOwner, Observer {checked ->
-                    // we download the data
-                    if (checked!!) {
-                        Log.i("asdfgjh;",platformItem+checked.toString())
-//                        gamesViewModel.downloadDataFromFireBaseWhenSharedPreferenceChange(platformItem)
-                    } else {// delete the data from database
-                        Log.i("asdfgjh;",platformItem+checked.toString())
-
-//                        gamesViewModel.deletePlatformFromDataBaseWhenSharedPreferenceChanges(platformItem)
-                    }
-                })
-        }
         val chipGroup = binding.platformList
         val inflater2 = LayoutInflater.from(chipGroup.context)
-        val platforms = arrayListOf<String>()
-        for (item in activePlatforms) {
+        val activePlatforms = arrayListOf<String>()
+        for (item in platformsArrayFromSharedPreference) {
             if (item.second) {
-                platforms.add(item.first)
+                activePlatforms.add(item.first)
             }
         }
         val children: List<Chip>
-        if (platforms.size > 1) {
-            children = platforms.map { regionName ->
+        if (activePlatforms.size > 1) {
+            children = activePlatforms.map { regionName ->
                 val chip = inflater2.inflate(R.layout.platform, chipGroup, false) as Chip
                 chip.text = regionName
                 chip.tag = regionName
