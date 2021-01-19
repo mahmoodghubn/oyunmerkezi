@@ -3,7 +3,6 @@ package com.example.oyunmerkezi3.database
 import android.app.Application
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.ViewModelProvider
-import com.example.oyunmerkezi3.utils.GameFilter
 
 class GamesViewModelFactory(
     private val dataSource: GameDatabaseDao,

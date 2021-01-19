@@ -4,8 +4,8 @@ import android.os.Parcelable
 import androidx.room.ColumnInfo
 import androidx.room.Entity
 import androidx.room.PrimaryKey
+import com.example.oyunmerkezi3.utils.Date
 import kotlinx.parcelize.Parcelize
-import java.util.*
 
 @Parcelize
 @Entity(tableName = "game_table")
@@ -114,17 +114,6 @@ object SingletonPlatform {
         Platform.XBoxOne,
         Platform.XBoxX
     )
-//    init {
-//        currentPlatform(0)
-//    }
-//    fun currentPlatform(index:Int):Pair<Platform,Boolean> {
-//        return platformBool[index]
-//    }
-//    fun setCurrentPlat(boolArrayList :ArrayList<Pair<Platform,Boolean>>){
-//        for ((index, item) in boolArrayList.withIndex()){
-//            platformBool[index] = item
-//        }
-//    }
 }
 
 

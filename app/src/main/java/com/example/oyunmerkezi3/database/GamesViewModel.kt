@@ -1,7 +1,7 @@
 package com.example.oyunmerkezi3.database
 
 import android.app.Application
-import android.util.Log
+import android.os.Build
 import androidx.lifecycle.*
 import com.example.oyunmerkezi3.utils.CalendarUtil
 import com.example.oyunmerkezi3.utils.GameFilter
@@ -11,6 +11,7 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.*
+import java.time.LocalDate
 
 class GamesViewModel(
     val database: GameDatabaseDao,
@@ -38,12 +39,9 @@ class GamesViewModel(
     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val downloadedGame = dataSnapshot.getValue(Game::class.java)
-            Log.i("mahmoodGet", downloadedGame!!.gameName)
             uiScope.launch {
                 if (getGame(downloadedGame!!.gameId) == null) {
                     insertGame(downloadedGame)
-                    Log.i("mahmoodInsert", downloadedGame.gameName)
-
                 }
             }
         }
@@ -64,10 +62,9 @@ class GamesViewModel(
     }
 
     private var mPlaceRef: DatabaseReference =
-        Utils.databaseRef?.child("platforms")!!.child(platform)
+        Utils.databaseRef?.child("platforms")!!.child("PS3")
 
     init {
-
         if (!downloaded) {
             mPlaceRef.addChildEventListener(mChildEventListener)
             mPlaceRef.keepSynced(true)
@@ -140,14 +137,49 @@ class GamesViewModel(
                 }
             }
             2 -> {
-                Transformations.map(games) {
-                    it?.sortedBy { it.publishedDate }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Transformations.map(games) {
+                        it?.sortedBy {
+                            LocalDate.of(
+                                it.publishedDate.year,
+                                it.publishedDate.month,
+                                it.publishedDate.day
+                            )
+                        }
+                    }
+                } else {
+                    Transformations.map(games) {
+                        it?.sortedBy {
+                            java.util.Date(
+                                it.publishedDate.year,
+                                it.publishedDate.month,
+                                it.publishedDate.day
+                            )
+                        }
+                    }
                 }
             }
             3 -> {
-                Transformations.map(games)
-                {
-                    it?.sortedByDescending { it.publishedDate }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    Transformations.map(games) {
+                        it?.sortedByDescending {
+                            LocalDate.of(
+                                it.publishedDate.year,
+                                it.publishedDate.month,
+                                it.publishedDate.day
+                            )
+                        }
+                    }
+                } else {
+                    Transformations.map(games) {
+                        it?.sortedByDescending {
+                            java.util.Date(
+                                it.publishedDate.year,
+                                it.publishedDate.month,
+                                it.publishedDate.day
+                            )
+                        }
+                    }
                 }
             }
             4 -> {
@@ -251,7 +283,30 @@ class GamesViewModel(
             val cal = CalendarUtil(gameFilter.publishDate)
             games = Transformations.map(games)
             {
-                it?.filter { it.publishedDate >= cal.dateBefore() }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    it?.filter {
+                        LocalDate.of(
+                            it.publishedDate.year,
+                            it.publishedDate.month,
+                            it.publishedDate.day
+                        ) >= LocalDate.of(
+                            cal.dateBefore().year,
+                            cal.dateBefore().month,
+                            cal.dateBefore().day
+                        )
+                    }
+                else
+                    it?.filter {
+                        java.util.Date(
+                            it.publishedDate.year,
+                            it.publishedDate.month,
+                            it.publishedDate.day
+                        ) >= java.util.Date(
+                            cal.dateBefore().year,
+                            cal.dateBefore().month,
+                            cal.dateBefore().day
+                        )
+                    }
             }
         }
         gameFilter.orderBy?.let {

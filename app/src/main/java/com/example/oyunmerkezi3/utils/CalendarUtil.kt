@@ -1,6 +1,7 @@
 package com.example.oyunmerkezi3.utils
 
-import java.util.*
+import java.util.Calendar
+
 
 class CalendarUtil(private val before: Int) {
     private val cal: Calendar = Calendar.getInstance()

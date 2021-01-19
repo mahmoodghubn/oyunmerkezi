@@ -5,7 +5,6 @@ import com.example.oyunmerkezi3.database.Category
 import com.example.oyunmerkezi3.database.Language
 import com.example.oyunmerkezi3.database.Online
 import com.example.oyunmerkezi3.database.Platform
-import java.util.*
 
 object DataConverter {
     @TypeConverter
@@ -34,15 +33,17 @@ object DataConverter {
 
     @TypeConverter
     @JvmStatic
-    fun fromTimestamp(value: Long?): Date? {
-        return value?.let { Date(it) }
+    fun fromStringToDate(value: String): Date {
+        val array = value.split(",")
+        return Date(array[0].toInt(), array[1].toInt(), array[2].toInt())
     }
 
     @TypeConverter
     @JvmStatic
-    fun dateToTimestamp(date: Date?): Long? {
-        return date?.time?.toLong()
+    fun fromDateToString(date: Date): String {
+        return "${date.year},${date.month},${date.day}"
     }
+
 
     @TypeConverter
     @JvmStatic
