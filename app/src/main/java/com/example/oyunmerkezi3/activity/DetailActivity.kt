@@ -1,5 +1,6 @@
 package com.example.oyunmerkezi3.activity
-
+/*
+* this activity gets the details of a game and show it on the screen*/
 import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity

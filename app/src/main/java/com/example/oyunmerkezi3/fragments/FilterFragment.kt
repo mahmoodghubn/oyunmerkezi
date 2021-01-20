@@ -1,5 +1,9 @@
 package com.example.oyunmerkezi3.fragments
 
+/**
+ * this class create a FilterGame object and returns it to GameFragment
+ */
+
 import android.os.Bundle
 import android.view.*
 import android.widget.*

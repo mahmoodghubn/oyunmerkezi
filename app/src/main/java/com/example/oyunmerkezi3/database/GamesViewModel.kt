@@ -34,6 +34,8 @@ class GamesViewModel(
         it?.sortedBy { it.gameId }
     }
     var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
+     val sellingCheckBox = arrayListOf<Long>()
+     val buyingCheckBox = arrayListOf<Long>()
 
     //childEvenListener is listening to changes in firebase database
     private val mChildEventListener = object : ChildEventListener {
@@ -341,5 +343,19 @@ class GamesViewModel(
         withContext(Dispatchers.IO) {
             database.deletePlatform(platform)
         }
+    }
+
+    fun addSoledGame(gameId: Long) {
+        if (sellingCheckBox.contains(gameId))
+            sellingCheckBox.remove(gameId)
+        else
+            sellingCheckBox.add(gameId)
+    }
+
+    fun addBoughtGame(gameId: Long) {
+        if (buyingCheckBox.contains(gameId))
+            buyingCheckBox.remove(gameId)
+        else
+            buyingCheckBox.add(gameId)
     }
 }

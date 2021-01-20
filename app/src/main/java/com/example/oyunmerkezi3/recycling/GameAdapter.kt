@@ -7,14 +7,15 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 import com.example.oyunmerkezi3.database.Game
+import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.databinding.ListItemViewBinding
 
-class GameAdapter(private val clickListener: GameListener) :
+class GameAdapter(private val clickListener: GameListener,private val gamesViewModel: GamesViewModel) :
     ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()) {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(clickListener, getItem(position)!!)
+        holder.bind(clickListener, getItem(position)!!, gamesViewModel)
     }
 
 
@@ -27,8 +28,25 @@ class GameAdapter(private val clickListener: GameListener) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(
             clickListener: GameListener,
-            item: Game
+            item: Game,
+            gamesViewModel: GamesViewModel
         ) {
+
+            binding.sellingCheckBox.isChecked =
+                gamesViewModel.sellingCheckBox.contains(item.gameId)
+
+            binding.buyingCheckBox.isChecked =
+                gamesViewModel.buyingCheckBox.contains(item.gameId)
+
+
+            binding.sellingCheckBox.setOnClickListener { view ->
+                gamesViewModel.addSoledGame(item.gameId)
+
+            }
+            binding.buyingCheckBox.setOnClickListener { view ->
+                gamesViewModel.addBoughtGame(item.gameId)
+            }
+
             binding.game = item
             binding.clickListener = clickListener
             binding.executePendingBindings()

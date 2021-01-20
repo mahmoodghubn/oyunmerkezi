@@ -1,5 +1,7 @@
 package com.example.oyunmerkezi3.bottomSheet
-
+/*
+* this class is responsible for getting a list and show it as bottom sheet
+* and returns the selected item to filter fragment */
 import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
@@ -8,7 +10,7 @@ import android.widget.BaseAdapter
 import android.widget.TextView
 import com.example.oyunmerkezi3.R
 
-//this class for category and language as well
+//this class for category, language and orders as well
 class CategoryAdapter(private val context: Context,
                     private val dataSource: ArrayList<String>) : BaseAdapter() {
 
@@ -29,7 +31,6 @@ class CategoryAdapter(private val context: Context,
 
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
 
-//        val rowView = inflater.inflate(R.layout.bottom_sheet_item, parent, false)
         val view: View
         val holder: ViewHolder
 

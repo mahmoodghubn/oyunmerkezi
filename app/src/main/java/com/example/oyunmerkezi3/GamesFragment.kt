@@ -11,8 +11,6 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
-import androidx.preference.PreferenceManager
-import com.example.oyunmerkezi3.database.GameDatabase
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
@@ -48,8 +46,8 @@ class GamesFragment : Fragment() {
         }
         val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
-        val adapter = GameAdapter(GameListener { game -> gamesViewModel.onGameClicked(game) })
-        binding.gameLest.adapter = adapter
+        val adapter = GameAdapter(GameListener { game -> gamesViewModel.onGameClicked(game) },gamesViewModel)
+        binding.gameList.adapter = adapter
         gamesViewModel.games.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
@@ -94,7 +92,6 @@ class GamesFragment : Fragment() {
             }
         }
         binding.lifecycleOwner = this
-        binding.gamesViewModel = gamesViewModel
 
         //whatsApp button
         val number = "+905465399410"

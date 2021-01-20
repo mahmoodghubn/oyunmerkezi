@@ -14,6 +14,13 @@ fun TextView.setGamePrice(item: Game?) {
     }
 }
 
+@BindingAdapter("buyingPrice")
+fun TextView.setBuyingPrice(item: Game?) {
+    item?.let {
+        text = item.buyingPrice.toString()
+    }
+}
+
 @BindingAdapter("gameName")
 fun TextView.setGameName(item: Game?) {
     item?.let {
