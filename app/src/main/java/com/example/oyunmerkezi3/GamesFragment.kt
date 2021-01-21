@@ -6,13 +6,16 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
+import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
+import androidx.lifecycle.Transformations
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
 import com.example.oyunmerkezi3.bottomSheet.GamePriceAdapter
+import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
@@ -24,6 +27,9 @@ import com.google.android.material.chip.Chip
 class GamesFragment : Fragment() {
     private lateinit var adapter1: GamePriceAdapter
     private lateinit var adapter2: GamePriceAdapter
+    private lateinit var adapter: GameAdapter
+    private lateinit var gamesViewModel:GamesViewModel
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -36,7 +42,7 @@ class GamesFragment : Fragment() {
         )
 
         val activity: MainActivity = activity as MainActivity
-        val gamesViewModel = activity.gamesViewModel
+        gamesViewModel = activity.gamesViewModel
         val platformSharedPreferences = activity.platformSharedPreferences
         val editor: SharedPreferences.Editor = activity.editor
 
@@ -122,7 +128,7 @@ class GamesFragment : Fragment() {
         }
         val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
-        val adapter =
+        adapter =
             GameAdapter(
                 GameListener { game -> gamesViewModel.onGameClicked(game) },
                 gamesViewModel,
@@ -217,6 +223,22 @@ class GamesFragment : Fragment() {
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
         super.onCreateOptionsMenu(menu, inflater)
         inflater.inflate(R.menu.menu, menu)
+        val item = menu.findItem(R.id.search)
+        val searchView: SearchView = item.actionView as SearchView
+        searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?): Boolean {
+                return false
+            }
+
+            override fun onQueryTextChange(newText: String?): Boolean {
+//                gamesViewModel.games  = Transformations.map(gamesViewModel.games)
+//                {
+//                    it?.filter { it.gameName.toLowerCase().contains(newText.toString().toLowerCase()) }
+//                }
+                adapter.filter.filter(newText)
+                return false
+            }
+        })
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
@@ -227,16 +249,5 @@ class GamesFragment : Fragment() {
     // Creating our Share Intent
     private fun getShareIntent(intent: Intent) {
         startActivity(intent)
-    }
-
-    fun onTouch(v: View, event: MotionEvent): Boolean {
-        when (event.action) {
-            MotionEvent.ACTION_DOWN -> {
-            }
-            MotionEvent.ACTION_UP -> v.performClick()
-            else -> {
-            }
-        }
-        return true
     }
 }

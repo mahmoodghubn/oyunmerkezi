@@ -64,4 +64,5 @@
     <string name="XBoxOne_Removed">XBox One Removed</string>
     <string name="XBoxOne_Added">XBox One Added</string>
     <string name="summary">Summary</string>
+    <string name="search">search</string>
 </resources>
