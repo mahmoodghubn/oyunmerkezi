@@ -44,6 +44,13 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/summary"
             app:layout_constraintTop_toTopOf="parent" />
+        <ImageButton
+            android:id="@+id/clear_image_button"
+            app:srcCompat="@drawable/ic_baseline_clear_all_24"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
 
         <TextView
             android:id="@+id/sold_games"

@@ -64,8 +64,8 @@ class GamePriceAdapter(
 
             }else {
                 gamesViewModel.addBoughtGame(game)
-                this.notifyDataSetChanged()
             }
+            this.notifyDataSetChanged()
         }
 
         platformTextView.text = game.platform.toString()

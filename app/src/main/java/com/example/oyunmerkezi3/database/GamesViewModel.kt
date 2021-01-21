@@ -366,4 +366,9 @@ class GamesViewModel(
             total.value = total.value!!.minus(game.price)
         }
     }
+    fun clear(){
+        sellingCheckBox.clear()
+        buyingCheckBox.clear()
+        total.value = 0
+    }
 }

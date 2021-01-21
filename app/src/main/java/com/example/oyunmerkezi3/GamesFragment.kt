@@ -4,8 +4,8 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.*
+import android.view.GestureDetector.SimpleOnGestureListener
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -19,6 +19,7 @@ import com.example.oyunmerkezi3.recycling.GameListener
 import com.example.oyunmerkezi3.utils.GameFilter
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
+
 
 class GamesFragment : Fragment() {
     private lateinit var adapter1: GamePriceAdapter
@@ -43,7 +44,6 @@ class GamesFragment : Fragment() {
         val listView1 = binding.priceBottomSheet.soldListView
         val listView2 = binding.priceBottomSheet.boughtListView
 
-//        bottomSheetBehavior.
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -85,6 +85,29 @@ class GamesFragment : Fragment() {
 
             }
         })
+        val gesture = GestureDetector(
+            activity,
+            object : SimpleOnGestureListener() {
+                override fun onDown(e: MotionEvent): Boolean {
+                    return true
+                }
+
+                override fun onFling(
+                    e1: MotionEvent, e2: MotionEvent, velocityX: Float,
+                    velocityY: Float
+                ): Boolean {
+                    if (binding.priceBottomSheet.root.visibility == View.VISIBLE) {
+                        bottomSheetBehavior.state = BottomSheetBehavior.STATE_EXPANDED
+                    }
+                    return super.onFling(e1, e2, velocityX, velocityY)
+                }
+            })
+        container!!.setOnTouchListener { v, event ->
+            if (event!!.action == MotionEvent.ACTION_UP)
+                v!!.performClick()
+
+            gesture.onTouchEvent(event)
+        }
 
         val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
         filter?.let { gamesViewModel.filter(it) }
@@ -100,7 +123,11 @@ class GamesFragment : Fragment() {
         val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
         val adapter =
-            GameAdapter(GameListener { game -> gamesViewModel.onGameClicked(game) }, gamesViewModel,binding.priceBottomSheet.root)
+            GameAdapter(
+                GameListener { game -> gamesViewModel.onGameClicked(game) },
+                gamesViewModel,
+                binding.priceBottomSheet.root
+            )
         binding.gameList.adapter = adapter
         gamesViewModel.games.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -112,6 +139,12 @@ class GamesFragment : Fragment() {
                 binding.priceBottomSheet.total.text = it.toString()
             }
         })
+        binding.priceBottomSheet.clearImageButton.setOnClickListener{
+            gamesViewModel.clear()
+            listView1.adapter = null
+            listView2.adapter = null
+
+        }
 
         val chipGroup = binding.platformList
         val inflater2 = LayoutInflater.from(chipGroup.context)
@@ -194,5 +227,16 @@ class GamesFragment : Fragment() {
     // Creating our Share Intent
     private fun getShareIntent(intent: Intent) {
         startActivity(intent)
+    }
+
+    fun onTouch(v: View, event: MotionEvent): Boolean {
+        when (event.action) {
+            MotionEvent.ACTION_DOWN -> {
+            }
+            MotionEvent.ACTION_UP -> v.performClick()
+            else -> {
+            }
+        }
+        return true
     }
 }
