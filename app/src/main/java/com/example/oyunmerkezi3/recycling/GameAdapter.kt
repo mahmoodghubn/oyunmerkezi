@@ -1,21 +1,25 @@
 package com.example.oyunmerkezi3.recycling
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
+import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.database.GamesViewModel
+import com.example.oyunmerkezi3.database.MiniGame
 import com.example.oyunmerkezi3.databinding.ListItemViewBinding
+import com.example.oyunmerkezi3.databinding.PriceBottomSheetBinding
 
-class GameAdapter(private val clickListener: GameListener,private val gamesViewModel: GamesViewModel) :
+class GameAdapter(private val clickListener: GameListener,private val gamesViewModel: GamesViewModel,private val coordinatorLayout: CoordinatorLayout) :
     ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()) {
 
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(clickListener, getItem(position)!!, gamesViewModel)
+        holder.bind(clickListener, getItem(position)!!, gamesViewModel,coordinatorLayout)
     }
 
 
@@ -29,22 +33,26 @@ class GameAdapter(private val clickListener: GameListener,private val gamesViewM
         fun bind(
             clickListener: GameListener,
             item: Game,
-            gamesViewModel: GamesViewModel
+            gamesViewModel: GamesViewModel,
+            coordinatorLayout: CoordinatorLayout
         ) {
 
             binding.sellingCheckBox.isChecked =
-                gamesViewModel.sellingCheckBox.contains(item.gameId)
+                gamesViewModel.sellingCheckBox.filter{ it.gameId == item.gameId }.size == 1
 
             binding.buyingCheckBox.isChecked =
-                gamesViewModel.buyingCheckBox.contains(item.gameId)
+                gamesViewModel.buyingCheckBox.filter{ it.gameId == item.gameId }.size == 1
 
 
             binding.sellingCheckBox.setOnClickListener { view ->
-                gamesViewModel.addSoledGame(item.gameId)
+                gamesViewModel.addSoledGame(MiniGame( item.gameId,item.gameName,item.sellingPrice,item.platform))
+                coordinatorLayout.visibility = View.VISIBLE
+
 
             }
             binding.buyingCheckBox.setOnClickListener { view ->
-                gamesViewModel.addBoughtGame(item.gameId)
+                gamesViewModel.addBoughtGame(MiniGame(item.gameId,item.gameName,item.buyingPrice,item.platform))
+                coordinatorLayout.visibility = View.VISIBLE
             }
 
             binding.game = item

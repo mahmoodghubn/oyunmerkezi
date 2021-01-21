@@ -116,4 +116,11 @@ object SingletonPlatform {
     )
 }
 
-
+class MiniGame(var gameId: Long,var gameName: String , var price: Int,var platform: Platform){
+    constructor() : this(
+        0,
+        "",
+        0,
+        Platform.PS4
+    )
+}

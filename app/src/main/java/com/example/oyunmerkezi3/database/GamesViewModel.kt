@@ -2,6 +2,7 @@ package com.example.oyunmerkezi3.database
 
 import android.app.Application
 import android.os.Build
+import android.util.Log
 import androidx.lifecycle.*
 import com.example.oyunmerkezi3.utils.CalendarUtil
 import com.example.oyunmerkezi3.utils.GameFilter
@@ -34,8 +35,9 @@ class GamesViewModel(
         it?.sortedBy { it.gameId }
     }
     var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
-     val sellingCheckBox = arrayListOf<Long>()
-     val buyingCheckBox = arrayListOf<Long>()
+    val sellingCheckBox = arrayListOf<MiniGame>()
+    val buyingCheckBox = arrayListOf<MiniGame>()
+    var total: MutableLiveData<Int> = MutableLiveData(0)
 
     //childEvenListener is listening to changes in firebase database
     private val mChildEventListener = object : ChildEventListener {
@@ -345,17 +347,23 @@ class GamesViewModel(
         }
     }
 
-    fun addSoledGame(gameId: Long) {
-        if (sellingCheckBox.contains(gameId))
-            sellingCheckBox.remove(gameId)
-        else
-            sellingCheckBox.add(gameId)
+    fun addSoledGame(game: MiniGame) {
+        if (sellingCheckBox.filter { it.gameId == game.gameId }.size == 1) {
+            sellingCheckBox.remove(sellingCheckBox.first { it.gameId == game.gameId })
+            total.value = total.value!!.minus(game.price)
+        } else {
+            sellingCheckBox.add(game)
+            total.value = total.value!!.plus(game.price)
+        }
     }
 
-    fun addBoughtGame(gameId: Long) {
-        if (buyingCheckBox.contains(gameId))
-            buyingCheckBox.remove(gameId)
-        else
-            buyingCheckBox.add(gameId)
+    fun addBoughtGame(game: MiniGame) {
+        if (buyingCheckBox.filter { it.gameId == game.gameId }.size == 1) {
+            buyingCheckBox.remove(buyingCheckBox.first { it.gameId == game.gameId })
+            total.value = total.value!!.plus(game.price)
+        } else {
+            buyingCheckBox.add(game)
+            total.value = total.value!!.minus(game.price)
+        }
     }
 }

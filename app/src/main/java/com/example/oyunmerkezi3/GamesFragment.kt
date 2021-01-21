@@ -4,6 +4,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
@@ -11,13 +12,17 @@ import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import com.example.oyunmerkezi3.bottomSheet.GamePriceAdapter
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
 import com.example.oyunmerkezi3.utils.GameFilter
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 
 class GamesFragment : Fragment() {
+    private lateinit var adapter1: GamePriceAdapter
+    private lateinit var adapter2: GamePriceAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -28,10 +33,58 @@ class GamesFragment : Fragment() {
             inflater,
             R.layout.fragment_games, container, false
         )
+
         val activity: MainActivity = activity as MainActivity
         val gamesViewModel = activity.gamesViewModel
         val platformSharedPreferences = activity.platformSharedPreferences
         val editor: SharedPreferences.Editor = activity.editor
+
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.priceBottomSheet.parentView)
+        val listView1 = binding.priceBottomSheet.soldListView
+        val listView2 = binding.priceBottomSheet.boughtListView
+
+//        bottomSheetBehavior.
+        bottomSheetBehavior.addBottomSheetCallback(object :
+            BottomSheetBehavior.BottomSheetCallback() {
+            override fun onStateChanged(bottomSheet: View, newState: Int) {
+                when (newState) {
+                    BottomSheetBehavior.STATE_HIDDEN -> {
+                    }
+
+                    BottomSheetBehavior.STATE_EXPANDED -> {
+                        adapter1 = GamePriceAdapter(
+                            requireContext(),
+                            gamesViewModel.sellingCheckBox,
+                            gamesViewModel,
+                            true
+                        )
+                        listView1.adapter = adapter1
+                        adapter2 = GamePriceAdapter(
+                            requireContext(),
+                            gamesViewModel.buyingCheckBox,
+                            gamesViewModel,
+                            false
+                        )
+                        listView2.adapter = adapter2
+                    }
+                    BottomSheetBehavior.STATE_COLLAPSED -> {
+
+                    }
+                    BottomSheetBehavior.STATE_DRAGGING -> {
+
+                    }
+                    BottomSheetBehavior.STATE_SETTLING -> {
+
+                    }
+                    BottomSheetBehavior.STATE_HALF_EXPANDED -> {
+                    }
+                }
+            }
+
+            override fun onSlide(bottomSheet: View, slideOffset: Float) {
+
+            }
+        })
 
         val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
         filter?.let { gamesViewModel.filter(it) }
@@ -46,11 +99,17 @@ class GamesFragment : Fragment() {
         }
         val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
-        val adapter = GameAdapter(GameListener { game -> gamesViewModel.onGameClicked(game) },gamesViewModel)
+        val adapter =
+            GameAdapter(GameListener { game -> gamesViewModel.onGameClicked(game) }, gamesViewModel,binding.priceBottomSheet.root)
         binding.gameList.adapter = adapter
         gamesViewModel.games.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
+            }
+        })
+        gamesViewModel.total.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                binding.priceBottomSheet.total.text = it.toString()
             }
         })
 
