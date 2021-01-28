@@ -1,9 +1,10 @@
 package com.example.oyunmerkezi3.utils
 
-import java.util.Calendar
+import java.text.SimpleDateFormat
+import java.util.*
 
 
-class CalendarUtil(private val before: Int) {
+class CalendarUtil(private val before: Int?) {
     private val cal: Calendar = Calendar.getInstance()
     private fun getLastYear(): Date {
         return Date(cal.get(Calendar.YEAR)-1,1,1)
@@ -37,5 +38,13 @@ class CalendarUtil(private val before: Int) {
             2-> getLastMonth()
             else -> getLastYear()
         }
+    }
+    fun getCurrentDate():Date{
+        val c = Calendar.getInstance().time
+        val df =  SimpleDateFormat ("dd-MM-yyyy", Locale.getDefault())
+        val formattedDate = df.format (c)
+        return Date( Integer.parseInt(formattedDate.subSequence(6,10).toString()) ,
+            Integer.parseInt(formattedDate.subSequence(3,5).toString()),
+            Integer.parseInt(formattedDate.subSequence(0,2).toString()))
     }
 }

@@ -10,7 +10,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
-import androidx.lifecycle.Transformations
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -19,17 +18,17 @@ import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
+import com.example.oyunmerkezi3.service.NotificationService
 import com.example.oyunmerkezi3.utils.GameFilter
+import com.example.oyunmerkezi3.utils.NotificationTask
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
-
 
 class GamesFragment : Fragment() {
     private lateinit var adapter1: GamePriceAdapter
     private lateinit var adapter2: GamePriceAdapter
     private lateinit var adapter: GameAdapter
     private lateinit var gamesViewModel:GamesViewModel
-
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -40,6 +39,12 @@ class GamesFragment : Fragment() {
             inflater,
             R.layout.fragment_games, container, false
         )
+
+        //TODO do not call this every time we start the application
+        // only if the service has been killed
+        val showNotification = Intent(requireContext(), NotificationService::class.java)
+        showNotification.action = NotificationTask().actionShowNotification
+        NotificationService.enqueueWork(requireContext(), showNotification)
 
         val activity: MainActivity = activity as MainActivity
         gamesViewModel = activity.gamesViewModel
@@ -216,6 +221,7 @@ class GamesFragment : Fragment() {
             }
         })
 
+
         setHasOptionsMenu(true)
         return binding.root
     }
@@ -231,10 +237,7 @@ class GamesFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-//                gamesViewModel.games  = Transformations.map(gamesViewModel.games)
-//                {
-//                    it?.filter { it.gameName.toLowerCase().contains(newText.toString().toLowerCase()) }
-//                }
+
                 adapter.filter.filter(newText)
                 return false
             }
@@ -250,4 +253,5 @@ class GamesFragment : Fragment() {
     private fun getShareIntent(intent: Intent) {
         startActivity(intent)
     }
+
 }

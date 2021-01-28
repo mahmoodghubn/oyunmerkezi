@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item
-        android:id="@+id/productsFragment"
+        android:id="@+id/productsFragment2"
         android:title="@string/our_products" />
     <item
         android:id="@+id/our_location"
@@ -9,6 +9,9 @@
     <item
         android:id="@+id/about_us"
         android:title="@string/about_us" />
+    <item
+        android:id="@+id/languageFragment"
+        android:title="@string/language" />
 
     <item
         android:id="@+id/settingsFragment2"

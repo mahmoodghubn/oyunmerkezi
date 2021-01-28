@@ -4,10 +4,9 @@
 
     <item
         android:id="@+id/filterFragment2"
-        android:title="@string/filter" />
-    <item
-        android:id="@+id/languageFragment"
-        android:title="@string/language" />
+        android:title="@string/filter"
+        android:icon="@drawable/ic_baseline_filter_list_24"
+        app:showAsAction="ifRoom"/>
 
     <item
         android:id="@+id/search"
