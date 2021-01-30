@@ -7,6 +7,8 @@ import android.graphics.Color
 import android.os.Build
 import androidx.core.content.ContextCompat
 import androidx.preference.PreferenceManager
+import com.example.oyunmerkezi3.R
+import com.example.oyunmerkezi3.database.DownloadedGame
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.database.GameDatabase
 import com.example.oyunmerkezi3.database.GameDatabaseDao
@@ -16,7 +18,6 @@ import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.DatabaseReference
 import com.google.gson.Gson
 import kotlinx.coroutines.*
-
 
 class NotificationTask {
     val newGameNotificationId = "NEW_GAME_NOTIFICATION"
@@ -34,14 +35,31 @@ class NotificationTask {
     }
 
     private fun showNotification(context: Context) {
-        val mPlaceRef: DatabaseReference =
-            //TODO see what to do about the platform in the database
-            Utils.databaseRef?.child("platforms")!!.child("PS4")
+
+        val platformsArray: Array<String> = context.resources.getStringArray(R.array.platforms)
+        val platformSharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(context)
+        val activePlatforms = arrayListOf<String>()
+        platformSharedPreferences.let { it1 ->
+            for (item in platformsArray) {
+                if (it1.getBoolean(item, true))
+                    activePlatforms.add(item)
+            }
+        }
+
+        val mPlaceRef = arrayListOf<DatabaseReference>()
+        for ((index, item) in activePlatforms.withIndex()) {
+            mPlaceRef.add(
+                Utils.databaseRef?.child("platforms")!!.child(item)
+            )
+            mPlaceRef[index].addChildEventListener(mChildEventListener)
+            mPlaceRef[index].keepSynced(true)
+            mPlaceRef[index].keepSynced(true)
+        }
+
         database = GameDatabase.getInstance(context).gameDatabaseDao
         this.context = context
         createChannel(newGameNotificationId, gameChannel, context)
-        mPlaceRef.addChildEventListener(mChildEventListener)
-        mPlaceRef.keepSynced(true)
 
     }
 
@@ -52,13 +70,13 @@ class NotificationTask {
             val gson = Gson()
             val json: String? = platformSharedPreferences.getString("last_date", null)
             var lastDate: Date = CalendarUtil(null).getCurrentDate()
-            json?.let { lastDate = gson.fromJson(json, Date::class.java)  }
-            val downloadedGame = dataSnapshot.getValue(Game::class.java)!!
+            json?.let { lastDate = gson.fromJson(json, Date::class.java) }
+            val downloadedGame = dataSnapshot.getValue(DownloadedGame::class.java)!!
 
             uiScope.launch {
                 if (getGame(downloadedGame.gameId) == null) {
-                    insertGame(downloadedGame)
-                    if (downloadedGame.publishedDate.isBigger(lastDate)){
+                    insertGame(Game(downloadedGame))
+                    if (downloadedGame.publishedDate.isBigger(lastDate)) {
                         val notificationManager = ContextCompat.getSystemService(
                             context,
                             NotificationManager::class.java
@@ -66,7 +84,7 @@ class NotificationTask {
                         notificationManager.sendNotification(
                             "${downloadedGame.gameName} is available now in the market",
                             context,
-                            downloadedGame
+                            Game(downloadedGame)
                         )
                     }
 
@@ -75,19 +93,24 @@ class NotificationTask {
         }
 
         override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-            val game = dataSnapshot.getValue(Game::class.java)!!
-            updateGame(game)
+            val game = dataSnapshot.getValue(DownloadedGame::class.java)!!
+            uiScope.launch {
+                val game2 = getGame(game.gameId)!!
+                updateGame(Game(game,game2.favorite,game2.showNotification))
 
-            //TODO make this notification appears only if it selected game by the user
-            val notificationManager = ContextCompat.getSystemService(
-                context,
-                NotificationManager::class.java
-            ) as NotificationManager
-            notificationManager.sendNotification(
-                "The price of ${game.gameName} has been changed ",
-                context,
-                game
-            )
+                //TODO make sure the changes is only on the price or stock
+                if (game2.showNotification) {
+                    val notificationManager = ContextCompat.getSystemService(
+                        context,
+                        NotificationManager::class.java
+                    ) as NotificationManager
+                    notificationManager.sendNotification(
+                        "The price of ${game.gameName} has been changed ",
+                        context,
+                        Game(game)
+                    )
+                }
+            }
         }
 
         private fun insertGame(game: Game) {
@@ -103,8 +126,8 @@ class NotificationTask {
         }
 
         override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-            val game = dataSnapshot.getValue(Game::class.java)
-//            deleteGame(game!!)
+            val game = dataSnapshot.getValue(DownloadedGame::class.java)
+            deleteGame(Game(game!!))
         }
 
         override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
@@ -125,6 +148,19 @@ class NotificationTask {
     private suspend fun update(game: Game) {
         withContext(Dispatchers.IO) {
             database.update(game)
+        }
+    }
+
+
+    private fun deleteGame(game: Game) {
+        uiScope.launch {
+            delete(game)
+        }
+    }
+
+    private suspend fun delete(game: Game) {
+        withContext(Dispatchers.IO) {
+            database.delete(game)
         }
     }
 

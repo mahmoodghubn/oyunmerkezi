@@ -59,7 +59,13 @@ data class Game(
     var language: List<Language>,
 
     @ColumnInfo
-    var caption: List<Language>
+    var caption: List<Language>,
+
+    @ColumnInfo
+    var favorite: Boolean,
+
+    @ColumnInfo
+    var showNotification: Boolean
 ) : Parcelable {
     constructor() : this(
         0,
@@ -78,7 +84,51 @@ data class Game(
         Platform.PS4,
         emptyList(),
         listOf(Language.Turkish, Language.English),
-        listOf(Language.Turkish, Language.English)
+        listOf(Language.Turkish, Language.English),
+        false,
+        false
+    )
+    constructor(game:DownloadedGame) : this(
+        game.gameId,
+        game.gameName,
+        game.sellingPrice,
+        game.buyingPrice,
+        game.URL,
+        game.about,
+        game.age,
+        game.gameRating,
+        game.stock,
+        game.hours,
+        game.publishedDate,
+        game.online,
+        game.category,
+        game.platform,
+        game.playerNo,
+        game.language,
+        game.caption,
+        false,
+        false
+    )
+    constructor(game:DownloadedGame,showNotification: Boolean,favorite: Boolean) : this(
+        game.gameId,
+        game.gameName,
+        game.sellingPrice,
+        game.buyingPrice,
+        game.URL,
+        game.about,
+        game.age,
+        game.gameRating,
+        game.stock,
+        game.hours,
+        game.publishedDate,
+        game.online,
+        game.category,
+        game.platform,
+        game.playerNo,
+        game.language,
+        game.caption,
+        favorite,
+        showNotification
     )
 }
 
@@ -104,16 +154,6 @@ enum class Category {
 
 enum class Platform {
     PS3, PS4, PS5, XBoxOne, XBoxX
-}
-
-object SingletonPlatform {
-    private var platformBool = arrayListOf(
-        Platform.PS3,
-        Platform.PS4,
-        Platform.PS5,
-        Platform.XBoxOne,
-        Platform.XBoxX
-    )
 }
 
 class MiniGame(var gameId: Long,var gameName: String , var price: Int,var platform: Platform){

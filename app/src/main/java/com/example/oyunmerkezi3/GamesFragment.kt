@@ -6,7 +6,9 @@ import android.net.Uri
 import android.os.Bundle
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
+import android.widget.ListView
 import androidx.appcompat.widget.SearchView
+import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
@@ -42,6 +44,8 @@ class GamesFragment : Fragment() {
 
         //TODO do not call this every time we start the application
         // only if the service has been killed
+
+        //notification and service
         val showNotification = Intent(requireContext(), NotificationService::class.java)
         showNotification.action = NotificationTask().actionShowNotification
         NotificationService.enqueueWork(requireContext(), showNotification)
@@ -52,9 +56,119 @@ class GamesFragment : Fragment() {
         val editor: SharedPreferences.Editor = activity.editor
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.priceBottomSheet.parentView)
-        val listView1 = binding.priceBottomSheet.soldListView
-        val listView2 = binding.priceBottomSheet.boughtListView
+        val soldGameListView = binding.priceBottomSheet.soldListView
+        val boughtGameListView = binding.priceBottomSheet.boughtListView
 
+        bottomSheetFunction(bottomSheetBehavior, soldGameListView, boughtGameListView, activity, binding, container)
+
+        performFiltering()
+
+        inflateChips(platformSharedPreferences, binding, editor)
+
+        sendWhatsAppMessage(binding)
+
+        adapter =
+            GameAdapter(
+                GameListener { game -> gamesViewModel.onGameClicked(game) },
+                gamesViewModel,
+                binding.priceBottomSheet.root
+            )
+        binding.gameList.adapter = adapter
+        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                adapter.submitList(it)
+            }
+        })
+        gamesViewModel.totalPriceLiveData.observe(viewLifecycleOwner, Observer {
+            it?.let {
+                binding.priceBottomSheet.total.text = it.toString()
+            }
+        })
+        binding.priceBottomSheet.clearImageButton.setOnClickListener{
+            gamesViewModel.clearTheListOfSelectedGame()
+            soldGameListView.adapter = null
+            boughtGameListView.adapter = null
+
+        }
+
+        //observing the navigateToDetails value in gamesViewModel to navigate to detail view when clicking on a game
+        gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
+            game?.let {
+                this.findNavController().navigate(
+                    GamesFragmentDirections
+                        .actionGamesFragmentToDetailActivity(game)
+                )
+                gamesViewModel.onGameDetailsNavigated()
+            }
+        })
+
+        binding.lifecycleOwner = this
+
+        setHasOptionsMenu(true)
+        return binding.root
+    }
+
+    private fun inflateChips(
+        platformSharedPreferences: SharedPreferences,
+        binding: FragmentGamesBinding,
+        editor: SharedPreferences.Editor
+    ) {
+        val platformsArray: Array<String> = resources.getStringArray(R.array.platforms)
+        val activePlatforms = arrayListOf<String>()
+        platformSharedPreferences.let { it1 ->
+            for (item in platformsArray) {
+                if (it1.getBoolean(item, true))
+                    activePlatforms.add(item)
+            }
+        }
+        val chipGroup = binding.platformList
+        val inflater2 = LayoutInflater.from(chipGroup.context)
+        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
+
+        val children: List<Chip>
+        if (activePlatforms.size > 1) {
+            children = activePlatforms.map { regionName ->
+                val chip = inflater2.inflate(R.layout.platform, chipGroup, false) as Chip
+                chip.text = regionName
+                chip.tag = regionName
+                chipGroup.addView(chip)
+                if (regionName == currentPlatform) {
+                    chip.isChecked = true
+                }
+                chip.setOnCheckedChangeListener { button, isChecked ->
+                    if (isChecked) {
+                        editor.putString("current", button.text as String)
+                        editor.apply()
+                        gamesViewModel.onSelectedPlatformChange(button.text as String)
+                        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
+                            it?.let {
+                                adapter.submitList(it)
+                            }
+                        })
+                    }
+                }
+                chip
+            }
+            chipGroup.removeAllViews()
+            for (chip in children) {
+                chipGroup.addView(chip)
+            }
+        }
+    }
+
+    private fun performFiltering() {
+        val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
+        filter?.let { gamesViewModel.filter(it) }
+    }
+
+    private fun bottomSheetFunction(
+        bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>,
+        listView1: ListView,
+        listView2: ListView,
+        activity: MainActivity,
+        binding: FragmentGamesBinding,
+        container: ViewGroup?
+    ) {
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -63,16 +177,17 @@ class GamesFragment : Fragment() {
                     }
 
                     BottomSheetBehavior.STATE_EXPANDED -> {
+                        //inflate the chosen games in the bottom sheet
                         adapter1 = GamePriceAdapter(
                             requireContext(),
-                            gamesViewModel.sellingCheckBox,
+                            gamesViewModel.sellingCheckBoxArray,
                             gamesViewModel,
                             true
                         )
                         listView1.adapter = adapter1
                         adapter2 = GamePriceAdapter(
                             requireContext(),
-                            gamesViewModel.buyingCheckBox,
+                            gamesViewModel.buyingCheckBoxArray,
                             gamesViewModel,
                             false
                         )
@@ -119,83 +234,11 @@ class GamesFragment : Fragment() {
 
             gesture.onTouchEvent(event)
         }
+    }
 
-        val filter: GameFilter? = this.arguments?.getParcelable<GameFilter>("filter")
-        filter?.let { gamesViewModel.filter(it) }
 
-        val platformsArray: Array<String> = resources.getStringArray(R.array.platforms)
-        val platformsArrayFromSharedPreference = arrayListOf<Pair<String, Boolean>>()
 
-        platformSharedPreferences.let { it1 ->
-            for (item in platformsArray) {
-                platformsArrayFromSharedPreference.add(Pair(item, it1.getBoolean(item, false)))
-            }
-        }
-        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
-
-        adapter =
-            GameAdapter(
-                GameListener { game -> gamesViewModel.onGameClicked(game) },
-                gamesViewModel,
-                binding.priceBottomSheet.root
-            )
-        binding.gameList.adapter = adapter
-        gamesViewModel.games.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                adapter.submitList(it)
-            }
-        })
-        gamesViewModel.total.observe(viewLifecycleOwner, Observer {
-            it?.let {
-                binding.priceBottomSheet.total.text = it.toString()
-            }
-        })
-        binding.priceBottomSheet.clearImageButton.setOnClickListener{
-            gamesViewModel.clear()
-            listView1.adapter = null
-            listView2.adapter = null
-
-        }
-
-        val chipGroup = binding.platformList
-        val inflater2 = LayoutInflater.from(chipGroup.context)
-        val activePlatforms = arrayListOf<String>()
-        for (item in platformsArrayFromSharedPreference) {
-            if (item.second) {
-                activePlatforms.add(item.first)
-            }
-        }
-        val children: List<Chip>
-        if (activePlatforms.size > 1) {
-            children = activePlatforms.map { regionName ->
-                val chip = inflater2.inflate(R.layout.platform, chipGroup, false) as Chip
-                chip.text = regionName
-                chip.tag = regionName
-                chipGroup.addView(chip)
-                if (regionName == currentPlatform) {
-                    chip.isChecked = true
-                }
-                chip.setOnCheckedChangeListener { button, isChecked ->
-                    if (isChecked) {
-                        editor.putString("current", button.text as String)
-                        editor.apply()
-                        gamesViewModel.onFilterChanged(button.text as String)
-                        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
-                            it?.let {
-                                adapter.submitList(it)
-                            }
-                        })
-                    }
-                }
-                chip
-            }
-            chipGroup.removeAllViews()
-            for (chip in children) {
-                chipGroup.addView(chip)
-            }
-        }
-        binding.lifecycleOwner = this
-
+    private fun sendWhatsAppMessage(binding: FragmentGamesBinding) {
         //whatsApp button
         val number = "+905465399410"
         val url = "https://api.whatsapp.com/send?phone=$number"
@@ -209,21 +252,6 @@ class GamesFragment : Fragment() {
         binding.sendButton.setOnClickListener() {
             getShareIntent(intent)
         }
-
-        //observing the navigateToDetails value in gamesViewModel to navigate to detail view when clicking on a game
-        gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
-            game?.let {
-                this.findNavController().navigate(
-                    GamesFragmentDirections
-                        .actionGamesFragmentToDetailActivity(game)
-                )
-                gamesViewModel.onGameDetailsNavigated()
-            }
-        })
-
-
-        setHasOptionsMenu(true)
-        return binding.root
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

@@ -41,9 +41,9 @@ class GameAdapter(
         ) {
 
             binding.sellingCheckBox.isChecked =
-                gamesViewModel.sellingCheckBox.filter { it.gameId == item.gameId }.size == 1
+                gamesViewModel.sellingCheckBoxArray.filter { it.gameId == item.gameId }.size == 1
             binding.buyingCheckBox.isChecked =
-                gamesViewModel.buyingCheckBox.filter { it.gameId == item.gameId }.size == 1
+                gamesViewModel.buyingCheckBoxArray.filter { it.gameId == item.gameId }.size == 1
             binding.sellingCheckBox.setOnClickListener {
                 gamesViewModel.addSoledGame(
                     MiniGame(
@@ -53,6 +53,8 @@ class GameAdapter(
                         item.platform
                     )
                 )
+                //the default value of the coordinatorLayout -which is the parent of bottom sheet- is gone
+                //we wanna change it when a game selected
                 coordinatorLayout.visibility = View.VISIBLE
             }
             binding.buyingCheckBox.setOnClickListener {
@@ -96,7 +98,7 @@ class GameAdapter(
 
     private var filterObject: Filter = object : Filter() {
         override fun performFiltering(charSequence: CharSequence): FilterResults {
-            val arrayAllGames= ArrayList(gamesViewModel.games.value!!)
+            val arrayAllGames= ArrayList(gamesViewModel.games2.value!!)
             val filterList = ArrayList<Game>()
             if (charSequence.toString().isEmpty()) {
                 filterList.addAll(arrayAllGames)

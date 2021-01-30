@@ -2,6 +2,11 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+    <data>
+        <variable
+            name="game"
+            type="com.example.oyunmerkezi3.database.Game" />
+    </data>
 
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -23,6 +28,44 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/youtube_player_fragment"
             app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+
+        <TextView
+            android:id="@+id/selling_price"
+            style="@style/TextViewStyle"
+            android:text="@{Integer.toString(game.sellingPrice)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/video_list" />
+
+        <TextView
+            android:id="@+id/buying_price"
+            style="@style/TextViewStyle"
+            android:text="@{Integer.toString(game.buyingPrice)}"
+            app:layout_constraintStart_toEndOf="@id/selling_price"
+            app:layout_constraintTop_toBottomOf="@id/video_list" />
+
+        <androidx.appcompat.widget.SwitchCompat
+            android:checked="@{game.showNotification}"
+            android:id="@+id/notification_on_price"
+            app:layout_constraintStart_toEndOf="@+id/buying_price"
+            app:layout_constraintTop_toBottomOf="@id/video_list"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"/>
+
+        <TextView
+            android:id="@+id/age"
+            style="@style/TextViewStyle"
+            android:text="@{Integer.toString(game.age)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/selling_price" />
+
+        <TextView
+            android:id="@+id/hours"
+            style="@style/TextViewStyle"
+            android:text="@{Integer.toString(game.hours)}"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toBottomOf="@id/age" />
+
+
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

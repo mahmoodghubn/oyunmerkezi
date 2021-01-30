@@ -6,19 +6,13 @@ import android.util.Log
 import androidx.lifecycle.*
 import com.example.oyunmerkezi3.utils.CalendarUtil
 import com.example.oyunmerkezi3.utils.GameFilter
-import com.example.oyunmerkezi3.utils.Utils
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
 import kotlinx.coroutines.*
 import java.time.LocalDate
 
 class GamesViewModel(
     val database: GameDatabaseDao,
     application: Application,
-    platform: String,
-    downloaded: Boolean
+    platform: String
 ) : AndroidViewModel(application) {
 
     private var viewModelJob = Job()
@@ -28,90 +22,20 @@ class GamesViewModel(
     }
 
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
-    private var plat = platform
 
+    var selectedPlatform = platform
     //games variable is observable by games fragment and contain the list of games from the database
-    var games: LiveData<List<Game>?> = Transformations.map(database.getPlatform(plat)) {
-        it?.sortedBy { it.gameId }
+    private var games: LiveData<List<Game>?> = Transformations.map(database.getPlatform(platform)) { list ->
+        list?.sortedBy { it.gameId }
     }
     var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
-    val sellingCheckBox = arrayListOf<MiniGame>()
-    val buyingCheckBox = arrayListOf<MiniGame>()
-    var total: MutableLiveData<Int> = MutableLiveData(0)
-
-    //childEvenListener is listening to changes in firebase database
-    private val mChildEventListener = object : ChildEventListener {
-        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-            val downloadedGame = dataSnapshot.getValue(Game::class.java)
-            uiScope.launch {
-                if (getGame(downloadedGame!!.gameId) == null) {
-                    insertGame(downloadedGame)
-                }
-            }
-        }
-
-        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {
-            val game = dataSnapshot.getValue(Game::class.java)
-            updateGame(game!!)
-        }
-
-        override fun onChildRemoved(dataSnapshot: DataSnapshot) {
-            val game = dataSnapshot.getValue(Game::class.java)
-            deleteGame(game!!)
-        }
-
-        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
-
-        override fun onCancelled(databaseError: DatabaseError) {}
-    }
-
-    private var mPlaceRef: DatabaseReference =
-        Utils.databaseRef?.child("platforms")!!.child("PS3")
+    val sellingCheckBoxArray = arrayListOf<MiniGame>()
+    val buyingCheckBoxArray = arrayListOf<MiniGame>()
+    var totalPriceLiveData: MutableLiveData<Int> = MutableLiveData(0)
 
     init {
-        if (!downloaded) {
-            mPlaceRef.addChildEventListener(mChildEventListener)
-            mPlaceRef.keepSynced(true)
-        }
-    }
-
-    private suspend fun getGame(gameId: Long): Game? {
-        return database.get(gameId)
-    }
-
-    private fun insertGame(game: Game) {
-        uiScope.launch {
-            insert(game)
-        }
-    }
-
-    private suspend fun insert(game: Game) {
-        withContext(Dispatchers.IO) {
-            database.insert(game)
-        }
-    }
-
-    private fun deleteGame(game: Game) {
-        uiScope.launch {
-            delete(game)
-        }
-    }
-
-    private suspend fun delete(game: Game) {
-        withContext(Dispatchers.IO) {
-            database.delete(game)
-        }
-    }
-
-    private fun updateGame(game: Game) {
-        uiScope.launch {
-            update(game)
-        }
-    }
-
-    private suspend fun update(game: Game) {
-        withContext(Dispatchers.IO) {
-            database.update(game)
+        games2.addSource(database.getPlatform(platform)) { it->
+            games2.setValue(it)
         }
     }
 
@@ -131,19 +55,19 @@ class GamesViewModel(
     private fun orderBy(x: Int) {
         games = when (x) {
             0 -> {
-                Transformations.map(games) {
-                    it?.sortedBy { it.gameName }
+                Transformations.map(games) { list ->
+                    list?.sortedBy { it.gameName }
                 }
             }
             1 -> {
-                Transformations.map(games) {
-                    it?.sortedByDescending { it.gameName }
+                Transformations.map(games) { list ->
+                    list?.sortedByDescending { it.gameName }
                 }
             }
             2 -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Transformations.map(games) {
-                        it?.sortedBy {
+                    Transformations.map(games) { list ->
+                        list?.sortedBy {
                             LocalDate.of(
                                 it.publishedDate.year,
                                 it.publishedDate.month,
@@ -152,8 +76,8 @@ class GamesViewModel(
                         }
                     }
                 } else {
-                    Transformations.map(games) {
-                        it?.sortedBy {
+                    Transformations.map(games) { list ->
+                        list?.sortedBy {
                             java.util.Date(
                                 it.publishedDate.year,
                                 it.publishedDate.month,
@@ -165,8 +89,8 @@ class GamesViewModel(
             }
             3 -> {
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    Transformations.map(games) {
-                        it?.sortedByDescending {
+                    Transformations.map(games) { list ->
+                        list?.sortedByDescending {
                             LocalDate.of(
                                 it.publishedDate.year,
                                 it.publishedDate.month,
@@ -175,8 +99,8 @@ class GamesViewModel(
                         }
                     }
                 } else {
-                    Transformations.map(games) {
-                        it?.sortedByDescending {
+                    Transformations.map(games) { list ->
+                        list?.sortedByDescending {
                             java.util.Date(
                                 it.publishedDate.year,
                                 it.publishedDate.month,
@@ -187,108 +111,112 @@ class GamesViewModel(
                 }
             }
             4 -> {
-                Transformations.map(games) {
-                    it?.sortedBy { it.sellingPrice }
+                Transformations.map(games) { list ->
+                    list?.sortedBy { it.sellingPrice }
                 }
             }
             5 -> {
-                Transformations.map(games) {
-                    it?.sortedByDescending { it.sellingPrice }
+                Transformations.map(games) { list ->
+                    list?.sortedByDescending { it.sellingPrice }
                 }
             }
             6 -> {
-                Transformations.map(games) {
-                    it?.sortedBy { it.hours }
+                Transformations.map(games) { list ->
+                    list?.sortedBy { it.hours }
                 }
             }
             7 -> {
-                Transformations.map(games) {
-                    it?.sortedByDescending { it.hours }
+                Transformations.map(games) { list ->
+                    list?.sortedByDescending { it.hours }
                 }
             }
             else -> {
-                Transformations.map(games) {
-                    it?.sortedBy { it.gameRating }
+                Transformations.map(games) { list ->
+                    list?.sortedBy { it.gameRating }
                 }
             }
         }
     }
 
     fun filter(gameFilter: GameFilter) {
+        games= Transformations.map(database.getPlatform(selectedPlatform)) { list ->
+            list?.sortedBy { it.gameId }
+        }
         gameFilter.minPrice?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.sellingPrice >= gameFilter.minPrice }
+            { list ->
+                list?.filter { it.sellingPrice >= gameFilter.minPrice }
             }
         }
         gameFilter.maxPrice?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.sellingPrice <= gameFilter.maxPrice }
+            { list ->
+                list?.filter { it.sellingPrice <= gameFilter.maxPrice }
             }
         }
         gameFilter.minHours?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.hours >= gameFilter.minHours }
+            { list ->
+                list?.filter { it.hours >= gameFilter.minHours }
             }
         }
         gameFilter.maxHours?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.hours <= gameFilter.maxHours }
+            { list ->
+                list?.filter { it.hours <= gameFilter.maxHours }
             }
         }
         gameFilter.age?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.age <= gameFilter.age }
+            { list ->
+                list?.filter { it.age <= gameFilter.age }
             }
         }
         gameFilter.playersNo?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { gameFilter.playersNo in it.playerNo }
+            { list ->
+                list?.filter { gameFilter.playersNo in it.playerNo }
             }
         }
         gameFilter.inStock?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { it.stock == gameFilter.inStock }
+            { list ->
+                list?.filter { it.stock == gameFilter.inStock }
             }
         }
         gameFilter.online?.let {
             games = Transformations.map(games)
-            {
-                it?.filter {
+            { list ->
+                list?.filter {
                     it.online == Online.Offline || it.online == Online.Both
                 }
             }
         }
         gameFilter.language?.let {
             games = Transformations.map(games)
-            {
-                it?.filter { gameFilter.language in it.language }
+            { list ->
+                list?.filter { gameFilter.language in it.language }
             }
         }
         gameFilter.category?.let {
+            Log.i("mahmoodite",gameFilter.category.toString())
             games = Transformations.map(games)
-            {
-                it?.filter { it.category == gameFilter.category }
+            { list ->
+                list?.filter { it.category == gameFilter.category }
             }
         }
         gameFilter.gameRate?.let {
             games = Transformations.map(games)
-            { it1 ->
-                it1?.filter { it.gameRating >= gameFilter.gameRate }
+            { list ->
+                list?.filter { it.gameRating >= gameFilter.gameRate }
             }
         }
         gameFilter.publishDate?.let {
             val cal = CalendarUtil(gameFilter.publishDate)
             games = Transformations.map(games)
-            {
+            { list ->
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
-                    it?.filter {
+                    list?.filter {
                         LocalDate.of(
                             it.publishedDate.year,
                             it.publishedDate.month,
@@ -300,7 +228,7 @@ class GamesViewModel(
                         )
                     }
                 else
-                    it?.filter {
+                    list?.filter {
                         java.util.Date(
                             it.publishedDate.year,
                             it.publishedDate.month,
@@ -316,23 +244,16 @@ class GamesViewModel(
         gameFilter.orderBy?.let {
             orderBy(it)
         }
-
-    }
-
-    fun onFilterChanged(filter: String) {
-        games = database.getPlatform(filter)
-        games2.addSource(games) { exerciseList ->
-            games2.removeSource(games)
-            games2.setValue(exerciseList)
+        games2.addSource(games) { List ->
+            games2.setValue(List)
         }
-        //TODO understanding exerciseList variable
-        plat = filter
     }
 
-    fun downloadDataFromFireBaseWhenSharedPreferenceChange(platform: String) {
-        mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(platform)
-        mPlaceRef.addChildEventListener(mChildEventListener)
-        mPlaceRef.keepSynced(true)
+    fun onSelectedPlatformChange(filter: String) {
+        selectedPlatform = filter
+        games2.addSource(database.getPlatform(filter)) {it ->
+            games2.setValue(it)
+        }
     }
 
     fun deletePlatformFromDataBaseWhenSharedPreferenceChanges(platform: String) {
@@ -348,27 +269,52 @@ class GamesViewModel(
     }
 
     fun addSoledGame(game: MiniGame) {
-        if (sellingCheckBox.filter { it.gameId == game.gameId }.size == 1) {
-            sellingCheckBox.remove(sellingCheckBox.first { it.gameId == game.gameId })
-            total.value = total.value!!.minus(game.price)
+        if (sellingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
+            sellingCheckBoxArray.remove(sellingCheckBoxArray.first { it.gameId == game.gameId })
+            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
         } else {
-            sellingCheckBox.add(game)
-            total.value = total.value!!.plus(game.price)
+            sellingCheckBoxArray.add(game)
+            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
         }
     }
 
     fun addBoughtGame(game: MiniGame) {
-        if (buyingCheckBox.filter { it.gameId == game.gameId }.size == 1) {
-            buyingCheckBox.remove(buyingCheckBox.first { it.gameId == game.gameId })
-            total.value = total.value!!.plus(game.price)
+        if (buyingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
+            buyingCheckBoxArray.remove(buyingCheckBoxArray.first { it.gameId == game.gameId })
+            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
         } else {
-            buyingCheckBox.add(game)
-            total.value = total.value!!.minus(game.price)
+            buyingCheckBoxArray.add(game)
+            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
         }
     }
-    fun clear(){
-        sellingCheckBox.clear()
-        buyingCheckBox.clear()
-        total.value = 0
+
+    fun clearTheListOfSelectedGame() {
+        sellingCheckBoxArray.clear()
+        buyingCheckBoxArray.clear()
+        totalPriceLiveData.value = 0
+    }
+
+    fun setFavorite(gameId: Long) {
+        uiScope.launch {
+            val game = getGame(gameId)!!
+            game.showNotification = !game.showNotification
+            updateGame(game)
+        }
+    }
+
+    private suspend fun getGame(gameId: Long): Game? {
+        return database.get(gameId)
+    }
+
+    private fun updateGame(game: Game) {
+        uiScope.launch {
+            update(game)
+        }
+    }
+
+    private suspend fun update(game: Game) {
+        withContext(Dispatchers.IO) {
+            database.update(game)
+        }
     }
 }

@@ -5,9 +5,14 @@ import android.os.Bundle
 import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navArgs
+import androidx.preference.PreferenceManager
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Game
+import com.example.oyunmerkezi3.database.GameDatabase
+import com.example.oyunmerkezi3.database.GamesViewModel
+import com.example.oyunmerkezi3.database.GamesViewModelFactory
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
 import com.example.oyunmerkezi3.recycling.VideoAdapter
 import com.example.oyunmerkezi3.recycling.VideoListener
@@ -28,10 +33,29 @@ class DetailActivity : AppCompatActivity() {
              R.layout.activity_detail
          )
         val detailActivityArgs by navArgs<DetailActivityArgs>()
+
+        val platformSharedPreferences =
+            PreferenceManager.getDefaultSharedPreferences(this)
+        val application = requireNotNull(this).application
+        val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
+        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
+
+        val viewModelFactory =
+            GamesViewModelFactory(dataSource, application, currentPlatform!!)
+        val gamesViewModel =
+            ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
+        binding.notificationOnPrice.setOnClickListener{
+            gamesViewModel.setFavorite(game.gameId)
+
+        }
+
         game = detailActivityArgs.game
+        title = game.gameName
+        binding.game = game
+
         initializeYoutubePlayer()
         val adapter = VideoAdapter(VideoListener { url ->
-            youTubePlayer?.loadVideo(url);
+            youTubePlayer?.loadVideo(url)
         })
         binding.videoList.adapter = adapter
         adapter.submitList(game.URL)

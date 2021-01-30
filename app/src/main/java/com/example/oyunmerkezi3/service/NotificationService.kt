@@ -8,7 +8,6 @@ import com.example.oyunmerkezi3.utils.CalendarUtil
 import com.example.oyunmerkezi3.utils.NotificationTask
 import com.google.gson.Gson
 
-
 class NotificationService : JobIntentService() {
     lateinit var context: Context
 
@@ -25,6 +24,10 @@ class NotificationService : JobIntentService() {
         val lastDate =  CalendarUtil(null).getCurrentDate()
         val  gson =  Gson()
         val json = gson.toJson(lastDate)
+        // we save the last date when the service being destroyed
+        // so that when it's been created again it notify us about the new games that has been published after that date
+        //TODO we could remove this piece of code if we guarantee that the service will not be died for a long time
+        // or we should change that to the last internet connection
         editor.putString("last_date", json)
         editor.apply()
 

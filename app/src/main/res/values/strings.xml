@@ -1,6 +1,5 @@
 <resources>
-    <string name="app_name">OyunMerkezi2</string>
-    <!-- TODO: Remove or change this placeholder text -->
+    <string name="app_name">OyunMerkezi</string>
     <string name="hello_filter_fragment">Hello filter fragment</string>
     <string name="filter">filter</string>
     <string name="order">order</string>

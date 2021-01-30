@@ -19,14 +19,12 @@ import com.example.oyunmerkezi3.database.GameDatabase
 import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.database.GamesViewModelFactory
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
     private lateinit var appBarConfiguration: AppBarConfiguration
     lateinit var gamesViewModel: GamesViewModel
     lateinit var platformSharedPreferences: SharedPreferences
     lateinit var editor: SharedPreferences.Editor
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -39,54 +37,17 @@ class MainActivity : AppCompatActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
         editor = platformSharedPreferences.edit()
 
-        val platformsArray: Array<String> = resources.getStringArray(R.array.platforms)
-        val oldSharedPreferences: Array<String> =
-            resources.getStringArray(R.array.old_shared_preference)
-
-        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
-
-
         val application = requireNotNull(this).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
+        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
         val viewModelFactory =
-            GamesViewModelFactory(dataSource, application, currentPlatform!!,platformSharedPreferences.getBoolean("downloaded", false))
-        editor.putBoolean("downloaded",true)
-        editor.apply()
+            GamesViewModelFactory(dataSource, application, currentPlatform!!)
         gamesViewModel =
             ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
 
-        //observing the changes in shared preferences and delete and download data accordingly
-        var sharedPreferenceStringLiveData: SharedPreferenceBooleanLiveData
-
-        for ((index, platformItem) in platformsArray.withIndex()) {
-            sharedPreferenceStringLiveData =
-                SharedPreferenceBooleanLiveData(platformSharedPreferences, platformItem, false)
-            sharedPreferenceStringLiveData.getBooleanLiveData(platformItem, false)
-                .observe(this, Observer { checked ->
-                    //by this line of check we prevent extra loading from the internet
-                    // because this way we load from internet and delete from database
-                    // only if there is changes in shared preferences
-                    if (platformSharedPreferences.getBoolean(
-                            oldSharedPreferences[index],
-                            true
-                        ) != checked
-                    ) {
-                        editor.putBoolean(oldSharedPreferences[index], checked!!)
-                        editor.apply()
-                        // we download the data
-                        if (checked) {
-                            gamesViewModel.downloadDataFromFireBaseWhenSharedPreferenceChange(
-                                platformItem
-                            )
-                        } else {// delete the data from database
-                            gamesViewModel.deletePlatformFromDataBaseWhenSharedPreferenceChanges(
-                                platformItem
-                            )
-                        }
-                    }
-                })
-        }
+        //delete platform games when it is not selected any more
+        deletePlatformGames()
 
         drawerLayout = binding.drawerLayout
 
@@ -103,6 +64,44 @@ class MainActivity : AppCompatActivity() {
         }
         appBarConfiguration = AppBarConfiguration(navController.graph, drawerLayout)
 
+    }
+
+    private fun deletePlatformGames() {
+        val platformsArray: Array<String> = resources.getStringArray(R.array.platforms)
+        val oldSharedPreferences: Array<String> =
+            resources.getStringArray(R.array.old_shared_preference)
+
+        //observing the changes in shared preferences and delete data accordingly
+        var sharedPreferenceStringLiveData: SharedPreferenceBooleanLiveData
+
+        for ((index, platformItem) in platformsArray.withIndex()) {
+            sharedPreferenceStringLiveData =
+                SharedPreferenceBooleanLiveData(platformSharedPreferences, platformItem, true)
+            sharedPreferenceStringLiveData.getBooleanLiveData(platformItem, true)
+                .observe(this, Observer { checked ->
+                    if (platformSharedPreferences.getBoolean(
+                            //TODO change the preference live data to list
+                            // or proceed to another item by taking the active items from the games fragment
+
+                            //TODO if the user removes all the platforms and add platform different from
+                            // the current platform we should proceed to the new chosen platform
+
+                            //TODO when click on the platform that we are already on
+
+                            oldSharedPreferences[index],
+                            true
+                        ) != checked
+                    ) {
+                        editor.putBoolean(oldSharedPreferences[index], checked!!)
+                        editor.apply()
+                        if (!checked) {// delete the data from database
+                            gamesViewModel.deletePlatformFromDataBaseWhenSharedPreferenceChanges(
+                                platformItem
+                            )
+                        }
+                    }
+                })
+        }
     }
 
     override fun onSupportNavigateUp(): Boolean {

@@ -7,12 +7,11 @@ import androidx.lifecycle.ViewModelProvider
 class GamesViewModelFactory(
     private val dataSource: GameDatabaseDao,
     private val application: Application,
-    private val platform:String,
-    private val downloaded:Boolean) : ViewModelProvider.Factory {
+    private val platform:String) : ViewModelProvider.Factory {
     @Suppress("unchecked_cast")
     override fun <T : ViewModel?> create(modelClass: Class<T>): T {
         if (modelClass.isAssignableFrom(GamesViewModel::class.java)) {
-            return GamesViewModel(dataSource, application,platform,downloaded) as T
+            return GamesViewModel(dataSource, application,platform) as T
         }
         throw IllegalArgumentException("Unknown ViewModel class")
     }
