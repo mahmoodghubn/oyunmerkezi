@@ -15,4 +15,7 @@
         app:actionViewClass="androidx.appcompat.widget.SearchView"
         app:showAsAction="always|collapseActionView" />
 
+    <item android:id="@+id/favoriteFragment"
+        android:title="@string/favorite"/>
+
 </menu>

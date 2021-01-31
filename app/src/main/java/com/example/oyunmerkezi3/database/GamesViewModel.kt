@@ -24,11 +24,11 @@ class GamesViewModel(
 
     var selectedPlatform = platform
 
-    //games variable is observable by games fragment and contain the list of games from the database
-    private var games: LiveData<List<Game>?> =
+    var games: LiveData<List<Game>?> =
         Transformations.map(database.getPlatform(platform)) { list ->
             list?.sortedBy { it.gameId }
         }
+
     var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
     val sellingCheckBoxArray = arrayListOf<MiniGame>()
     val buyingCheckBoxArray = arrayListOf<MiniGame>()
@@ -305,19 +305,31 @@ class GamesViewModel(
         }
     }
 
-
-
     fun clearTheListOfSelectedGame() {
         sellingCheckBoxArray.clear()
         buyingCheckBoxArray.clear()
         totalPriceLiveData.value = 0
     }
 
-    fun setFavorite(gameId: Long) {
+    fun setShowNotification(gameId: Long) {
         uiScope.launch {
             val game = getGame(gameId)!!
             game.showNotification = !game.showNotification
             updateGame(game)
+        }
+    }
+
+    fun setFavorite(gameId: Long) {
+        uiScope.launch {
+            val game = getGame(gameId)!!
+            game.favorite = !game.favorite
+            updateGame(game)
+        }
+    }
+
+    fun getFavoriteList(){
+        games2.addSource(database.getAllFavorite(true)) { it ->
+            games2.setValue(it)
         }
     }
 

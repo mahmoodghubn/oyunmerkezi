@@ -9,6 +9,7 @@ import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
+import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.database.MiniGame
@@ -72,6 +73,16 @@ class GameAdapter(
                 )
                 coordinatorLayout.visibility = View.VISIBLE
             }
+            binding.favoriteImageButton.setOnClickListener{
+                gamesViewModel.setFavorite(item.gameId)
+
+
+            }
+
+            if (item.favorite)
+                binding.favoriteImageButton.setImageResource(R.drawable.ic_baseline_favorite_24)
+            else
+                binding.favoriteImageButton.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
             binding.game = item
             binding.clickListener = clickListener

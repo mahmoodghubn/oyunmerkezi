@@ -42,4 +42,9 @@
             android:id="@+id/action_settingsFragment2_to_gamesFragment"
             app:destination="@id/gamesFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/favoriteFragment"
+        android:name="com.example.oyunmerkezi3.fragments.FavoriteFragment"
+        android:label="fragment_favorite"
+        tools:layout="@layout/fragment_favorite" />
 </navigation>

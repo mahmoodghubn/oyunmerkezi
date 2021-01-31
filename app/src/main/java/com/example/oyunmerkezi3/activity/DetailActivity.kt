@@ -45,7 +45,7 @@ class DetailActivity : AppCompatActivity() {
         val gamesViewModel =
             ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
         binding.notificationOnPrice.setOnClickListener{
-            gamesViewModel.setFavorite(game.gameId)
+            gamesViewModel.setShowNotification(game.gameId)
 
         }
 
