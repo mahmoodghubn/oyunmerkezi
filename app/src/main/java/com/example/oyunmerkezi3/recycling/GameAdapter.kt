@@ -50,7 +50,9 @@ class GameAdapter(
                         item.gameId,
                         item.gameName,
                         item.sellingPrice,
-                        item.platform
+                        item.platform,
+                        1,
+                        item.sellingPrice
                     )
                 )
                 //the default value of the coordinatorLayout -which is the parent of bottom sheet- is gone
@@ -63,7 +65,9 @@ class GameAdapter(
                         item.gameId,
                         item.gameName,
                         item.buyingPrice,
-                        item.platform
+                        item.platform,
+                        1,
+                        item.buyingPrice
                     )
                 )
                 coordinatorLayout.visibility = View.VISIBLE

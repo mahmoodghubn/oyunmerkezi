@@ -2,7 +2,6 @@ package com.example.oyunmerkezi3.database
 
 import android.app.Application
 import android.os.Build
-import android.util.Log
 import androidx.lifecycle.*
 import com.example.oyunmerkezi3.utils.CalendarUtil
 import com.example.oyunmerkezi3.utils.GameFilter
@@ -24,17 +23,19 @@ class GamesViewModel(
     private val uiScope = CoroutineScope(Dispatchers.Main + viewModelJob)
 
     var selectedPlatform = platform
+
     //games variable is observable by games fragment and contain the list of games from the database
-    private var games: LiveData<List<Game>?> = Transformations.map(database.getPlatform(platform)) { list ->
-        list?.sortedBy { it.gameId }
-    }
+    private var games: LiveData<List<Game>?> =
+        Transformations.map(database.getPlatform(platform)) { list ->
+            list?.sortedBy { it.gameId }
+        }
     var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
     val sellingCheckBoxArray = arrayListOf<MiniGame>()
     val buyingCheckBoxArray = arrayListOf<MiniGame>()
     var totalPriceLiveData: MutableLiveData<Int> = MutableLiveData(0)
 
     init {
-        games2.addSource(database.getPlatform(platform)) { it->
+        games2.addSource(database.getPlatform(platform)) { it ->
             games2.setValue(it)
         }
     }
@@ -139,7 +140,7 @@ class GamesViewModel(
     }
 
     fun filter(gameFilter: GameFilter) {
-        games= Transformations.map(database.getPlatform(selectedPlatform)) { list ->
+        games = Transformations.map(database.getPlatform(selectedPlatform)) { list ->
             list?.sortedBy { it.gameId }
         }
         gameFilter.minPrice?.let {
@@ -199,7 +200,6 @@ class GamesViewModel(
             }
         }
         gameFilter.category?.let {
-            Log.i("mahmoodite",gameFilter.category.toString())
             games = Transformations.map(games)
             { list ->
                 list?.filter { it.category == gameFilter.category }
@@ -251,7 +251,7 @@ class GamesViewModel(
 
     fun onSelectedPlatformChange(filter: String) {
         selectedPlatform = filter
-        games2.addSource(database.getPlatform(filter)) {it ->
+        games2.addSource(database.getPlatform(filter)) { it ->
             games2.setValue(it)
         }
     }
@@ -271,22 +271,41 @@ class GamesViewModel(
     fun addSoledGame(game: MiniGame) {
         if (sellingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
             sellingCheckBoxArray.remove(sellingCheckBoxArray.first { it.gameId == game.gameId })
-            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
+            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.total)
+
         } else {
             sellingCheckBoxArray.add(game)
             totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
         }
     }
-
     fun addBoughtGame(game: MiniGame) {
         if (buyingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
             buyingCheckBoxArray.remove(buyingCheckBoxArray.first { it.gameId == game.gameId })
-            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
+            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.total)
+
         } else {
             buyingCheckBoxArray.add(game)
             totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
         }
     }
+
+    fun increaseCount(game: MiniGame, isSelling: Boolean) {
+        if (isSelling) {
+            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
+        } else {
+            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
+        }
+    }
+
+    fun decreasingCount(game: MiniGame, isSelling: Boolean) {
+        if (isSelling) {
+            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
+        } else {
+            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
+        }
+    }
+
+
 
     fun clearTheListOfSelectedGame() {
         sellingCheckBoxArray.clear()
