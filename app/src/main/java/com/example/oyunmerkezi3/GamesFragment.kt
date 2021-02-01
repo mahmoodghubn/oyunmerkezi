@@ -139,12 +139,6 @@ class GamesFragment : Fragment() {
                     if (isChecked) {
                         editor.putString("current", button.text as String)
                         editor.apply()
-                        gamesViewModel.onSelectedPlatformChange(button.text as String)
-//                        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
-//                            it?.let {
-//                                adapter.submitList(it)
-//                            }
-//                        })
                     }
                 }
                 chip

@@ -39,10 +39,9 @@ class MainActivity : AppCompatActivity() {
 
         val application = requireNotNull(this).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
-        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
         val viewModelFactory =
-            GamesViewModelFactory(dataSource, application, currentPlatform!!)
+            GamesViewModelFactory(dataSource, application)
         gamesViewModel =
             ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
 
@@ -72,12 +71,12 @@ class MainActivity : AppCompatActivity() {
             resources.getStringArray(R.array.old_shared_preference)
 
         //observing the changes in shared preferences and delete data accordingly
-        var sharedPreferenceStringLiveData: SharedPreferenceBooleanLiveData
+        var sharedPreferenceBooleanLiveData: SharedPreferenceBooleanLiveData
 
         for ((index, platformItem) in platformsArray.withIndex()) {
-            sharedPreferenceStringLiveData =
+            sharedPreferenceBooleanLiveData =
                 SharedPreferenceBooleanLiveData(platformSharedPreferences, platformItem, true)
-            sharedPreferenceStringLiveData.getBooleanLiveData(platformItem, true)
+            sharedPreferenceBooleanLiveData.getBooleanLiveData(platformItem, true)
                 .observe(this, Observer { checked ->
                     if (platformSharedPreferences.getBoolean(
                             //TODO change the preference live data to list

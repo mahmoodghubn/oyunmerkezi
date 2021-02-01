@@ -34,4 +34,11 @@ abstract class SharedPreferenceLiveData<T>(prefs: SharedPreferences, private var
     ): SharedPreferenceBooleanLiveData {
         return SharedPreferenceBooleanLiveData(sharedPrefs, key, defaultValue)
     }
+
+    fun getStringLiveData(
+        key: String?,
+        defaultValue: String
+    ): SharedPreferenceStringLiveData {
+        return SharedPreferenceStringLiveData(sharedPrefs, key, defaultValue)
+    }
 }

@@ -38,10 +38,9 @@ class DetailActivity : AppCompatActivity() {
             PreferenceManager.getDefaultSharedPreferences(this)
         val application = requireNotNull(this).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
-        val currentPlatform = platformSharedPreferences.getString("current", "PS4")
 
         val viewModelFactory =
-            GamesViewModelFactory(dataSource, application, currentPlatform!!)
+            GamesViewModelFactory(dataSource, application)
         val gamesViewModel =
             ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
         binding.notificationOnPrice.setOnClickListener{

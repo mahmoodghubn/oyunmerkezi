@@ -10,3 +10,11 @@ class SharedPreferenceBooleanLiveData(prefs: SharedPreferences?, key: String?, d
         return sharedPrefs.getBoolean(key, defValue!! )
     }
 }
+
+class SharedPreferenceStringLiveData(prefs: SharedPreferences?, key: String?, defValue: String?) :
+    SharedPreferenceLiveData<String?>(prefs!!, key!!, defValue) {
+
+    override fun getValueFromPreferences(key: String?, defValue: String?): String {
+        return sharedPrefs.getString(key, defValue!! )!!
+    }
+}

@@ -54,7 +54,6 @@ class FavoriteFragment : Fragment() {
             container
         )
         sendWhatsAppMessage(binding)
-        gamesViewModel.getFavoriteList()
 
         adapter =
             GameAdapter(
@@ -63,7 +62,7 @@ class FavoriteFragment : Fragment() {
                 binding.priceBottomSheet.root
             )
         binding.gameList.adapter = adapter
-        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
+        gamesViewModel.favoriteGames.observe(viewLifecycleOwner, Observer {
             it?.let {
                 adapter.submitList(it)
             }
