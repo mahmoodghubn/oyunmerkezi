@@ -130,64 +130,64 @@ class GamesViewModel(
         }
     }
 
-    fun filter(gameFilter: GameFilter) {
+    fun filter(gameFilter: GameFilter?) {
         games2.removeSource(games)
         games2.addSource(games) { it ->
             games2.setValue(filter2(gameFilter, it!!))
         }
     }
 
-    private fun filter2(gameFilter: GameFilter, games: List<Game>): List<Game>? {
+    private fun filter2(gameFilter: GameFilter?, games: List<Game>): List<Game>? {
 
         var localListGame: List<Game>? = games
 
-        gameFilter.minPrice?.let {
+        gameFilter?.minPrice?.let {
             localListGame = games.filter { it.sellingPrice >= gameFilter.minPrice }
         }
 
-        gameFilter.maxPrice?.let {
+        gameFilter?.maxPrice?.let {
             localListGame = localListGame?.filter { it.sellingPrice <= gameFilter.maxPrice }
         }
 
-        gameFilter.minHours?.let {
+        gameFilter?.minHours?.let {
             localListGame = localListGame?.filter { it.hours >= gameFilter.minHours }
         }
 
-        gameFilter.maxHours?.let {
+        gameFilter?.maxHours?.let {
             localListGame = localListGame?.filter { it.hours <= gameFilter.maxHours }
         }
 
-        gameFilter.age?.let {
+        gameFilter?.age?.let {
             localListGame = localListGame?.filter { it.age <= gameFilter.age }
         }
 
-        gameFilter.playersNo?.let {
+        gameFilter?.playersNo?.let {
             localListGame = localListGame?.filter { gameFilter.playersNo in it.playerNo }
         }
 
-        gameFilter.inStock?.let {
+        gameFilter?.inStock?.let {
             localListGame = localListGame?.filter { it.stock == gameFilter.inStock }
         }
 
-        gameFilter.online?.let {
+        gameFilter?.online?.let {
             localListGame = localListGame?.filter {
                 it.online == Online.Offline || it.online == Online.Both
             }
         }
 
-        gameFilter.language?.let {
+        gameFilter?.language?.let {
             localListGame = localListGame?.filter { gameFilter.language in it.language }
         }
 
-        gameFilter.category?.let {
+        gameFilter?.category?.let {
             localListGame = localListGame?.filter { it.category == gameFilter.category }
         }
 
-        gameFilter.gameRate?.let {
+        gameFilter?.gameRate?.let {
             localListGame = localListGame?.filter { it.gameRating >= gameFilter.gameRate }
         }
 
-        gameFilter.publishDate?.let {
+        gameFilter?.publishDate?.let {
             val cal = CalendarUtil(gameFilter.publishDate)
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
                 localListGame = localListGame?.filter {
@@ -215,7 +215,7 @@ class GamesViewModel(
                 }
         }
 
-        gameFilter.orderBy?.let {
+        gameFilter?.orderBy?.let {
             localListGame = orderBy(it, localListGame)
         }
 

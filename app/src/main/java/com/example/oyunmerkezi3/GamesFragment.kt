@@ -1,5 +1,6 @@
 package com.example.oyunmerkezi3
 
+import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
 import android.net.Uri
@@ -30,7 +31,7 @@ class GamesFragment : Fragment() {
     private lateinit var adapter1: GamePriceAdapter
     private lateinit var adapter2: GamePriceAdapter
     private lateinit var adapter: GameAdapter
-    private lateinit var gamesViewModel:GamesViewModel
+    private lateinit var gamesViewModel: GamesViewModel
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,7 +60,14 @@ class GamesFragment : Fragment() {
         val soldGameListView = binding.priceBottomSheet.soldListView
         val boughtGameListView = binding.priceBottomSheet.boughtListView
 
-        bottomSheetFunction(bottomSheetBehavior, soldGameListView, boughtGameListView, activity, binding, container)
+        bottomSheetFunction(
+            bottomSheetBehavior,
+            soldGameListView,
+            boughtGameListView,
+            activity,
+            binding,
+            container
+        )
 
         performFiltering()
 
@@ -74,17 +82,17 @@ class GamesFragment : Fragment() {
                 binding.priceBottomSheet.root
             )
         binding.gameList.adapter = adapter
-        gamesViewModel.games2.observe(viewLifecycleOwner, Observer {
+        gamesViewModel.games2.observe(viewLifecycleOwner, {
             it?.let {
                 adapter.submitList(it)
             }
         })
-        gamesViewModel.totalPriceLiveData.observe(viewLifecycleOwner, Observer {
+        gamesViewModel.totalPriceLiveData.observe(viewLifecycleOwner, {
             it?.let {
                 binding.priceBottomSheet.total.text = it.toString()
             }
         })
-        binding.priceBottomSheet.clearImageButton.setOnClickListener{
+        binding.priceBottomSheet.clearImageButton.setOnClickListener {
             gamesViewModel.clearTheListOfSelectedGame()
             soldGameListView.adapter = null
             boughtGameListView.adapter = null
@@ -92,7 +100,7 @@ class GamesFragment : Fragment() {
         }
 
         //observing the navigateToDetails value in gamesViewModel to navigate to detail view when clicking on a game
-        gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
+        gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, { game ->
             game?.let {
                 this.findNavController().navigate(
                     GamesFragmentDirections
@@ -231,20 +239,19 @@ class GamesFragment : Fragment() {
     }
 
 
-
     private fun sendWhatsAppMessage(binding: FragmentGamesBinding) {
         //whatsApp button
         val number = "+905465399410"
         val url = "https://api.whatsapp.com/send?phone=$number"
         val intent = Intent(Intent.ACTION_VIEW)
         intent.data = Uri.parse(url)
-        if (null == intent.resolveActivity(requireActivity().packageManager)) {
-            binding.sendButton.visibility = View.GONE
-            //TODO need test by uninstalling whatsapp
-        }
-
+        //TODO need test by uninstalling whatsapp
         binding.sendButton.setOnClickListener() {
-            getShareIntent(intent)
+            try {
+                getShareIntent(intent)
+            } catch (ex: ActivityNotFoundException) {
+                //TODO show a message
+            }
         }
     }
 
@@ -267,6 +274,9 @@ class GamesFragment : Fragment() {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        if (item.itemId == R.id.reset) {
+            gamesViewModel.filter(null)
+        }
         return NavigationUI.onNavDestinationSelected(item, requireView().findNavController())
                 || super.onOptionsItemSelected(item)
     }
