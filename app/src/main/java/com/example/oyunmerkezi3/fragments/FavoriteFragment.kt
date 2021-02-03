@@ -83,8 +83,8 @@ class FavoriteFragment : Fragment() {
         gamesViewModel.navigateToDetails.observe(viewLifecycleOwner, Observer { game ->
             game?.let {
                 this.findNavController().navigate(
-                    GamesFragmentDirections
-                        .actionGamesFragmentToDetailActivity(game)
+                    FavoriteFragmentDirections
+                        .actionFavoriteFragmentToDetailActivity(game)
                 )
                 gamesViewModel.onGameDetailsNavigated()
             }

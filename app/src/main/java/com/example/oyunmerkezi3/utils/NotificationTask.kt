@@ -96,7 +96,7 @@ class NotificationTask {
             val game = dataSnapshot.getValue(DownloadedGame::class.java)!!
             uiScope.launch {
                 val game2 = getGame(game.gameId)!!
-                updateGame(Game(game,game2.favorite,game2.showNotification))
+                updateGame(Game(game,game2.showNotification,game2.favorite))
 
                 //TODO make sure the changes is only on the price or stock
                 if (game2.showNotification) {

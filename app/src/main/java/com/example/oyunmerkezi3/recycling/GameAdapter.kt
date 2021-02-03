@@ -73,7 +73,7 @@ class GameAdapter(
                 )
                 coordinatorLayout.visibility = View.VISIBLE
             }
-            binding.favoriteImageButton.setOnClickListener{
+            binding.favoriteImageButton.setOnClickListener {
                 gamesViewModel.setFavorite(item.gameId)
 
 
@@ -106,6 +106,10 @@ class GameAdapter(
             return oldItem.gameId == newItem.gameId
         }
 
+        override fun getChangePayload(oldItem: Game, newItem: Game): Any? {
+            return newItem
+        }
+
         override fun areContentsTheSame(oldItem: Game, newItem: Game): Boolean {
             return oldItem == newItem
         }
@@ -113,7 +117,7 @@ class GameAdapter(
 
     private var filterObject: Filter = object : Filter() {
         override fun performFiltering(charSequence: CharSequence): FilterResults {
-            val arrayAllGames= ArrayList(gamesViewModel.games2.value!!)
+            val arrayAllGames = ArrayList(gamesViewModel.games2.value!!)
             val filterList = ArrayList<Game>()
             if (charSequence.toString().isEmpty()) {
                 filterList.addAll(arrayAllGames)
