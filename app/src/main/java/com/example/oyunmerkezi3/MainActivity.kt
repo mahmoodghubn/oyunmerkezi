@@ -18,8 +18,6 @@ import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.database.GamesViewModelFactory
 import com.example.oyunmerkezi3.databinding.ActivityMainBinding
 import com.example.oyunmerkezi3.shared_preferences.SharedPreferenceBooleanLiveData
-import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
-import com.google.android.material.snackbar.Snackbar
 
 
 class MainActivity : AppCompatActivity() {
@@ -37,13 +35,6 @@ class MainActivity : AppCompatActivity() {
             DataBindingUtil.setContentView<ActivityMainBinding>(this, R.layout.activity_main)
         setContentView(binding.root)
 
-        ConnectionBroadcastReceiver.registerToActivityAndAutoUnregister(
-            this,
-            object : ConnectionBroadcastReceiver() {
-                override fun onConnectionChanged(hasConnection: Boolean) {
-                    showInternetStatus(hasConnection)
-                }
-            })
         platformSharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(this)
         editor = platformSharedPreferences.edit()
@@ -121,16 +112,4 @@ class MainActivity : AppCompatActivity() {
 
     }
 
-    fun showInternetStatus(connected: Boolean) {
-        if (connected) {
-            val snackBar = Snackbar
-                .make(binding.root, "connected", Snackbar.LENGTH_LONG)
-            snackBar.show()
-        } else {
-            val snackBar = Snackbar
-                .make(binding.root, "disconnected", Snackbar.LENGTH_LONG)
-            snackBar.show()
-        }
-
-    }
 }

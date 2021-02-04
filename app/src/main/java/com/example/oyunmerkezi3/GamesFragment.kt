@@ -3,6 +3,8 @@ package com.example.oyunmerkezi3
 import android.content.ActivityNotFoundException
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color.GREEN
+import android.graphics.Color.RED
 import android.net.Uri
 import android.os.Bundle
 import android.view.*
@@ -12,7 +14,6 @@ import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.Fragment
-import androidx.lifecycle.Observer
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
@@ -22,23 +23,28 @@ import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
 import com.example.oyunmerkezi3.service.NotificationService
+import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
 import com.example.oyunmerkezi3.utils.GameFilter
 import com.example.oyunmerkezi3.utils.NotificationTask
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
+import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
+import com.google.android.material.snackbar.Snackbar
+
 
 class GamesFragment : Fragment() {
     private lateinit var adapter1: GamePriceAdapter
     private lateinit var adapter2: GamePriceAdapter
     private lateinit var adapter: GameAdapter
     private lateinit var gamesViewModel: GamesViewModel
+    private lateinit var binding: FragmentGamesBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         // Inflate the layout for this fragment
-        val binding: FragmentGamesBinding = DataBindingUtil.inflate(
+        binding = DataBindingUtil.inflate(
             inflater,
             R.layout.fragment_games, container, false
         )
@@ -82,11 +88,24 @@ class GamesFragment : Fragment() {
                 binding.priceBottomSheet.root
             )
         binding.gameList.adapter = adapter
-        gamesViewModel.games2.observe(viewLifecycleOwner, {
+        gamesViewModel.games2.observe(viewLifecycleOwner, { it ->
             it?.let {
                 adapter.submitList(it)
             }
         })
+        var firstCreation = true
+        ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
+            activity,
+            this,
+            gamesViewModel.games2,
+            object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    if (!hasConnection || !firstCreation) {
+                        firstCreation = false
+                        showInternetStatus(hasConnection)
+                    }
+                }
+            })
         gamesViewModel.totalPriceLiveData.observe(viewLifecycleOwner, {
             it?.let {
                 binding.priceBottomSheet.total.text = it.toString()
@@ -286,4 +305,21 @@ class GamesFragment : Fragment() {
         startActivity(intent)
     }
 
+    fun showInternetStatus(connected: Boolean) {
+        if (connected) {
+            val snackBar =
+                Snackbar.make(binding.sendButton, "connected", Snackbar.LENGTH_LONG)
+            snackBar.animationMode = ANIMATION_MODE_SLIDE
+            snackBar.setBackgroundTint(GREEN)
+            snackBar.show()
+        } else {
+            val snackBar =
+                Snackbar.make(binding.sendButton, "disconnected", Snackbar.LENGTH_LONG)
+            snackBar.duration = 10000
+            snackBar.setBackgroundTint(RED)
+            snackBar.animationMode = ANIMATION_MODE_SLIDE
+            snackBar.show()
+        }
+
+    }
 }

@@ -7,7 +7,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navArgs
-import androidx.preference.PreferenceManager
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.database.GameDatabase
@@ -16,6 +15,8 @@ import com.example.oyunmerkezi3.database.GamesViewModelFactory
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
 import com.example.oyunmerkezi3.recycling.VideoAdapter
 import com.example.oyunmerkezi3.recycling.VideoListener
+import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
+import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.*
 
 private var youTubePlayer: YouTubePlayer? = null
@@ -28,14 +29,23 @@ class DetailActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-         binding = DataBindingUtil.setContentView<ActivityDetailBinding>(
-             this,
-             R.layout.activity_detail
-         )
-        val detailActivityArgs by navArgs<DetailActivityArgs>()
+        binding = DataBindingUtil.setContentView<ActivityDetailBinding>(
+            this,
+            R.layout.activity_detail
+        )
 
-        val platformSharedPreferences =
-            PreferenceManager.getDefaultSharedPreferences(this)
+        var firstCreation = true
+        ConnectionBroadcastReceiver.registerToActivityAndAutoUnregister(
+            this,
+            object : ConnectionBroadcastReceiver() {
+                override fun onConnectionChanged(hasConnection: Boolean) {
+                    if (!hasConnection || !firstCreation) {
+                        firstCreation = false
+                        showInternetStatus(hasConnection)
+                    }
+                }
+            })
+        val detailActivityArgs by navArgs<DetailActivityArgs>()
         val application = requireNotNull(this).application
         val dataSource = GameDatabase.getInstance(application).gameDatabaseDao
 
@@ -43,7 +53,7 @@ class DetailActivity : AppCompatActivity() {
             GamesViewModelFactory(dataSource, application)
         val gamesViewModel =
             ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
-        binding.notificationOnPrice.setOnClickListener{
+        binding.notificationOnPrice.setOnClickListener {
             gamesViewModel.setShowNotification(game.gameId)
 
         }
@@ -89,4 +99,15 @@ class DetailActivity : AppCompatActivity() {
             })
     }
 
+    fun showInternetStatus(connected: Boolean) {
+        if (connected) {
+            val snackBar = Snackbar
+                .make(binding.root, "connected", Snackbar.LENGTH_LONG)
+            snackBar.show()
+        } else {
+            val snackBar = Snackbar
+                .make(binding.root, "disconnected", Snackbar.LENGTH_LONG)
+            snackBar.show()
+        }
+    }
 }
