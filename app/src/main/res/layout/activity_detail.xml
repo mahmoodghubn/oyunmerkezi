@@ -2,70 +2,185 @@
 <layout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools">
+
     <data>
+
         <variable
             name="game"
             type="com.example.oyunmerkezi3.database.Game" />
     </data>
 
-
-    <androidx.constraintlayout.widget.ConstraintLayout
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:orientation="vertical"
         tools:context=".activity.DetailActivity">
+
         <fragment
             android:id="@+id/youtube_player_fragment"
             android:name="com.google.android.youtube.player.YouTubePlayerFragment"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/video_list"
-            android:orientation="horizontal"
+            android:layout_height="wrap_content" />
+
+        <ScrollView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/youtube_player_fragment"
-            app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"/>
+            android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/selling_price"
-            style="@style/TextViewStyle"
-            android:text="@{Integer.toString(game.sellingPrice)}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/video_list" />
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
 
-        <TextView
-            android:id="@+id/buying_price"
-            style="@style/TextViewStyle"
-            android:text="@{Integer.toString(game.buyingPrice)}"
-            app:layout_constraintStart_toEndOf="@id/selling_price"
-            app:layout_constraintTop_toBottomOf="@id/video_list" />
+                <androidx.recyclerview.widget.RecyclerView
+                    android:id="@+id/video_list"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-        <androidx.appcompat.widget.SwitchCompat
-            android:checked="@{game.showNotification}"
-            android:id="@+id/notification_on_price"
-            app:layout_constraintStart_toEndOf="@+id/buying_price"
-            app:layout_constraintTop_toBottomOf="@id/video_list"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"/>
+                <androidx.cardview.widget.CardView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content">
 
-        <TextView
-            android:id="@+id/age"
-            style="@style/TextViewStyle"
-            android:text="@{Integer.toString(game.age)}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/selling_price" />
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
 
-        <TextView
-            android:id="@+id/hours"
-            style="@style/TextViewStyle"
-            android:text="@{Integer.toString(game.hours)}"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/age" />
+                        <TextView
+                            android:id="@+id/sell_title"
+                            style="@style/TextViewStyle"
+                            android:text="sell"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <TextView
+                            android:id="@+id/selling_price"
+                            style="@style/TextViewStyle"
+                            android:text="@{Integer.toString(game.sellingPrice)}"
+                            app:layout_constraintStart_toEndOf="@id/hours_title"
+                            app:layout_constraintTop_toTopOf="parent" />
+
+                        <androidx.appcompat.widget.AppCompatRatingBar
+                            android:id="@+id/game_rating"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:rating="@{game.gameRating}"
+                            app:layout_constraintStart_toEndOf="@id/selling_price"
+                            app:layout_constraintTop_toTopOf="parent"/>
+
+                        <androidx.appcompat.widget.SwitchCompat
+                            android:id="@+id/notification_on_price"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:checked="@{game.showNotification}"
+                            app:layout_constraintStart_toStartOf="@+id/game_rating"
+                            app:layout_constraintTop_toBottomOf="@id/game_rating" />
+
+                        <TextView
+                            android:id="@+id/buy_title"
+                            style="@style/TextViewStyle"
+                            android:text="buy"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/sell_title" />
+
+                        <TextView
+                            android:id="@+id/buying_price"
+                            style="@style/TextViewStyle"
+                            android:text="@{Integer.toString(game.buyingPrice)}"
+                            app:layout_constraintStart_toEndOf="@id/hours_title"
+                            app:layout_constraintTop_toBottomOf="@id/sell_title" />
+
+                        <TextView
+                            android:id="@+id/age_title"
+                            style="@style/TextViewStyle"
+                            android:text="age"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/buy_title" />
+
+                        <TextView
+                            android:id="@+id/age"
+                            style="@style/TextViewStyle"
+                            android:text="@{Integer.toString(game.age)}"
+                            app:layout_constraintStart_toEndOf="@id/hours_title"
+                            app:layout_constraintTop_toBottomOf="@id/buy_title" />
+
+                        <TextView
+                            android:id="@+id/hours_title"
+                            style="@style/TextViewStyle"
+                            android:text="hours"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/age_title" />
+
+                        <TextView
+                            android:id="@+id/hours"
+                            style="@style/TextViewStyle"
+                            android:text="@{Integer.toString(game.hours)}"
+                            app:layout_constraintStart_toEndOf="@id/hours_title"
+                            app:layout_constraintTop_toBottomOf="@id/age_title" />
+
+                        <TextView
+                            android:id="@+id/date_title"
+                            style="@style/TextViewStyle"
+                            android:text="date"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/hours_title" />
+
+                        <TextView
+                            android:id="@+id/date"
+                            style="@style/TextViewStyle"
+                            app:layout_constraintStart_toEndOf="@id/hours_title"
+                            app:layout_constraintTop_toBottomOf="@id/hours_title" />
+
+                        <TextView
+                            android:id="@+id/online"
+                            style="@style/TextViewStyle"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/date_title" />
+
+                        <TextView
+                            android:id="@+id/players_title"
+                            style="@style/TextViewStyle"
+                            android:text="players"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/online" />
+
+                        <TextView
+                            android:id="@+id/players_value"
+                            style="@style/TextViewStyle"
+                            android:text="@string/language"
+                            app:layout_constraintStart_toEndOf="@id/players_title"
+                            app:layout_constraintTop_toBottomOf="@id/online" />
+
+                        <TextView
+                            android:id="@+id/language_title"
+                            style="@style/TextViewStyle"
+                            android:text="voice"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/players_title" />
+
+                        <TextView
+                            android:id="@+id/language"
+                            style="@style/TextViewStyle"
+                            app:layout_constraintStart_toEndOf="@id/language_title"
+                            app:layout_constraintTop_toBottomOf="@id/players_title" />
+
+                        <TextView
+                            android:id="@+id/caption_title"
+                            style="@style/TextViewStyle"
+                            android:text="caption"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintTop_toBottomOf="@id/language_title" />
 
 
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+                        <TextView
+                            android:id="@+id/caption"
+                            style="@style/TextViewStyle"
+                            app:layout_constraintStart_toEndOf="@+id/caption_title"
+                            app:layout_constraintTop_toBottomOf="@id/language_title" />
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.cardview.widget.CardView>
+            </LinearLayout>
+        </ScrollView>
+    </LinearLayout>
 </layout>

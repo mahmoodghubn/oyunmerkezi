@@ -8,14 +8,12 @@ import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navArgs
 import com.example.oyunmerkezi3.R
-import com.example.oyunmerkezi3.database.Game
-import com.example.oyunmerkezi3.database.GameDatabase
-import com.example.oyunmerkezi3.database.GamesViewModel
-import com.example.oyunmerkezi3.database.GamesViewModelFactory
+import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
 import com.example.oyunmerkezi3.recycling.VideoAdapter
 import com.example.oyunmerkezi3.recycling.VideoListener
 import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
+import com.example.oyunmerkezi3.utils.toText
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.*
 
@@ -59,6 +57,12 @@ class DetailActivity : AppCompatActivity() {
         }
 
         game = detailActivityArgs.game
+
+        binding.date.text = game.publishedDate.toText()
+        binding.online.text = game.online.toText()
+        binding.playersValue.text = game.playerNo.toText()
+        binding.language.text = game.language.toText()
+        binding.caption.text = game.caption.toText()
         title = game.gameName
         binding.game = game
 

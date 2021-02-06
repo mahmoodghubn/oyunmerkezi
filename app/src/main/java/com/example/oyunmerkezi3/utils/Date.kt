@@ -24,3 +24,6 @@ fun Date.isBigger(date: Date):Boolean{
     }
     return false
 }
+fun Date.toText():String{
+    return "${this.day}-${this.month}-${this.year}"
+}

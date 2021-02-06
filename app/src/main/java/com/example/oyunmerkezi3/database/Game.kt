@@ -136,6 +136,34 @@ enum class Online {
     Online, Offline, Both
 }
 
+fun Online.toText():String{
+    return when(this){
+        Online.Online -> "Only Online"
+        Online.Offline -> "Offline Mode"
+        Online.Both ->"Online and Offline"
+    }
+}
+
+fun List<Int>.toText():String{
+    var string = ""
+    for (item in this){
+        if ( item != this.last())
+            string = "$string$item-"
+    }
+    string = "$string${this.last()}"
+    return string
+}
+@JvmName("toTextString")
+fun List<Language>.toText():String{
+    var string = ""
+    for (item in this){
+        if ( item != this.last())
+            string = "$string${item.name}-"
+    }
+    string = "$string${this.last().name}"
+    return string
+}
+
 enum class Language {
     Turkish, Arabic, English, French, German, Italian, Russian, Spanish, Japanese
 }
