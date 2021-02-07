@@ -54,7 +54,6 @@ class NotificationTask {
             )
             mPlaceRef[index].addChildEventListener(mChildEventListener)
             mPlaceRef[index].keepSynced(true)
-            mPlaceRef[index].keepSynced(true)
         }
 
         database = GameDatabase.getInstance(context).gameDatabaseDao

@@ -2,8 +2,11 @@ package com.example.oyunmerkezi3.activity
 /*
 * this activity gets the details of a game and show it on the screen*/
 import android.os.Bundle
+import android.text.Editable
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navArgs
@@ -12,15 +15,21 @@ import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
 import com.example.oyunmerkezi3.recycling.VideoAdapter
 import com.example.oyunmerkezi3.recycling.VideoListener
-import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
-import com.example.oyunmerkezi3.utils.toText
+import com.example.oyunmerkezi3.utils.*
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.*
+import com.google.firebase.database.ChildEventListener
+import com.google.firebase.database.DataSnapshot
+import com.google.firebase.database.DatabaseError
+import com.google.firebase.database.DatabaseReference
 
 private var youTubePlayer: YouTubePlayer? = null
 private lateinit var game: Game
+var comments: ArrayList<String> = ArrayList<String>()
 
 class DetailActivity : AppCompatActivity() {
+    private lateinit var mPlaceRef: DatabaseReference
+
     private lateinit var binding: ActivityDetailBinding
     var youTubePlayerFragment: YouTubePlayerFragment? = null
 
@@ -63,6 +72,8 @@ class DetailActivity : AppCompatActivity() {
         binding.playersValue.text = game.playerNo.toText()
         binding.language.text = game.language.toText()
         binding.caption.text = game.caption.toText()
+        downloadCommentsOnThisGame()
+
         title = game.gameName
         binding.game = game
 
@@ -72,6 +83,16 @@ class DetailActivity : AppCompatActivity() {
         })
         binding.videoList.adapter = adapter
         adapter.submitList(game.URL)
+    }
+
+    private fun downloadCommentsOnThisGame() {
+        val mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(game.gameId.toString())
+        mPlaceRef.addChildEventListener(mChildEventListener)
+        mPlaceRef.keepSynced(true)
+    }
+
+    private fun sendMessage(text: Editable?) {
+        mPlaceRef.push().setValue(text.toString())
     }
 
     private fun initializeYoutubePlayer() {
@@ -112,6 +133,42 @@ class DetailActivity : AppCompatActivity() {
             val snackBar = Snackbar
                 .make(binding.root, "disconnected", Snackbar.LENGTH_LONG)
             snackBar.show()
+        }
+    }
+
+    private val mChildEventListener = object : ChildEventListener {
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+            val comment = dataSnapshot.getValue(String::class.java)
+            comment?.let {
+                comments.add(comment)
+                showComments()
+            }
+
+        }
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {}
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
+        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
+        override fun onCancelled(databaseError: DatabaseError) {}
+    }
+
+    private fun showComments() {
+        if (comments.isEmpty()) {
+            binding.commentView.commentEditText.addTextChangedListener {
+                if (binding.commentView.commentEditText.text.isBlank()) {
+                    binding.commentView.sendImageButton.visibility = View.GONE
+
+                } else {
+                    binding.commentView.sendImageButton.visibility = View.VISIBLE
+                    binding.commentView.sendImageButton.setOnClickListener {
+                        sendMessage(binding.commentView.commentEditText.text)
+                    }
+                }
+            }
+        } else {
+            binding.commentView.commentEditText.visibility = View.GONE
+            binding.commentView.commentTextView.visibility = View.VISIBLE
+            binding.commentView.commentTextView.text = comments.first()
         }
     }
 }
