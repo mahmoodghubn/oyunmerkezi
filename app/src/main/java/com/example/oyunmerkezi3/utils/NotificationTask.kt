@@ -12,6 +12,7 @@ import com.example.oyunmerkezi3.database.DownloadedGame
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.database.GameDatabase
 import com.example.oyunmerkezi3.database.GameDatabaseDao
+import com.example.oyunmerkezi3.model.Comment
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -22,7 +23,7 @@ import kotlinx.coroutines.*
 class NotificationTask {
     val newGameNotificationId = "NEW_GAME_NOTIFICATION"
     private val gameChannel = "GAME_CHANNEL"
-    lateinit var context: Context
+    lateinit var context: Context//TODO lateinit property context has not been initialized
     private var job = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + job)
     lateinit var database: GameDatabaseDao
@@ -35,6 +36,15 @@ class NotificationTask {
     }
 
     private fun showNotification(context: Context) {
+//        val comment1 = Comment("good game")
+//        val comment2 = Comment("bad game")
+//        val comment3 = Comment("great game")
+//        val comment4 = Comment("nice game")
+//        val comment = arrayListOf<Comment>(comment1,comment2,comment3,comment4)
+//        val mPlaceRef2 = Utils.databaseRef?.child("comments")!!.child("12")
+//        mPlaceRef2.addChildEventListener(mChildEventListener)
+//        mPlaceRef2.keepSynced(true)
+//        mPlaceRef2.push().setValue(comment)
 
         val platformsArray: Array<String> = context.resources.getStringArray(R.array.platforms)
         val platformSharedPreferences =
@@ -59,13 +69,12 @@ class NotificationTask {
         database = GameDatabase.getInstance(context).gameDatabaseDao
         this.context = context
         createChannel(newGameNotificationId, gameChannel, context)
-
     }
 
     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val platformSharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context)
+                PreferenceManager.getDefaultSharedPreferences(context)//ToDO lateinit property context has not been initialized
             val gson = Gson()
             val json: String? = platformSharedPreferences.getString("last_date", null)
             var lastDate: Date = CalendarUtil(null).getCurrentDate()
@@ -86,7 +95,6 @@ class NotificationTask {
                             Game(downloadedGame)
                         )
                     }
-
                 }
             }
         }

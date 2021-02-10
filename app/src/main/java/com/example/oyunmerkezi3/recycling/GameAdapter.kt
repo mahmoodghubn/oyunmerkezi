@@ -5,7 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
-import androidx.coordinatorlayout.widget.CoordinatorLayout
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -20,12 +19,13 @@ import kotlin.collections.ArrayList
 class GameAdapter(
     private val clickListener: GameListener,
     private val gamesViewModel: GamesViewModel,
-    private val coordinatorLayout: CoordinatorLayout
+    private val view: View
 ) :
     ListAdapter<Game, GameAdapter.ViewHolder>(GameDiffCallback()), Filterable {
 
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(clickListener, getItem(position)!!, gamesViewModel, coordinatorLayout)
+
+        holder.bind(clickListener, getItem(position)!!, gamesViewModel, view)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -38,15 +38,15 @@ class GameAdapter(
             clickListener: GameListener,
             item: Game,
             gamesViewModel: GamesViewModel,
-            coordinatorLayout: CoordinatorLayout
+            view: View
         ) {
 
             binding.sellingCheckBox.isChecked =
-                gamesViewModel.sellingCheckBoxArray.filter { it.gameId == item.gameId }.size == 1
+                gamesViewModel.buyingCheckBoxArray.filter { it.gameId == -item.gameId }.size == 1
             binding.buyingCheckBox.isChecked =
                 gamesViewModel.buyingCheckBoxArray.filter { it.gameId == item.gameId }.size == 1
             binding.sellingCheckBox.setOnClickListener {
-                gamesViewModel.addSoledGame(
+                gamesViewModel.addMiniGame(
                     MiniGame(
                         item.gameId,
                         item.gameName,
@@ -58,20 +58,20 @@ class GameAdapter(
                 )
                 //the default value of the coordinatorLayout -which is the parent of bottom sheet- is gone
                 //we wanna change it when a game selected
-                coordinatorLayout.visibility = View.VISIBLE
+                view.visibility = View.VISIBLE
             }
             binding.buyingCheckBox.setOnClickListener {
-                gamesViewModel.addBoughtGame(
+                gamesViewModel.addMiniGame(
                     MiniGame(
-                        item.gameId,
+                        -item.gameId,
                         item.gameName,
-                        item.buyingPrice,
+                        -item.buyingPrice,
                         item.platform,
                         1,
-                        item.buyingPrice
+                        -item.buyingPrice
                     )
                 )
-                coordinatorLayout.visibility = View.VISIBLE
+                view.visibility = View.VISIBLE
             }
             binding.favoriteImageButton.setOnClickListener {
                 gamesViewModel.setFavorite(item.gameId)

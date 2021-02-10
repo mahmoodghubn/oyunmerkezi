@@ -2,24 +2,22 @@ package com.example.oyunmerkezi3.recycling
 
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.recyclerview.widget.DiffUtil
-import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
-import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.databinding.VideoItemViewBinding
 
+class VideoAdapter(private val clickListener: VideoListener)
+    : RecyclerView.Adapter<VideoAdapter.ViewHolder>(){
 
-class VideoAdapter(private val clickListener: VideoListener) :
-    ListAdapter<String, VideoAdapter.ViewHolder>(VideoDiffCallback()) {
-
-
+    var data = listOf<String>()
+        set(value) {
+            field = value
+            notifyDataSetChanged()
+        }
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
-        holder.bind(clickListener, getItem(position)!!)
+        holder.bind(clickListener, data[position])
     }
 
-
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
-
         return ViewHolder.from(parent)
     }
 
@@ -45,17 +43,7 @@ class VideoAdapter(private val clickListener: VideoListener) :
             }
         }
     }
-
-    class VideoDiffCallback :
-        DiffUtil.ItemCallback<String>() {
-        override fun areItemsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
-        }
-
-        override fun areContentsTheSame(oldItem: String, newItem: String): Boolean {
-            return oldItem == newItem
-        }
-    }
+        override fun getItemCount() = data.size
 }
 
 class VideoListener(val clickListener: (game: String) -> Unit) {

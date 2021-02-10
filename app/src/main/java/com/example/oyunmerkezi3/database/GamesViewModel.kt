@@ -28,7 +28,6 @@ class GamesViewModel(
     var favoriteGames: LiveData<List<Game>?> = database.getAllFavorite(true)
 
     var games2: MediatorLiveData<List<Game>?> = MediatorLiveData<List<Game>?>()
-    val sellingCheckBoxArray = arrayListOf<MiniGame>()
     val buyingCheckBoxArray = arrayListOf<MiniGame>()
     var totalPriceLiveData: MutableLiveData<Int> = MutableLiveData(0)
 
@@ -36,8 +35,7 @@ class GamesViewModel(
         val platformSharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(application)
         //observing the changes in shared preferences and delete data accordingly
-        val sharedPreferenceStringLiveData: SharedPreferenceStringLiveData
-        sharedPreferenceStringLiveData =
+        val sharedPreferenceStringLiveData: SharedPreferenceStringLiveData =
             SharedPreferenceStringLiveData(platformSharedPreferences, "current", "PS4")
         val currentSharedPreferences = sharedPreferenceStringLiveData.getStringLiveData(
             "current",
@@ -234,46 +232,26 @@ class GamesViewModel(
         }
     }
 
-    fun addSoledGame(game: MiniGame) {
-        if (sellingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
-            sellingCheckBoxArray.remove(sellingCheckBoxArray.first { it.gameId == game.gameId })
+    fun addMiniGame(game: MiniGame) {
+        if (buyingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
+            buyingCheckBoxArray.remove(buyingCheckBoxArray.first { it.gameId == game.gameId })
             totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.total)
 
         } else {
-            sellingCheckBoxArray.add(game)
-            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
-        }
-    }
-
-    fun addBoughtGame(game: MiniGame) {
-        if (buyingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
-            buyingCheckBoxArray.remove(buyingCheckBoxArray.first { it.gameId == game.gameId })
-            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.total)
-
-        } else {
             buyingCheckBoxArray.add(game)
-            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
+            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
         }
     }
 
-    fun increaseCount(game: MiniGame, isSelling: Boolean) {
-        if (isSelling) {
-            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
-        } else {
-            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
-        }
+    fun increaseCount(game: MiniGame) {
+        totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
     }
 
-    fun decreasingCount(game: MiniGame, isSelling: Boolean) {
-        if (isSelling) {
-            totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
-        } else {
-            totalPriceLiveData.value = totalPriceLiveData.value!!.plus(game.price)
-        }
+    fun decreasingCount(game: MiniGame) {
+        totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.price)
     }
 
     fun clearTheListOfSelectedGame() {
-        sellingCheckBoxArray.clear()
         buyingCheckBoxArray.clear()
         totalPriceLiveData.value = 0
     }

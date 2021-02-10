@@ -12,11 +12,13 @@ import android.content.Intent
 import android.net.Uri
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
-import android.widget.ListView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
+import com.example.oyunmerkezi3.GamesFragment
 import com.example.oyunmerkezi3.bottomSheet.GamePriceAdapter
 import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.FragmentFavoriteBinding
@@ -26,7 +28,6 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class FavoriteFragment : Fragment() {
     private lateinit var adapter1: GamePriceAdapter
-    private lateinit var adapter2: GamePriceAdapter
     private lateinit var adapter: GameAdapter
     private lateinit var gamesViewModel: GamesViewModel
     override fun onCreateView(
@@ -42,13 +43,11 @@ class FavoriteFragment : Fragment() {
         gamesViewModel = activity.gamesViewModel
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.priceBottomSheet.parentView)
-        val soldGameListView = binding.priceBottomSheet.soldListView
-        val boughtGameListView = binding.priceBottomSheet.boughtListView
+        val soldGameListView = binding.priceBottomSheet.selectedGameRecyclerView
 
         bottomSheetFunction(
             bottomSheetBehavior,
             soldGameListView,
-            boughtGameListView,
             activity,
             binding,
             container
@@ -75,7 +74,6 @@ class FavoriteFragment : Fragment() {
         binding.priceBottomSheet.clearImageButton.setOnClickListener {
             gamesViewModel.clearTheListOfSelectedGame()
             soldGameListView.adapter = null
-            boughtGameListView.adapter = null
 
         }
 
@@ -97,8 +95,7 @@ class FavoriteFragment : Fragment() {
     }
     private fun bottomSheetFunction(
         bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>,
-        listView1: ListView,
-        listView2: ListView,
+        recyclerView: RecyclerView,
         activity: MainActivity,
         binding: FragmentFavoriteBinding,
         container: ViewGroup?
@@ -113,19 +110,13 @@ class FavoriteFragment : Fragment() {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         //inflate the chosen games in the bottom sheet
                         adapter1 = GamePriceAdapter(
-                            requireContext(),
-                            gamesViewModel.sellingCheckBoxArray,
-                            gamesViewModel,
-                            true
+                            gamesViewModel
                         )
-                        listView1.adapter = adapter1
-                        adapter2 = GamePriceAdapter(
-                            requireContext(),
-                            gamesViewModel.buyingCheckBoxArray,
-                            gamesViewModel,
-                            false
-                        )
-                        listView2.adapter = adapter2
+                        val layoutManager = LinearLayoutManager(context)
+                        layoutManager.orientation = LinearLayoutManager.VERTICAL
+                        recyclerView.layoutManager = layoutManager
+                        recyclerView.adapter = adapter1
+                        adapter1.data = gamesViewModel.buyingCheckBoxArray
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
 

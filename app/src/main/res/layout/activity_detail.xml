@@ -39,7 +39,7 @@
                     android:orientation="horizontal"
                     app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
 
-                <androidx.cardview.widget.CardView
+                <androidx.coordinatorlayout.widget.CoordinatorLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content">
 
@@ -194,7 +194,8 @@
                         </FrameLayout>
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
-                </androidx.cardview.widget.CardView>
+
+                </androidx.coordinatorlayout.widget.CoordinatorLayout>
             </LinearLayout>
         </ScrollView>
     </LinearLayout>

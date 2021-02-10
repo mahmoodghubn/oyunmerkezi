@@ -13,26 +13,28 @@ import androidx.navigation.navArgs
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
+import com.example.oyunmerkezi3.model.Comment
 import com.example.oyunmerkezi3.recycling.VideoAdapter
 import com.example.oyunmerkezi3.recycling.VideoListener
-import com.example.oyunmerkezi3.utils.*
+import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
+import com.example.oyunmerkezi3.utils.Utils
+import com.example.oyunmerkezi3.utils.toText
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.youtube.player.*
-import com.google.firebase.database.ChildEventListener
-import com.google.firebase.database.DataSnapshot
-import com.google.firebase.database.DatabaseError
-import com.google.firebase.database.DatabaseReference
+import com.google.android.youtube.player.YouTubeInitializationResult
+import com.google.android.youtube.player.YouTubePlayer
+import com.google.android.youtube.player.YouTubePlayerFragment
+import com.google.firebase.database.*
 
 private var youTubePlayer: YouTubePlayer? = null
 private lateinit var game: Game
-var comments: ArrayList<String> = ArrayList<String>()
 
 class DetailActivity : AppCompatActivity() {
+    var comments: ArrayList<Comment> = arrayListOf<Comment>()
+    //var comments: MutableMap<String, Comment> = mutableMapOf<String, Comment>()
     private lateinit var mPlaceRef: DatabaseReference
 
     private lateinit var binding: ActivityDetailBinding
     var youTubePlayerFragment: YouTubePlayerFragment? = null
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -77,22 +79,83 @@ class DetailActivity : AppCompatActivity() {
         title = game.gameName
         binding.game = game
 
+        if (comments.isNullOrEmpty()) {
+            binding.commentView.commentEditText.addTextChangedListener {
+                if (binding.commentView.commentEditText.text.isBlank()) {
+                    binding.commentView.sendImageButton.visibility = View.GONE
+                } else {
+                    binding.commentView.sendImageButton.visibility = View.VISIBLE
+                    binding.commentView.sendImageButton.setOnClickListener {
+                        sendMessage(binding.commentView.commentEditText.text)
+                        binding.commentView.sendImageButton.visibility = View.GONE
+
+                    }
+                }
+            }
+        }
         initializeYoutubePlayer()
         val adapter = VideoAdapter(VideoListener { url ->
             youTubePlayer?.loadVideo(url)
         })
         binding.videoList.adapter = adapter
-        adapter.submitList(game.URL)
+        adapter.data = game.URL
     }
 
     private fun downloadCommentsOnThisGame() {
-        val mPlaceRef = Utils.databaseRef?.child("platforms")!!.child(game.gameId.toString())
+        mPlaceRef = Utils.databaseRef?.child("comments")!!.child(game.gameId.toString())
         mPlaceRef.addChildEventListener(mChildEventListener)
         mPlaceRef.keepSynced(true)
     }
 
     private fun sendMessage(text: Editable?) {
-        mPlaceRef.push().setValue(text.toString())
+        //TODO the following key could lead to error should look for a solution
+        //TODO we have to look on it after making security so that it may give na error can not edit other comments
+//        comments[{ comments.size + 1 }.toString()] = Comment(text.toString())
+        //TODO make sure that no body will make a comment on the same key
+//        mPlaceRef.updateChildren(comments as Map<String, Any>)
+        comments.add(Comment(text.toString()))
+        mPlaceRef.push().setValue(comments)
+    }
+
+    private val mChildEventListener = object : ChildEventListener {
+        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
+//            val genericTypeIndicator: GenericTypeIndicator<Map<String, Comment>> =
+//                object : GenericTypeIndicator<Map<String, Comment>>() {}
+            val genericTypeIndicator: GenericTypeIndicator<ArrayList<Comment>> =
+                object : GenericTypeIndicator<ArrayList<Comment>>() {}
+            comments = dataSnapshot.getValue(genericTypeIndicator)!!
+            Log.i("mahmoditecomments",comments.toString())
+//            comments = dataSnapshot.getValue(genericTypeIndicator) as MutableMap<String, Comment>
+
+            showCommentLastComment()
+        }
+
+        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {}
+        override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
+        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
+        override fun onCancelled(databaseError: DatabaseError) {}
+    }
+
+    private fun showCommentLastComment() {
+        binding.commentView.commentEditText.visibility = View.GONE
+        binding.commentView.commentTextView.visibility = View.VISIBLE
+        binding.commentView.commentTextView.setOnClickListener {
+            inflateCommentsOnBottomSheet()
+        }
+//           binding.commentView.commentTextView.text = comments["0"]?.message ?: ""
+        binding.commentView.commentTextView.text = comments.maxByOrNull { it.date }!!.message ?: ""
+    }
+
+    private fun inflateCommentsOnBottomSheet(
+    ) {
+        //TODO we may wanna change the arrayList to map
+        //TODO show the bottom sheet
+        //TODO add a comment
+        //TODO make a log in
+        //TODO update the comment by add the name and if the same user add can edit his comment or delete
+        for (item in comments)
+            Log.i("mahmoodite", item?.message ?:"")
+//            Log.i("mahmoodite", item.component2().message)
     }
 
     private fun initializeYoutubePlayer() {
@@ -133,42 +196,6 @@ class DetailActivity : AppCompatActivity() {
             val snackBar = Snackbar
                 .make(binding.root, "disconnected", Snackbar.LENGTH_LONG)
             snackBar.show()
-        }
-    }
-
-    private val mChildEventListener = object : ChildEventListener {
-        override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-            val comment = dataSnapshot.getValue(String::class.java)
-            comment?.let {
-                comments.add(comment)
-                showComments()
-            }
-
-        }
-
-        override fun onChildChanged(dataSnapshot: DataSnapshot, s: String?) {}
-        override fun onChildRemoved(dataSnapshot: DataSnapshot) {}
-        override fun onChildMoved(dataSnapshot: DataSnapshot, s: String?) {}
-        override fun onCancelled(databaseError: DatabaseError) {}
-    }
-
-    private fun showComments() {
-        if (comments.isEmpty()) {
-            binding.commentView.commentEditText.addTextChangedListener {
-                if (binding.commentView.commentEditText.text.isBlank()) {
-                    binding.commentView.sendImageButton.visibility = View.GONE
-
-                } else {
-                    binding.commentView.sendImageButton.visibility = View.VISIBLE
-                    binding.commentView.sendImageButton.setOnClickListener {
-                        sendMessage(binding.commentView.commentEditText.text)
-                    }
-                }
-            }
-        } else {
-            binding.commentView.commentEditText.visibility = View.GONE
-            binding.commentView.commentTextView.visibility = View.VISIBLE
-            binding.commentView.commentTextView.text = comments.first()
         }
     }
 }

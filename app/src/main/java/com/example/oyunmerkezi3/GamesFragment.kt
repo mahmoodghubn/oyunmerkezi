@@ -7,9 +7,9 @@ import android.graphics.Color.GREEN
 import android.graphics.Color.RED
 import android.net.Uri
 import android.os.Bundle
+import android.util.Log
 import android.view.*
 import android.view.GestureDetector.SimpleOnGestureListener
-import android.widget.ListView
 import androidx.appcompat.widget.SearchView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.databinding.DataBindingUtil
@@ -17,6 +17,8 @@ import androidx.fragment.app.Fragment
 import androidx.navigation.findNavController
 import androidx.navigation.fragment.findNavController
 import androidx.navigation.ui.NavigationUI
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.oyunmerkezi3.bottomSheet.GamePriceAdapter
 import com.example.oyunmerkezi3.database.GamesViewModel
 import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
@@ -63,13 +65,12 @@ class GamesFragment : Fragment() {
         val editor: SharedPreferences.Editor = activity.editor
 
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.priceBottomSheet.parentView)
-        val soldGameListView = binding.priceBottomSheet.soldListView
-        val boughtGameListView = binding.priceBottomSheet.boughtListView
+//        bottomSheetBehavior.isDraggable = false
+        val selectedGameRecyclerView = binding.priceBottomSheet.selectedGameRecyclerView
 
         bottomSheetFunction(
             bottomSheetBehavior,
-            soldGameListView,
-            boughtGameListView,
+            selectedGameRecyclerView,
             activity,
             binding,
             container
@@ -93,6 +94,7 @@ class GamesFragment : Fragment() {
                 adapter.submitList(it)
             }
         })
+
         var firstCreation = true
         ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
             activity,
@@ -113,9 +115,7 @@ class GamesFragment : Fragment() {
         })
         binding.priceBottomSheet.clearImageButton.setOnClickListener {
             gamesViewModel.clearTheListOfSelectedGame()
-            soldGameListView.adapter = null
-            boughtGameListView.adapter = null
-
+            selectedGameRecyclerView.adapter = null
         }
 
         //observing the navigateToDetails value in gamesViewModel to navigate to detail view when clicking on a game
@@ -184,8 +184,7 @@ class GamesFragment : Fragment() {
 
     private fun bottomSheetFunction(
         bottomSheetBehavior: BottomSheetBehavior<ConstraintLayout>,
-        listView1: ListView,
-        listView2: ListView,
+        recyclerView: RecyclerView,
         activity: MainActivity,
         binding: FragmentGamesBinding,
         container: ViewGroup?
@@ -200,19 +199,13 @@ class GamesFragment : Fragment() {
                     BottomSheetBehavior.STATE_EXPANDED -> {
                         //inflate the chosen games in the bottom sheet
                         adapter1 = GamePriceAdapter(
-                            requireContext(),
-                            gamesViewModel.sellingCheckBoxArray,
-                            gamesViewModel,
-                            true
+                            gamesViewModel
                         )
-                        listView1.adapter = adapter1
-                        adapter2 = GamePriceAdapter(
-                            requireContext(),
-                            gamesViewModel.buyingCheckBoxArray,
-                            gamesViewModel,
-                            false
-                        )
-                        listView2.adapter = adapter2
+                        val layoutManager = LinearLayoutManager(context)
+                        layoutManager.orientation = LinearLayoutManager.VERTICAL
+                        recyclerView.layoutManager = layoutManager
+                        recyclerView.adapter = adapter1
+                        adapter1.data = gamesViewModel.buyingCheckBoxArray
                     }
                     BottomSheetBehavior.STATE_COLLAPSED -> {
 

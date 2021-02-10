@@ -184,7 +184,7 @@ enum class Platform {
     PS3, PS4, PS5, XBoxOne, XBoxX
 }
 
-class MiniGame(var gameId: Long,var gameName: String , var price: Int,var platform: Platform,var count:Int,var total:Int){
+data class MiniGame(var gameId: Long,var gameName: String , var price: Int,var platform: Platform,var count:Int,var total:Int){
     constructor() : this(
         0,
         "",
