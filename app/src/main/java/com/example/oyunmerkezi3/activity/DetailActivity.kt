@@ -10,15 +10,16 @@ import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.ViewModelProvider
 import androidx.navigation.navArgs
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.oyunmerkezi3.R
 import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
 import com.example.oyunmerkezi3.model.Comment
-import com.example.oyunmerkezi3.recycling.VideoAdapter
-import com.example.oyunmerkezi3.recycling.VideoListener
+import com.example.oyunmerkezi3.recycling.*
 import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
 import com.example.oyunmerkezi3.utils.Utils
 import com.example.oyunmerkezi3.utils.toText
+import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
@@ -30,6 +31,7 @@ private lateinit var game: Game
 
 class DetailActivity : AppCompatActivity() {
     var comments: ArrayList<Comment> = arrayListOf<Comment>()
+
     //var comments: MutableMap<String, Comment> = mutableMapOf<String, Comment>()
     private lateinit var mPlaceRef: DatabaseReference
 
@@ -62,32 +64,33 @@ class DetailActivity : AppCompatActivity() {
             GamesViewModelFactory(dataSource, application)
         val gamesViewModel =
             ViewModelProvider(this, viewModelFactory).get(GamesViewModel::class.java)
-        binding.notificationOnPrice.setOnClickListener {
+        binding.gameProperties.notificationOnPrice.setOnClickListener {
             gamesViewModel.setShowNotification(game.gameId)
 
         }
 
         game = detailActivityArgs.game
 
-        binding.date.text = game.publishedDate.toText()
-        binding.online.text = game.online.toText()
-        binding.playersValue.text = game.playerNo.toText()
-        binding.language.text = game.language.toText()
-        binding.caption.text = game.caption.toText()
+
+        binding.gameProperties.date.text = game.publishedDate.toText()
+        binding.gameProperties.online.text = game.online.toText()
+        binding.gameProperties.playersValue.text = game.playerNo.toText()
+        binding.gameProperties.language.text = game.language.toText()
+        binding.gameProperties.caption.text = game.caption.toText()
         downloadCommentsOnThisGame()
 
         title = game.gameName
-        binding.game = game
+        binding.gameProperties.game = game
 
         if (comments.isNullOrEmpty()) {
-            binding.commentView.commentEditText.addTextChangedListener {
-                if (binding.commentView.commentEditText.text.isBlank()) {
-                    binding.commentView.sendImageButton.visibility = View.GONE
+            binding.gameProperties.commentView.commentEditText.addTextChangedListener {
+                if (binding.gameProperties.commentView.commentEditText.text.isBlank()) {
+                    binding.gameProperties.commentView.sendImageButton.visibility = View.GONE
                 } else {
-                    binding.commentView.sendImageButton.visibility = View.VISIBLE
-                    binding.commentView.sendImageButton.setOnClickListener {
-                        sendMessage(binding.commentView.commentEditText.text)
-                        binding.commentView.sendImageButton.visibility = View.GONE
+                    binding.gameProperties.commentView.sendImageButton.visibility = View.VISIBLE
+                    binding.gameProperties.commentView.sendImageButton.setOnClickListener {
+                        sendMessage(binding.gameProperties.commentView.commentEditText.text)
+                        binding.gameProperties.commentView.sendImageButton.visibility = View.GONE
 
                     }
                 }
@@ -97,7 +100,7 @@ class DetailActivity : AppCompatActivity() {
         val adapter = VideoAdapter(VideoListener { url ->
             youTubePlayer?.loadVideo(url)
         })
-        binding.videoList.adapter = adapter
+        binding.gameProperties.videoList.adapter = adapter
         adapter.data = game.URL
     }
 
@@ -110,23 +113,16 @@ class DetailActivity : AppCompatActivity() {
     private fun sendMessage(text: Editable?) {
         //TODO the following key could lead to error should look for a solution
         //TODO we have to look on it after making security so that it may give na error can not edit other comments
-//        comments[{ comments.size + 1 }.toString()] = Comment(text.toString())
         //TODO make sure that no body will make a comment on the same key
-//        mPlaceRef.updateChildren(comments as Map<String, Any>)
         comments.add(Comment(text.toString()))
         mPlaceRef.push().setValue(comments)
     }
 
     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
-//            val genericTypeIndicator: GenericTypeIndicator<Map<String, Comment>> =
-//                object : GenericTypeIndicator<Map<String, Comment>>() {}
             val genericTypeIndicator: GenericTypeIndicator<ArrayList<Comment>> =
                 object : GenericTypeIndicator<ArrayList<Comment>>() {}
             comments = dataSnapshot.getValue(genericTypeIndicator)!!
-            Log.i("mahmoditecomments",comments.toString())
-//            comments = dataSnapshot.getValue(genericTypeIndicator) as MutableMap<String, Comment>
-
             showCommentLastComment()
         }
 
@@ -137,24 +133,37 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun showCommentLastComment() {
-        binding.commentView.commentEditText.visibility = View.GONE
-        binding.commentView.commentTextView.visibility = View.VISIBLE
-        binding.commentView.commentTextView.setOnClickListener {
+        binding.gameProperties.commentView.commentEditText.visibility = View.GONE
+        binding.gameProperties.commentView.commentTextView.visibility = View.VISIBLE
+        binding.gameProperties.commentView.commentTextView.setOnClickListener {
             inflateCommentsOnBottomSheet()
         }
-//           binding.commentView.commentTextView.text = comments["0"]?.message ?: ""
-        binding.commentView.commentTextView.text = comments.maxByOrNull { it.date }!!.message ?: ""
+        binding.gameProperties.commentView.commentTextView.text =
+            comments.maxByOrNull { it.date }!!.message ?: ""
     }
 
     private fun inflateCommentsOnBottomSheet(
     ) {
         //TODO we may wanna change the arrayList to map
-        //TODO show the bottom sheet
         //TODO add a comment
         //TODO make a log in
         //TODO update the comment by add the name and if the same user add can edit his comment or delete
+        val bottomSheetBehavior = BottomSheetBehavior.from(binding.commentsBottomSheet.bottomSheetView)
+        bottomSheetBehavior.isDraggable = false
+        binding.commentsBottomSheet.root.visibility = View.VISIBLE
+        val adapter1 = CommentAdapter(
+            CommentListener { }//game -> gamesViewModel.onGameClicked(game) }
+        )
+        val layoutManager = LinearLayoutManager(application)
+        layoutManager.orientation = LinearLayoutManager.VERTICAL
+        binding.commentsBottomSheet.commentList.layoutManager = layoutManager
+        binding.commentsBottomSheet.commentList.adapter = adapter1
+        //        bottomSheetBehavior.isDraggable = false
+
+        adapter1.submitList(comments)
         for (item in comments)
-            Log.i("mahmoodite", item?.message ?:"")
+            Log.i("mahmoodite0", item.message)
+
 //            Log.i("mahmoodite", item.component2().message)
     }
 
