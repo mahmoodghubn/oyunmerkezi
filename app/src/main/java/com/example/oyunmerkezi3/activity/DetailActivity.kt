@@ -1,10 +1,13 @@
 package com.example.oyunmerkezi3.activity
 /*
 * this activity gets the details of a game and show it on the screen*/
+
 import android.os.Bundle
 import android.text.Editable
+import android.text.method.ScrollingMovementMethod
 import android.util.Log
 import android.view.View
+import android.widget.Scroller
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.widget.addTextChangedListener
 import androidx.databinding.DataBindingUtil
@@ -19,12 +22,12 @@ import com.example.oyunmerkezi3.recycling.*
 import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
 import com.example.oyunmerkezi3.utils.Utils
 import com.example.oyunmerkezi3.utils.toText
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
 import com.google.firebase.database.*
+
 
 private var youTubePlayer: YouTubePlayer? = null
 private lateinit var game: Game
@@ -32,7 +35,6 @@ private lateinit var game: Game
 class DetailActivity : AppCompatActivity() {
     var comments: ArrayList<Comment> = arrayListOf<Comment>()
 
-    //var comments: MutableMap<String, Comment> = mutableMapOf<String, Comment>()
     private lateinit var mPlaceRef: DatabaseReference
 
     private lateinit var binding: ActivityDetailBinding
@@ -70,7 +72,6 @@ class DetailActivity : AppCompatActivity() {
         }
 
         game = detailActivityArgs.game
-
 
         binding.gameProperties.date.text = game.publishedDate.toText()
         binding.gameProperties.online.text = game.online.toText()
@@ -144,27 +145,41 @@ class DetailActivity : AppCompatActivity() {
 
     private fun inflateCommentsOnBottomSheet(
     ) {
-        //TODO we may wanna change the arrayList to map
-        //TODO add a comment
         //TODO make a log in
         //TODO update the comment by add the name and if the same user add can edit his comment or delete
-        val bottomSheetBehavior = BottomSheetBehavior.from(binding.commentsBottomSheet.bottomSheetView)
-        bottomSheetBehavior.isDraggable = false
         binding.commentsBottomSheet.root.visibility = View.VISIBLE
+        binding.gameProperties.root.visibility = View.GONE
         val adapter1 = CommentAdapter(
-            CommentListener { }//game -> gamesViewModel.onGameClicked(game) }
+            CommentListener { }
         )
         val layoutManager = LinearLayoutManager(application)
         layoutManager.orientation = LinearLayoutManager.VERTICAL
         binding.commentsBottomSheet.commentList.layoutManager = layoutManager
         binding.commentsBottomSheet.commentList.adapter = adapter1
-        //        bottomSheetBehavior.isDraggable = false
-
         adapter1.submitList(comments)
-        for (item in comments)
-            Log.i("mahmoodite0", item.message)
+        binding.commentsBottomSheet.commentEditText.setScroller(Scroller(requireNotNull(this).application))
+        binding.commentsBottomSheet.commentEditText.maxLines = 1
+        binding.commentsBottomSheet.commentEditText.isVerticalScrollBarEnabled = true
+        binding.commentsBottomSheet.commentEditText.movementMethod = ScrollingMovementMethod()
+        binding.commentsBottomSheet.hide.setOnClickListener {
+            binding.commentsBottomSheet.root.visibility = View.GONE
+            binding.gameProperties.root.visibility = View.VISIBLE
 
-//            Log.i("mahmoodite", item.component2().message)
+        }
+        binding.commentsBottomSheet.commentEditText.addTextChangedListener {
+            if (binding.commentsBottomSheet.commentEditText.text.isBlank()) {
+                binding.commentsBottomSheet.sendImageButton.visibility = View.GONE
+            } else {
+                binding.commentsBottomSheet.sendImageButton.visibility = View.VISIBLE
+                binding.commentsBottomSheet.sendImageButton.setOnClickListener {
+                    sendMessage(binding.commentsBottomSheet.commentEditText.text)
+                    adapter1.notifyDataSetChanged()
+                    binding.commentsBottomSheet.commentEditText.text.clear()
+                    binding.commentsBottomSheet.sendImageButton.visibility = View.GONE
+
+                }
+            }
+        }
     }
 
     private fun initializeYoutubePlayer() {
