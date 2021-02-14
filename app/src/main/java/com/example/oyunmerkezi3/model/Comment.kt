@@ -4,9 +4,10 @@ import java.util.*
 
 data class Comment(
     var message: String,
+    var userId:String,
     var date: Date
 ) {
-    constructor() : this("",Calendar.getInstance().time)
+    constructor() : this("","",Calendar.getInstance().time)
 
-    constructor(message: String) : this(message,Calendar.getInstance().time)
+    constructor(userId: String,message: String) : this(message,userId,Calendar.getInstance().time)
 }
