@@ -11,7 +11,7 @@ import com.google.android.youtube.player.YouTubeThumbnailView
 fun YouTubeThumbnailView.setVideoURL(item: String?) {
     item?.let {
         this.initialize(
-            "AIzaSyCbfkNTBYJp0JEp8hM4J0TCEm_EcnIvwig",
+            "YOUTUBE_API",
             object : YouTubeThumbnailView.OnInitializedListener {
                 override fun onInitializationSuccess(
                     youTubeThumbnailView: YouTubeThumbnailView,
