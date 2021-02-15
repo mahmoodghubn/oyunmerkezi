@@ -197,7 +197,7 @@ class DetailActivity : AppCompatActivity() {
             fragmentManager.findFragmentById(R.id.youtube_player_fragment) as YouTubePlayerFragment
         if (youTubePlayerFragment == null) return
         youTubePlayerFragment!!.initialize(
-            "AIzaSyCbfkNTBYJp0JEp8hM4J0TCEm_EcnIvwig",
+            "YOUTUBE_API",
             object : YouTubePlayer.OnInitializedListener {
                 override fun onInitializationSuccess(
                     provider: YouTubePlayer.Provider, player: YouTubePlayer,
