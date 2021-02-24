@@ -32,7 +32,7 @@ data class DownloadedGame(
     var age: Int = 3,
 
     @ColumnInfo
-    var gameRating: Float = 0F,
+    var gameRating: List<Int>,
 
     @ColumnInfo
     var stock: Boolean = false,
@@ -69,7 +69,7 @@ data class DownloadedGame(
         emptyList(),
         "",
         3,
-        0F,
+        listOf(),
         false,
         1,
         Date(1990, 1, 1),

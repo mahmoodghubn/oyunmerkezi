@@ -9,12 +9,20 @@
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
         android:theme="@style/Theme.OyunMerkezi3">
-        <activity android:name=".activity.DetailActivity"
+        <activity
+            android:name=".activity.CommentActivity"
+            android:label="@string/title_activity_comment"
+            android:theme="@style/Theme.OyunMerkezi3.NoActionBar"
+            android:parentActivityName=".activity.DetailActivity">
+
+        </activity>
+        <activity
+            android:name=".activity.DetailActivity"
             android:parentActivityName=".MainActivity">
+
             <!-- Parent activity meta-data to support 4.0 and lower -->
 
-
-            </activity>
+        </activity>
         <activity
             android:name=".MainActivity"
             android:launchMode="singleTop">
@@ -27,10 +35,9 @@
 
         <service
             android:name=".service.NotificationService"
-            android:launchMode="singleTop"
             android:exported="false"
+            android:launchMode="singleTop"
             android:permission="android.permission.BIND_JOB_SERVICE" />
-
     </application>
 
 </manifest>

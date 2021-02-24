@@ -32,7 +32,7 @@ data class Game(
     var age: Int = 3,
 
     @ColumnInfo
-    var gameRating: Float = 0F,
+    var gameRating: Float = 0f,
 
     @ColumnInfo
     var stock: Boolean = false,
@@ -75,7 +75,7 @@ data class Game(
         emptyList(),
         "",
         3,
-        0F,
+        0f,
         false,
         1,
         Date(1990, 1, 1),
@@ -96,7 +96,7 @@ data class Game(
         game.URL,
         game.about,
         game.age,
-        game.gameRating,
+        getRating(game.gameRating),
         game.stock,
         game.hours,
         game.publishedDate,
@@ -117,7 +117,7 @@ data class Game(
         game.URL,
         game.about,
         game.age,
-        game.gameRating,
+        getRating(game.gameRating),
         game.stock,
         game.hours,
         game.publishedDate,
@@ -193,4 +193,16 @@ data class MiniGame(var gameId: Long,var gameName: String , var price: Int,var p
         0,
         0
     )
+}
+
+private fun getRating(rateList: List<Int>): Float {
+    val numberOfRater: Int = rateList.sum()
+    var totalRating: Long = 0
+    for ((index, item) in rateList.withIndex())
+        totalRating += item * (index + 1)
+    return if (numberOfRater != 0)
+        totalRating.toFloat().div(numberOfRater)
+    else
+        0f
+
 }

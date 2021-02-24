@@ -84,6 +84,14 @@ class GameAdapter(
             else
                 binding.favoriteImageButton.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
+            binding.notificationImageButton.setOnClickListener {
+                gamesViewModel.setShowNotification(item.gameId)
+            }
+            if (item.showNotification)
+                binding.notificationImageButton.setImageResource(R.drawable.ic_baseline_doorbell_24)
+            else
+                binding.notificationImageButton.setImageResource(R.drawable.ic_baseline_circle_notifications_24)
+
             binding.game = item
             binding.clickListener = clickListener
             binding.executePendingBindings()

@@ -1,6 +1,7 @@
 package com.example.oyunmerkezi3.recycling
 
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
@@ -26,7 +27,6 @@ class CommentAdapter(
             clickListener: CommentListener,
             item: Comment
         ) {
-
             binding.comment = item
             binding.executePendingBindings()
         }

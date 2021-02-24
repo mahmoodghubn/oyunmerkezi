@@ -12,7 +12,6 @@ import com.example.oyunmerkezi3.database.DownloadedGame
 import com.example.oyunmerkezi3.database.Game
 import com.example.oyunmerkezi3.database.GameDatabase
 import com.example.oyunmerkezi3.database.GameDatabaseDao
-import com.example.oyunmerkezi3.model.Comment
 import com.google.firebase.database.ChildEventListener
 import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
@@ -36,16 +35,6 @@ class NotificationTask {
     }
 
     private fun showNotification(context: Context) {
-//        val comment1 = Comment("good game")
-//        val comment2 = Comment("bad game")
-//        val comment3 = Comment("great game")
-//        val comment4 = Comment("nice game")
-//        val comment = arrayListOf<Comment>(comment1,comment2,comment3,comment4)
-//        val mPlaceRef2 = Utils.databaseRef?.child("comments")!!.child("12")
-//        mPlaceRef2.addChildEventListener(mChildEventListener)
-//        mPlaceRef2.keepSynced(true)
-//        mPlaceRef2.push().setValue(comment)
-
         val platformsArray: Array<String> = context.resources.getStringArray(R.array.platforms)
         val platformSharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
