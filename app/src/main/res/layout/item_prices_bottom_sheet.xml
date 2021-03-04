@@ -11,89 +11,118 @@
 
 
     <androidx.cardview.widget.CardView
+        android:layout_marginTop="8dp"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:cardCornerRadius="10dp">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            android:padding="8dp">
+
+            <TextView
+                android:id="@+id/game_name"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textStyle="bold"
+                android:paddingBottom="8dp"
+                android:layout_marginStart="8dp"
+                android:textColor="@color/white_red"
+                android:fontFamily="monospace"
+                android:textSize="18sp"
+                app:gameName="@{game}"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
 
             <TextView
                 android:id="@+id/platform"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:fontFamily="monospace"
+                android:layout_marginStart="8dp"
                 app:platform="@{game}"
+                android:textColor="@color/white_red"
+                android:textStyle="bold"
+                android:textSize="18sp"
+                android:paddingBottom="8dp"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toBottomOf="@id/game_name" />
 
             <TextView
-                android:id="@+id/game_name"
+                android:id="@+id/game_price"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:textStyle="bold"
                 android:layout_marginStart="8dp"
+                android:textColor="@color/white_red"
+                android:layout_height="wrap_content"
+                android:layout_marginEnd="8dp"
+                android:textSize="18sp"
+                android:paddingBottom="8dp"
                 android:fontFamily="monospace"
-                app:gameName="@{game}"
+                app:price="@{game}"
                 app:layout_constraintStart_toEndOf="@id/platform"
-                app:layout_constraintTop_toTopOf="parent" />
+                app:layout_constraintTop_toTopOf="@id/platform" />
+
+
 
             <ImageButton
                 android:id="@+id/close_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="8dp"
+                android:padding="16dp"
                 android:adjustViewBounds="true"
                 android:background="?android:selectableItemBackground"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintTop_toTopOf="parent"
-                app:srcCompat="@drawable/ic_baseline_close_24" />
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:srcCompat="@drawable/ic_baseline_delete_24" />
 
-            <TextView
-                android:id="@+id/game_price"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="8dp"
-                android:fontFamily="monospace"
-                app:price="@{game}"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/platform" />
 
             <ImageButton
                 android:id="@+id/remove_image_button"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="16dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:background="?android:selectableItemBackground"
-                app:layout_constraintStart_toEndOf="@id/platform"
+                app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/platform"
-                app:srcCompat="@drawable/ic_baseline_remove_24" />
+                app:srcCompat="@drawable/ic_baseline_remove_circle_outline_24" />
 
             <TextView
                 android:id="@+id/count"
                 android:layout_width="wrap_content"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
+                android:textColor="@color/white_red"
                 android:layout_marginStart="16dp"
+                android:layout_marginEnd="16dp"
                 app:count="@{game}"
+                android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@id/remove_image_button"
                 app:layout_constraintTop_toBottomOf="@id/platform" />
 
             <ImageButton
                 android:id="@+id/add_image_button"
                 android:layout_width="wrap_content"
-                android:layout_marginStart="16dp"
+                android:paddingStart="16dp"
+                android:paddingEnd="16dp"
                 android:layout_height="wrap_content"
                 android:background="?android:selectableItemBackground"
                 app:layout_constraintStart_toEndOf="@id/count"
                 app:layout_constraintTop_toBottomOf="@id/platform"
-                app:srcCompat="@drawable/ic_baseline_add_24" />
+                app:srcCompat="@drawable/ic_baseline_add_circle_outline_24" />
 
             <TextView
                 android:id="@+id/sub_total"
                 android:layout_width="wrap_content"
+                android:textStyle="bold"
                 android:layout_height="wrap_content"
                 android:layout_marginStart="16dp"
                 app:total="@{game}"
+                android:textColor="@color/white_red"
+                android:textSize="18sp"
                 app:layout_constraintStart_toEndOf="@+id/add_image_button"
                 app:layout_constraintTop_toBottomOf="@id/platform" />
 

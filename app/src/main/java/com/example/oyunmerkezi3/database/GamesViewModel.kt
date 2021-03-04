@@ -138,84 +138,88 @@ class GamesViewModel(
     private fun filter2(gameFilter: GameFilter?, games: List<Game>): List<Game>? {
 
         var localListGame: List<Game>? = games
-
-        gameFilter?.minPrice?.let {
-            localListGame = games.filter { it.sellingPrice >= gameFilter.minPrice }
-        }
-
-        gameFilter?.maxPrice?.let {
-            localListGame = localListGame?.filter { it.sellingPrice <= gameFilter.maxPrice }
-        }
-
-        gameFilter?.minHours?.let {
-            localListGame = localListGame?.filter { it.hours >= gameFilter.minHours }
-        }
-
-        gameFilter?.maxHours?.let {
-            localListGame = localListGame?.filter { it.hours <= gameFilter.maxHours }
-        }
-
-        gameFilter?.age?.let {
-            localListGame = localListGame?.filter { it.age <= gameFilter.age }
-        }
-
-        gameFilter?.playersNo?.let {
-            localListGame = localListGame?.filter { gameFilter.playersNo in it.playerNo }
-        }
-
-        gameFilter?.inStock?.let {
-            localListGame = localListGame?.filter { it.stock == gameFilter.inStock }
-        }
-
-        gameFilter?.online?.let {
-            localListGame = localListGame?.filter {
-                it.online == Online.Offline || it.online == Online.Both
+        gameFilter?.let { item ->
+            item.minPrice?.let { pr ->
+                localListGame = games.filter { it.sellingPrice >= pr }
             }
-        }
 
-        gameFilter?.language?.let {
-            localListGame = localListGame?.filter { gameFilter.language in it.language }
-        }
+            item.maxPrice?.let { pr ->
+                localListGame = localListGame?.filter { it.sellingPrice <= pr }
+            }
 
-        gameFilter?.category?.let {
-            localListGame = localListGame?.filter { it.category == gameFilter.category }
-        }
+            item.minHours?.let { pr ->
+                localListGame = localListGame?.filter { it.hours >= pr }
+            }
 
-        gameFilter?.gameRate?.let {
-            localListGame = localListGame?.filter { it.gameRating >= gameFilter.gameRate }
-        }
+            item.maxHours?.let { pr ->
+                localListGame = localListGame?.filter { it.hours <= pr }
+            }
 
-        gameFilter?.publishDate?.let {
-            val cal = CalendarUtil(gameFilter.publishDate)
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+            item.age?.let { pr ->
+                localListGame = localListGame?.filter { it.age <= pr }
+            }
+
+            item.playersNo?.let { pr ->
+                localListGame = localListGame?.filter { pr in it.playerNo }
+            }
+
+            item.inStock?.let { pr ->
+                localListGame = localListGame?.filter { it.stock == pr }
+            }
+
+            item.online?.let {
                 localListGame = localListGame?.filter {
-                    LocalDate.of(
-                        it.publishedDate.year,
-                        it.publishedDate.month,
-                        it.publishedDate.day
-                    ) >= LocalDate.of(
-                        cal.dateBefore().year,
-                        cal.dateBefore().month,
-                        cal.dateBefore().day
-                    )
+                    it.online == Online.Offline || it.online == Online.Both
                 }
-            else
-                localListGame = localListGame?.filter {
-                    java.util.Date(
-                        it.publishedDate.year,
-                        it.publishedDate.month,
-                        it.publishedDate.day
-                    ) >= java.util.Date(
-                        cal.dateBefore().year,
-                        cal.dateBefore().month,
-                        cal.dateBefore().day
-                    )
-                }
+            }
+
+            item.language?.let { pr ->
+                localListGame = localListGame?.filter { pr in it.language }
+            }
+
+            item.category?.let { pr ->
+                localListGame = localListGame?.filter { it.category == pr }
+            }
+
+            item.gameRate?.let { pr ->
+                localListGame = localListGame?.filter { it.gameRating >= pr }
+            }
+
+            item.publishDate?.let { pr ->
+                val cal = CalendarUtil(pr)
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O)
+                    localListGame = localListGame?.filter {
+                        LocalDate.of(
+                            it.publishedDate.year,
+                            it.publishedDate.month,
+                            it.publishedDate.day
+                        ) >= LocalDate.of(
+                            cal.dateBefore().year,
+                            cal.dateBefore().month,
+                            cal.dateBefore().day
+                        )
+                    }
+                else
+                    localListGame = localListGame?.filter {
+                        java.util.Date(
+                            it.publishedDate.year,
+                            it.publishedDate.month,
+                            it.publishedDate.day
+                        ) >= java.util.Date(
+                            cal.dateBefore().year,
+                            cal.dateBefore().month,
+                            cal.dateBefore().day
+                        )
+                    }
+            }
+
+            item.orderBy?.let {
+                localListGame = orderBy(it, localListGame)
+            }
+
         }
 
-        gameFilter?.orderBy?.let {
-            localListGame = orderBy(it, localListGame)
-        }
+
 
         return localListGame
     }
@@ -233,7 +237,7 @@ class GamesViewModel(
     }
 
     fun addMiniGame(game: MiniGame) {
-        if (buyingCheckBoxArray.filter { it.gameId == game.gameId }.size == 1) {
+        if (buyingCheckBoxArray.any { it.gameId == game.gameId }) {
             buyingCheckBoxArray.remove(buyingCheckBoxArray.first { it.gameId == game.gameId })
             totalPriceLiveData.value = totalPriceLiveData.value!!.minus(game.total)
 

@@ -5,9 +5,11 @@ import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
 import android.net.ConnectivityManager
+import android.util.Log
 import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.*
+import androidx.localbroadcastmanager.content.LocalBroadcastManager
 import com.example.oyunmerkezi3.database.Game
 
 abstract class ConnectionBroadcastReceiver : BroadcastReceiver() {
@@ -27,15 +29,24 @@ abstract class ConnectionBroadcastReceiver : BroadcastReceiver() {
                         isRegistered = true
                         registerWithoutAutoUnregister(applicationContext, connectionBroadcastReceiver)
                         fragment.lifecycle.addObserver(object : LifecycleObserver {
-                            @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                            fun onDestroy() {
-                                applicationContext.unregisterReceiver(connectionBroadcastReceiver)
+                            @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                            fun onPause() {
+                                try {
+                                    applicationContext.unregisterReceiver(connectionBroadcastReceiver)
+                                } catch (e: IllegalArgumentException) {
+                                    // Check wether we are in debug mode
+                                    e.printStackTrace()
+                                }
                             }
                         })
                     }else if (isRegistered){
                         isRegistered = false
-                        applicationContext.unregisterReceiver(connectionBroadcastReceiver)
-                    }
+                        try {
+                            applicationContext.unregisterReceiver(connectionBroadcastReceiver)
+                        } catch (e: IllegalArgumentException) {
+                            // Check wether we are in debug mode
+                            e.printStackTrace()
+                        }                    }
                 }
             })
 
@@ -46,9 +57,15 @@ abstract class ConnectionBroadcastReceiver : BroadcastReceiver() {
         fun registerToActivityAndAutoUnregister(activity: AppCompatActivity, connectionBroadcastReceiver: ConnectionBroadcastReceiver) {
             registerWithoutAutoUnregister(activity, connectionBroadcastReceiver)
             activity.lifecycle.addObserver(object : LifecycleObserver {
-                @OnLifecycleEvent(Lifecycle.Event.ON_DESTROY)
-                fun onDestroy() {
-                    activity.unregisterReceiver(connectionBroadcastReceiver)
+                @OnLifecycleEvent(Lifecycle.Event.ON_PAUSE)
+                fun onPause() {
+                    try {
+                        activity.unregisterReceiver(connectionBroadcastReceiver)
+                    } catch (e: IllegalArgumentException) {
+                        // Check wether we are in debug mode
+                            e.printStackTrace()
+                    }
+//                    activity.unregisterReceiver(connectionBroadcastReceiver)
                 }
             })
         }

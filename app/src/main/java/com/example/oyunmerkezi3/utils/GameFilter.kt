@@ -14,7 +14,6 @@ data class GameFilter(
     val age: Int?,
     val playersNo: Int?,
     val online: Boolean?,
-    val favorite: Boolean?,
     val inStock: Boolean?,
     val gameRate: Float?,
     val category: Category?,

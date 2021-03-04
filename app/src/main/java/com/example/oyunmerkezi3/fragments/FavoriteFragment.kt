@@ -10,7 +10,6 @@ import com.example.oyunmerkezi3.R
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.Observer
 import androidx.navigation.fragment.findNavController
-import com.example.oyunmerkezi3.bottomSheet.GamePriceAdapter
 import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.FragmentFavoriteBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
@@ -18,7 +17,6 @@ import com.example.oyunmerkezi3.recycling.GameListener
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 
 class FavoriteFragment : Fragment() {
-    private lateinit var adapter1: GamePriceAdapter
     private lateinit var adapter: GameAdapter
     private lateinit var gamesViewModel: GamesViewModel
     override fun onCreateView(
@@ -54,8 +52,14 @@ class FavoriteFragment : Fragment() {
         binding.gameList.adapter = adapter
         gamesViewModel.favoriteGames.observe(viewLifecycleOwner, Observer {
             it?.let {
-                adapter.submitList(it)
-            }
+                if (it.isEmpty()){
+                    binding.gameList.visibility = View.GONE
+                    binding.emptyListTextView.visibility = View.VISIBLE
+                }else {
+                    binding.emptyListTextView.visibility = View.GONE
+                    binding.gameList.visibility = View.VISIBLE
+                    adapter.submitList(it)
+                }            }
         })
         gamesViewModel.totalPriceLiveData.observe(viewLifecycleOwner, Observer {
             it?.let {
@@ -80,11 +84,6 @@ class FavoriteFragment : Fragment() {
         })
 
         binding.lifecycleOwner = this
-
         return binding.root
-
     }
-
 }
-
-

@@ -30,13 +30,13 @@
     <string name="cheap">lower price</string>
     <string name="order_by">order by</string>
     <string name="high_rate">high rate</string>
-    <string name="price">price</string>
+    <string name="price">price:</string>
     <string name="minimum">minimum</string>
     <string name="maximum">maximum</string>
-    <string name="age">age</string>
+    <string name="age">age:</string>
     <string name="age3">18</string>
-    <string name="hours2">hours</string>
-    <string name="players">players</string>
+    <string name="hours2">hours:</string>
+    <string name="players">players:</string>
     <string name="players_">2</string>
     <string name="offline">only offline</string>
     <string name="in_stock">in stock</string>
@@ -79,4 +79,7 @@
     <string name="hello_first_fragment">Hello first fragment</string>
     <string name="hello_second_fragment">Hello second fragment. Arg: %1$s</string>
     <string name="delete">delete</string>
+    <string name="title_activity_good">GoodActivity</string>
+    <string name="internet_status">internet status</string>
+    <string name="stock_status">stock status</string>
 </resources>

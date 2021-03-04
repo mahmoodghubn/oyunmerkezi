@@ -29,14 +29,15 @@ import com.google.firebase.auth.ktx.auth
 import com.google.firebase.database.*
 import com.google.firebase.ktx.Firebase
 
+
 lateinit var game: Game
 lateinit var mPlaceRef: DatabaseReference
+var rateList = arrayListOf(0, 0, 0, 0, 0)
 
 class DetailActivity : AppCompatActivity() {
     private var youTubePlayer: YouTubePlayer? = null
     var youTubePlayerFragment: YouTubePlayerFragment? = null
     var outerRating: Float = 0F
-    val rateList = arrayListOf(0, 0, 0, 0, 0)
     var user: FirebaseUser? = null
     private var userComment: Comment? = null
     var comments: MutableMap<String, Comment> = mutableMapOf()
@@ -87,27 +88,37 @@ class DetailActivity : AppCompatActivity() {
     }
 
     private fun downloadCommentsOnThisGame() {
+        rateList = arrayListOf(0, 0, 0, 0, 0)
         mPlaceRef = Utils.databaseRef?.child("comments")!!.child(game.gameId.toString())
         mPlaceRef.addValueEventListener(postListener)
         mPlaceRef.keepSynced(true)
     }
 
+    //TODO this listener is not necessary and can removed
     private val postListener = object : ValueEventListener {
         override fun onDataChange(dataSnapshot: DataSnapshot) {
             // Get Post object and use the values to update the UI
+            commentList = arrayListOf<Comment>()
+            rateList = arrayListOf(0, 0, 0, 0, 0)
             user = Firebase.auth.currentUser
             for (item in dataSnapshot.children.withIndex()) {
                 val downloadedComment = item.value.getValue(Comment::class.java)!!
+//                if (commentList.none { it.userId == downloadedComment.userId }) {
+                    rateList[downloadedComment.gameRate - 1]++
+//                }
+
                 if (downloadedComment.userId == user?.uid) {
                     userComment = downloadedComment
 
                 } else if (downloadedComment.message != "") {
                     comments[item.value.key!!] = downloadedComment
-                    if (commentList.none { it.userId == downloadedComment.userId })
+//                    if (commentList.none { it.userId == downloadedComment.userId })
                         commentList.add(item.value.getValue(Comment::class.java)!!)
                 }
-                rateList[downloadedComment.gameRate - 1]++
+
             }
+            if (rateList.sum() > 0)
+                binding.gameProperties.totalRaters.text = "${rateList.sum()} rater(s)"
             showUserComment()
         }
 
@@ -157,7 +168,7 @@ class DetailActivity : AppCompatActivity() {
             }
             val profile = binding.gameProperties.userCommentView.commentView.profileImage
             user?.photoUrl.let {
-                Glide.with(this).load(it).error(R.drawable.ic_baseline_face_24)
+                Glide.with(applicationContext).load(it).error(R.drawable.ic_baseline_face_24)
                     .apply(RequestOptions.circleCropTransform()).into(profile)
             }
         } else {
@@ -221,7 +232,7 @@ class DetailActivity : AppCompatActivity() {
         }
         val userprofile = binding.gameProperties.commentView.commentView.profileImage
         lastComment.photoUri?.let {
-            Glide.with(this).load(it).error(R.drawable.ic_baseline_face_24)
+            Glide.with(applicationContext).load(it).error(R.drawable.ic_baseline_face_24)
                 .apply(RequestOptions.circleCropTransform()).into(userprofile)
         }
     }
@@ -258,8 +269,11 @@ class DetailActivity : AppCompatActivity() {
                     if (!wasRestored) {
                         youTubePlayer = player
                         //set the player style default
-                        youTubePlayer!!.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
-                        youTubePlayer!!.loadVideos(game.URL)
+                        youTubePlayer?.let {
+                            it.setPlayerStyle(YouTubePlayer.PlayerStyle.DEFAULT)
+                            it.loadVideos(game.URL)
+                            it.setShowFullscreenButton(false)
+                        }
                     }
                 }
 

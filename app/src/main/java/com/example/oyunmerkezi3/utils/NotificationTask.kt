@@ -22,7 +22,7 @@ import kotlinx.coroutines.*
 class NotificationTask {
     val newGameNotificationId = "NEW_GAME_NOTIFICATION"
     private val gameChannel = "GAME_CHANNEL"
-    lateinit var context: Context//TODO lateinit property context has not been initialized
+    lateinit var context: Context
     private var job = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + job)
     lateinit var database: GameDatabaseDao
@@ -35,6 +35,9 @@ class NotificationTask {
     }
 
     private fun showNotification(context: Context) {
+        this.context = context
+        database = GameDatabase.getInstance(context).gameDatabaseDao
+
         val platformsArray: Array<String> = context.resources.getStringArray(R.array.platforms)
         val platformSharedPreferences =
             PreferenceManager.getDefaultSharedPreferences(context)
@@ -55,15 +58,13 @@ class NotificationTask {
             mPlaceRef[index].keepSynced(true)
         }
 
-        database = GameDatabase.getInstance(context).gameDatabaseDao
-        this.context = context
         createChannel(newGameNotificationId, gameChannel, context)
     }
 
     private val mChildEventListener = object : ChildEventListener {
         override fun onChildAdded(dataSnapshot: DataSnapshot, s: String?) {
             val platformSharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(context)//ToDO lateinit property context has not been initialized
+                PreferenceManager.getDefaultSharedPreferences(context)
             val gson = Gson()
             val json: String? = platformSharedPreferences.getString("last_date", null)
             var lastDate: Date = CalendarUtil(null).getCurrentDate()

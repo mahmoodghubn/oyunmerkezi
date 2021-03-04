@@ -1,5 +1,6 @@
 package com.example.oyunmerkezi3.bottomSheet
 
+import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -22,7 +23,9 @@ class GamePriceAdapter(
         holder.bind(data[position], gamesViewModel)
         holder.binding.closeButton.setOnClickListener {
             gamesViewModel.addMiniGame(data[position])
-            notifyDataSetChanged()
+            notifyItemRemoved(position)
+            notifyItemRangeChanged(position,data.size)
+
         }
     }
 
@@ -54,7 +57,13 @@ class GamePriceAdapter(
                     gamesViewModel.decreasingCount(game)
                 }
             }
-
+            if (game.gameId > 0) {
+                binding.count.setTextColor(Color.parseColor("#A5D6A7"))
+                binding.platform.setTextColor(Color.parseColor("#A5D6A7"))
+                binding.gameName.setTextColor(Color.parseColor("#A5D6A7"))
+                binding.gamePrice.setTextColor(Color.parseColor("#A5D6A7"))
+                binding.subTotal.setTextColor(Color.parseColor("#A5D6A7"))
+            }
             binding.game = game
             binding.executePendingBindings()
         }

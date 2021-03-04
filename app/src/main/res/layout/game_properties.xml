@@ -39,9 +39,7 @@
 
                 <include
                     android:id="@+id/user_comment_view"
-                    layout="@layout/comments"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/caption" />
+                    layout="@layout/comments"/>
 
             </FrameLayout>
 
@@ -53,19 +51,7 @@
                 app:layout_constraintTop_toBottomOf="@id/user_comment_rate"
                 app:layout_constraintStart_toStartOf="parent"/>
 
-            <TextView
-                android:id="@+id/sell_title"
-                style="@style/TextViewStyle"
-                android:text="sell"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/user_comment_rate" />
 
-            <TextView
-                android:id="@+id/selling_price"
-                style="@style/TextViewStyle"
-                android:text="@{Integer.toString(game.sellingPrice)}"
-                app:layout_constraintStart_toEndOf="@id/hours_title"
-                app:layout_constraintTop_toBottomOf="@id/user_comment_rate" />
 
             <androidx.appcompat.widget.AppCompatRatingBar
                 android:id="@+id/game_rating"
@@ -74,8 +60,31 @@
                 android:rating="@{game.gameRating}"
                 android:clickable="false"
                 android:isIndicator="true"
-                app:layout_constraintStart_toEndOf="@id/selling_price"
-                app:layout_constraintTop_toBottomOf="@id/user_comment_rate" />
+                android:layout_marginStart="16dp"
+                android:theme="@style/RatingBar"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/divider2" />
+
+            <TextView
+                android:id="@+id/total_raters"
+                style="@style/TextViewStyle"
+                android:textSize="12sp"
+                app:layout_constraintStart_toEndOf="@id/game_rating"
+                app:layout_constraintTop_toTopOf="@id/game_rating" />
+
+            <TextView
+                android:id="@+id/sell_title"
+                style="@style/TextViewStyle"
+                android:text="sell"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/game_rating" />
+
+            <TextView
+                android:id="@+id/selling_price"
+                style="@style/TextViewStyle"
+                android:text="@{Integer.toString(game.sellingPrice)}"
+                app:layout_constraintStart_toEndOf="@id/hours_title"
+                app:layout_constraintTop_toBottomOf="@id/game_rating" />
 
             <TextView
                 android:id="@+id/buy_title"
@@ -197,9 +206,7 @@
 
                 <include
                     android:id="@+id/comment_view"
-                    layout="@layout/comments"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/caption" />
+                    layout="@layout/comments" />
 
             </FrameLayout>
 

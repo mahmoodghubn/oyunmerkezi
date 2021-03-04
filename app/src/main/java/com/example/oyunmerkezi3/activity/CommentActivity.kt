@@ -45,6 +45,7 @@ class CommentActivity : AppCompatActivity() {
         mActionBar.setNavigationOnClickListener {
             finish()
         }
+        mActionBar.title = game.gameName
 
         val bundle = intent.extras?.getBundle("bundle")
         bundle?.let {
@@ -55,7 +56,7 @@ class CommentActivity : AppCompatActivity() {
 
         findViewById<RatingBar>(R.id.rate_bar).rating = rating
         findViewById<EditText>(R.id.comment_edit_text).setText(text)
-        findViewById<RatingBar>(R.id.rate_bar).setOnRatingBarChangeListener { _, rating2, _ ->
+        findViewById<me.zhanghai.android.materialratingbar.MaterialRatingBar>(R.id.rate_bar).setOnRatingBarChangeListener { _, rating2, _ ->
             menuItem.isEnabled = rating2 > 0f
             rating = rating2
         }
@@ -95,7 +96,6 @@ class CommentActivity : AppCompatActivity() {
                 text,
                 it.photoUrl.toString()
             )
-            val rateList = DetailActivity().rateList
             mPlaceRef.child(it.uid).setValue(userComment)
             val platform = game.platform.toString()
             rateList[(rating - 1).toInt()] = rateList[(rating - 1).toInt()].plus(1)
@@ -138,24 +138,14 @@ class CommentActivity : AppCompatActivity() {
                     TAG,
                     "Successfully signed in user ${FirebaseAuth.getInstance().currentUser?.displayName}!"
                 )
-                if (user == null) {
-                    Log.i("mahmoodite", "user = null")
-                } else {
-                    Log.i("mahmoodite", "user != null")
-                }
                 val dataSnapshot = mPlaceRef.child(user?.uid!!).get()
-//                val dataSnapshot2 = mPlaceRef.child(user?.uid!!).database
-//                val dataSnapshot3 = mPlaceRef.child(user?.uid!!).key
                 dataSnapshot.addOnCompleteListener { it ->
                     if (it.result?.exists()!!) {
-                        Log.i("mahmoodite", "dataSnapShot do exist")
                         showAlertDialog()
                     } else {
-                        Log.i("mahmoodite", "dataSnapShot do not exist")
                         sendComment()
                     }
                 }
-//                if (dataSnapshot.result?.exists()!!)
             } else {
                 Log.i(TAG, "Sign in unsuccessful ${response?.error?.errorCode}")
             }

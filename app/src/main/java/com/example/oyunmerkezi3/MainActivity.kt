@@ -32,6 +32,7 @@ import com.example.oyunmerkezi3.databinding.PriceBottomSheetBinding
 import com.example.oyunmerkezi3.shared_preferences.SharedPreferenceBooleanLiveData
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.floatingactionbutton.ExtendedFloatingActionButton
+import com.google.android.material.floatingactionbutton.FloatingActionButton
 
 class MainActivity : AppCompatActivity() {
     private lateinit var drawerLayout: DrawerLayout
@@ -192,7 +193,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    fun sendWhatsAppMessage(actionButton: ExtendedFloatingActionButton) {
+    fun sendWhatsAppMessage(actionButton: FloatingActionButton) {
         //whatsApp button
         val number = "+905465399410"
         val url = "https://api.whatsapp.com/send?phone=$number"

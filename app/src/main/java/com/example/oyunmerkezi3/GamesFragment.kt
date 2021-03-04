@@ -28,14 +28,27 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
+import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
+
 
 class GamesFragment : Fragment() {
     private lateinit var adapter: GameAdapter
     private lateinit var gamesViewModel: GamesViewModel
     private lateinit var binding: FragmentGamesBinding
+    lateinit var activity1: MainActivity
+    var firstCreation = true
+//    private val connectionBroadcastReceiver = object : ConnectionBroadcastReceiver() {
+//        override fun onConnectionChanged(hasConnection: Boolean) {
+//            if (!hasConnection || !firstCreation) {
+//                firstCreation = false
+//                showInternetStatus(hasConnection)
+//            }
+//        }
+//    }
+
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -59,16 +72,14 @@ class GamesFragment : Fragment() {
         showNotification.action = NotificationTask().actionShowNotification
         NotificationService.enqueueWork(requireContext(), showNotification)
 
-        val activity: MainActivity = activity as MainActivity
-        gamesViewModel = activity.gamesViewModel
-        val platformSharedPreferences = activity.platformSharedPreferences
-        val editor: SharedPreferences.Editor = activity.editor
-
+        activity1 = activity as MainActivity
+        gamesViewModel = activity1.gamesViewModel
+        val platformSharedPreferences = activity1.platformSharedPreferences
+        val editor: SharedPreferences.Editor = activity1.editor
         val bottomSheetBehavior = BottomSheetBehavior.from(binding.priceBottomSheet.parentView)
-//        bottomSheetBehavior.isDraggable = false
         val selectedGameRecyclerView = binding.priceBottomSheet.selectedGameRecyclerView
 
-        activity.bottomSheetFunction(
+        activity1.bottomSheetFunction(
             bottomSheetBehavior,
             selectedGameRecyclerView,
             binding.priceBottomSheet,
@@ -79,7 +90,7 @@ class GamesFragment : Fragment() {
 
         inflateChips(platformSharedPreferences, binding, editor)
 
-        activity.sendWhatsAppMessage(binding.sendButton)
+        activity1.sendWhatsAppMessage(binding.sendButton)
 
         adapter =
             GameAdapter(
@@ -94,19 +105,7 @@ class GamesFragment : Fragment() {
             }
         })
 
-        var firstCreation = true
-        ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
-            activity,
-            this,
-            gamesViewModel.games2,
-            object : ConnectionBroadcastReceiver() {
-                override fun onConnectionChanged(hasConnection: Boolean) {
-                    if (!hasConnection || !firstCreation) {
-                        firstCreation = false
-                        showInternetStatus(hasConnection)
-                    }
-                }
-            })
+
         gamesViewModel.totalPriceLiveData.observe(viewLifecycleOwner, {
             it?.let {
                 binding.priceBottomSheet.total.text = it.toString()
@@ -132,6 +131,16 @@ class GamesFragment : Fragment() {
 
         setHasOptionsMenu(true)
         return binding.root
+    }
+
+    override fun onResume() {
+        super.onResume()
+//        ConnectionBroadcastReceiver.registerToFragmentAndAutoUnregister(
+//            activity1,
+//            this,
+//            gamesViewModel.games2,
+//            connectionBroadcastReceiver
+//        )
     }
 
     private fun inflateChips(
@@ -192,7 +201,6 @@ class GamesFragment : Fragment() {
             }
 
             override fun onQueryTextChange(newText: String?): Boolean {
-
                 adapter.filter.filter(newText)
                 return false
             }
@@ -201,17 +209,20 @@ class GamesFragment : Fragment() {
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         if (item.itemId == R.id.reset) {
+            this.arguments?.clear()
             gamesViewModel.filter(null)
         }
         return NavigationUI.onNavDestinationSelected(item, requireView().findNavController())
                 || super.onOptionsItemSelected(item)
     }
 
+
     fun showInternetStatus(connected: Boolean) {
         if (connected) {
             val snackBar =
                 Snackbar.make(binding.sendButton, "connected", Snackbar.LENGTH_LONG)
             snackBar.animationMode = ANIMATION_MODE_SLIDE
+            snackBar.view.minimumHeight = 8
             snackBar.setBackgroundTint(GREEN)
             snackBar.show()
         } else {
@@ -219,6 +230,7 @@ class GamesFragment : Fragment() {
                 Snackbar.make(binding.sendButton, "disconnected", Snackbar.LENGTH_LONG)
             snackBar.duration = 10000
             snackBar.setBackgroundTint(RED)
+            snackBar.view.minimumHeight = 16
             snackBar.animationMode = ANIMATION_MODE_SLIDE
             snackBar.show()
         }

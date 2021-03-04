@@ -38,7 +38,6 @@ class FilterFragment : Fragment() {
     private var publishDate: Int? = null
     private var offline: Boolean? = null
     private var inStock: Boolean? = null
-    private var favorite: Boolean? = null
     private lateinit var binding: FragmentFilterBinding
 
     override fun onCreateView(
@@ -187,11 +186,6 @@ class FilterFragment : Fragment() {
             } else {
                 null
             }
-            favorite = if (binding.favorite.isChecked) {
-                true
-            } else {
-                null
-            }
             val filter = GameFilter(
                 minPrice,
                 maxPrice,
@@ -200,7 +194,6 @@ class FilterFragment : Fragment() {
                 age,
                 playersNo,
                 offline,
-                favorite,
                 inStock,
                 gameRate,
                 category,
@@ -231,7 +224,6 @@ class FilterFragment : Fragment() {
             age = null
             playersNo = null
             offline = null
-            favorite = null
             inStock = null
             gameRate = null
             category = null
@@ -247,7 +239,6 @@ class FilterFragment : Fragment() {
                 it.playersValue.setText("")
                 it.online.isChecked = false
                 it.inStock.isChecked = false
-                it.favorite.isChecked = false
                 it.gameRating.rating = 0F
                 binding.radioGroupDate.clearCheck()
                 binding.chosenLanguage.text = ""

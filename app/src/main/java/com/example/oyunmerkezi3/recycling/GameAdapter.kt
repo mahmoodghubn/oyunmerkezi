@@ -42,9 +42,9 @@ class GameAdapter(
         ) {
 
             binding.sellingCheckBox.isChecked =
-                gamesViewModel.buyingCheckBoxArray.filter { it.gameId == -item.gameId }.size == 1
+                gamesViewModel.buyingCheckBoxArray.any { it.gameId == item.gameId }
             binding.buyingCheckBox.isChecked =
-                gamesViewModel.buyingCheckBoxArray.filter { it.gameId == item.gameId }.size == 1
+                gamesViewModel.buyingCheckBoxArray.any { it.gameId == -item.gameId }
             binding.sellingCheckBox.setOnClickListener {
                 gamesViewModel.addMiniGame(
                     MiniGame(
@@ -77,6 +77,9 @@ class GameAdapter(
                 gamesViewModel.setFavorite(item.gameId)
 
 
+            }
+            if(gamesViewModel.buyingCheckBoxArray.isNotEmpty()){
+                view.visibility = View.VISIBLE
             }
 
             if (item.favorite)

@@ -102,19 +102,12 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/online" />
 
-                <CheckBox
-                    android:id="@+id/favorite"
-                    style="@style/CheckBoxStyle"
-                    android:text="@string/favorite"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/inStock" />
-
                 <TextView
                     android:id="@+id/date_text_view"
                     style="@style/TextViewStyle"
                     android:text="@string/publishing"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/favorite" />
+                    app:layout_constraintTop_toBottomOf="@id/inStock" />
 
                 <RadioGroup
                     android:id="@+id/radio_group_date"
