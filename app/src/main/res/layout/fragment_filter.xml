@@ -27,15 +27,16 @@
                     android:id="@+id/min_price"
                     style="@style/EditTextStyle"
                     android:hint="@string/minimum"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/price" />
+                    android:padding="8dp"
+                    app:layout_constraintStart_toEndOf="@+id/players"
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <EditText
                     android:id="@+id/max_price"
                     style="@style/EditTextStyle"
                     android:hint="@string/maximum"
                     app:layout_constraintStart_toEndOf="@id/min_price"
-                    app:layout_constraintTop_toBottomOf="@id/price" />
+                    app:layout_constraintTop_toTopOf="parent" />
 
                 <TextView
                     android:id="@+id/hours"
@@ -48,15 +49,15 @@
                     android:id="@+id/minimum_hours"
                     style="@style/EditTextStyle"
                     android:hint="@string/minimum"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/hours" />
+                    app:layout_constraintStart_toEndOf="@id/players"
+                    app:layout_constraintTop_toBottomOf="@id/min_price" />
 
                 <EditText
                     android:id="@+id/maximum_hours"
                     style="@style/EditTextStyle"
                     android:hint="@string/maximum"
                     app:layout_constraintStart_toEndOf="@id/minimum_hours"
-                    app:layout_constraintTop_toBottomOf="@id/hours" />
+                    app:layout_constraintTop_toBottomOf="@id/min_price" />
 
                 <TextView
                     android:id="@+id/age"
@@ -70,8 +71,8 @@
                     style="@style/EditTextStyle"
                     android:layout_width="64dp"
                     android:hint="@string/age3"
-                    app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/age" />
+                    app:layout_constraintStart_toEndOf="@id/players"
+                    app:layout_constraintTop_toBottomOf="@id/minimum_hours" />
 
                 <TextView
                     android:id="@+id/players"
@@ -85,22 +86,38 @@
                     style="@style/EditTextStyle"
                     android:layout_width="64dp"
                     android:hint="@string/players_"
+                    app:layout_constraintStart_toEndOf="@id/players"
+                    app:layout_constraintTop_toBottomOf="@id/age_value" />
+
+                <TextView
+                    android:id="@+id/internetStatus"
+                    style="@style/TextViewStyle"
+                    android:text="@string/internet_status"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/players" />
 
                 <CheckBox
                     android:id="@+id/online"
                     style="@style/CheckBoxStyle"
+                    android:layoutDirection="rtl"
                     android:text="@string/offline"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/players_value" />
+                    app:layout_constraintTop_toBottomOf="@id/internetStatus" />
+
+                <TextView
+                    android:id="@+id/stockStatus"
+                    style="@style/TextViewStyle"
+                    android:text="@string/stock_status"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/online" />
 
                 <CheckBox
                     android:id="@+id/inStock"
                     style="@style/CheckBoxStyle"
+                    android:layoutDirection="rtl"
                     android:text="@string/in_stock"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/online" />
+                    app:layout_constraintTop_toBottomOf="@id/stockStatus" />
 
                 <TextView
                     android:id="@+id/date_text_view"
@@ -111,25 +128,29 @@
 
                 <RadioGroup
                     android:id="@+id/radio_group_date"
-                    android:layout_width="wrap_content"
+                    android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginEnd="16dp"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/date_text_view">
 
                     <RadioButton
                         android:id="@+id/week"
                         style="@style/RadioButtonStyle"
+                        android:layoutDirection="rtl"
                         android:text="@string/week" />
 
                     <RadioButton
                         android:id="@+id/month"
                         style="@style/RadioButtonStyle"
+                        android:layoutDirection="rtl"
                         android:text="@string/month" />
 
                     <RadioButton
                         android:id="@+id/year"
                         style="@style/RadioButtonStyle"
+                        android:layoutDirection="rtl"
                         android:text="@string/year" />
                 </RadioGroup>
 
@@ -139,6 +160,16 @@
                     android:text="@string/game_category"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/radio_group_date" />
+
+                <ImageButton
+                    android:id="@+id/category_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:selectableItemBackground"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/category_text_view"
+                    app:srcCompat="@drawable/ic_baseline_expand_24" />
 
                 <TextView
                     android:id="@+id/chosen_category"
@@ -156,6 +187,16 @@
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chosen_category" />
 
+                <ImageButton
+                    android:id="@+id/language_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:selectableItemBackground"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/language_text_view"
+                    app:srcCompat="@drawable/ic_baseline_expand_24" />
+
                 <TextView
                     android:id="@+id/chosen_language"
                     style="@style/TextViewStyle"
@@ -166,11 +207,22 @@
                     app:layout_constraintTop_toBottomOf="@id/language_text_view" />
 
                 <TextView
-                    android:id="@+id/oder_by_text_view"
+                    android:id="@+id/order_by_text_view"
                     style="@style/TextViewStyle"
                     android:text="@string/game_oder"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toBottomOf="@id/chosen_language" />
+
+
+                <ImageButton
+                    android:id="@+id/order_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="16dp"
+                    android:background="?android:selectableItemBackground"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@+id/order_by_text_view"
+                    app:srcCompat="@drawable/ic_baseline_expand_24" />
 
                 <TextView
                     android:id="@+id/chosen_order"
@@ -179,16 +231,23 @@
                     android:gravity="top"
                     android:textSize="12dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/oder_by_text_view" />
+                    app:layout_constraintTop_toBottomOf="@id/order_by_text_view" />
+
+                <TextView
+                    android:id="@+id/chose_rating"
+                    style="@style/TextViewStyle"
+                    android:text="@string/chose_min_rating"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/chosen_order" />
 
                 <RatingBar
                     android:id="@+id/game_rating"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:layout_marginStart="16dp"
+                    android:layout_marginStart="32dp"
                     android:layout_marginTop="16dp"
                     app:layout_constraintStart_toStartOf="parent"
-                    app:layout_constraintTop_toBottomOf="@id/chosen_order" />
+                    app:layout_constraintTop_toBottomOf="@id/chose_rating" />
 
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -201,8 +260,9 @@
             android:layout_height="wrap_content"
             android:layout_gravity="bottom|end"
             android:layout_marginEnd="16dp"
-            android:layout_marginBottom="16dp"
-            android:text="@string/apply" />
+            android:layout_marginBottom="48dp"
+            android:text="@string/apply"
+            android:textAlignment="center" />
 
         <include layout="@layout/bottom_sheet" />
 

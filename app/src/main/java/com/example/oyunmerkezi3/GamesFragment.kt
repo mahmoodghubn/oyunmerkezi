@@ -1,10 +1,15 @@
 package com.example.oyunmerkezi3
 
 import android.app.Activity
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
+import android.graphics.Color
 import android.graphics.Color.GREEN
 import android.graphics.Color.RED
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
 import android.view.*
@@ -19,7 +24,6 @@ import com.example.oyunmerkezi3.databinding.FragmentGamesBinding
 import com.example.oyunmerkezi3.recycling.GameAdapter
 import com.example.oyunmerkezi3.recycling.GameListener
 import com.example.oyunmerkezi3.service.NotificationService
-import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
 import com.example.oyunmerkezi3.utils.GameFilter
 import com.example.oyunmerkezi3.utils.NotificationTask
 import com.firebase.ui.auth.AuthUI
@@ -28,13 +32,14 @@ import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.chip.Chip
 import com.google.android.material.snackbar.BaseTransientBottomBar.ANIMATION_MODE_SLIDE
 import com.google.android.material.snackbar.Snackbar
-import com.google.android.material.snackbar.Snackbar.SnackbarLayout
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.ktx.auth
 import com.google.firebase.ktx.Firebase
 
 
 class GamesFragment : Fragment() {
+    val newGameNotificationId = "NEW_GAME_NOTIFICATION"
+    private val gameChannel = "GAME_CHANNEL"
     private lateinit var adapter: GameAdapter
     private lateinit var gamesViewModel: GamesViewModel
     private lateinit var binding: FragmentGamesBinding
@@ -126,6 +131,8 @@ class GamesFragment : Fragment() {
                 gamesViewModel.onGameDetailsNavigated()
             }
         })
+
+        createChannel(newGameNotificationId, gameChannel, this.requireContext())
 
         binding.lifecycleOwner = this
 
@@ -233,6 +240,26 @@ class GamesFragment : Fragment() {
             snackBar.view.minimumHeight = 16
             snackBar.animationMode = ANIMATION_MODE_SLIDE
             snackBar.show()
+        }
+    }
+
+    private fun createChannel(channelId: String, channelName: String, context: Context) {
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            val notificationChannel = NotificationChannel(
+                channelId,
+                channelName,
+                NotificationManager.IMPORTANCE_HIGH
+            )
+
+            notificationChannel.enableLights(true)
+            notificationChannel.lightColor = Color.RED
+            notificationChannel.enableVibration(true)
+            notificationChannel.description = "Changes On Games"
+            val notificationManager = context.getSystemService(
+                NotificationManager::class.java
+            )
+            notificationManager.createNotificationChannel(notificationChannel)
         }
     }
 

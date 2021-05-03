@@ -1,10 +1,15 @@
 package com.example.oyunmerkezi3.recycling
 
+import android.content.Context
+import android.content.DialogInterface
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
+import androidx.appcompat.app.AlertDialog
+import androidx.databinding.DataBindingUtil
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
@@ -15,6 +20,7 @@ import com.example.oyunmerkezi3.database.MiniGame
 import com.example.oyunmerkezi3.databinding.ListItemViewBinding
 import java.util.*
 import kotlin.collections.ArrayList
+
 
 class GameAdapter(
     private val clickListener: GameListener,
@@ -88,6 +94,16 @@ class GameAdapter(
                 binding.favoriteImageButton.setImageResource(R.drawable.ic_baseline_favorite_border_24)
 
             binding.notificationImageButton.setOnClickListener {
+//                val notificationManager = ContextCompat.getSystemService(
+//                    view.context,
+//                    NotificationManager::class.java
+//                ) as NotificationManager
+//                notificationManager.sendNotification(
+//                    "you will have notification on ${item.gameName} when its price get change",
+//                    view.context,
+//                    item
+//                )
+                showAlertDialogButtonClicked(view)
                 gamesViewModel.setShowNotification(item.gameId)
             }
             if (item.showNotification)
@@ -158,4 +174,31 @@ class GameAdapter(
 
 class GameListener(val clickListener: (game: Game) -> Unit) {
     fun onClick(game: Game) = clickListener(game)
+}
+
+fun showAlertDialogButtonClicked(view: View) {
+    // create an alert builder
+    val builder: AlertDialog.Builder = AlertDialog.Builder(view.context)
+    builder.setTitle("Name")
+    // set the custom layout
+    val layoutInflater = view.context.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+
+    val customLayout: View = layoutInflater.inflate(R.layout.custome_alert, null)
+//    val customLayout: View = DataBindingUtil.inflate(
+//        LayoutInflater.from(view.context), R.layout.custome_alert, null, false
+//    )
+//        LayoutInflater.inflate(view.context,R.layout.custome_alert, null)
+    builder.setView(customLayout)
+    // add a button
+    builder.setPositiveButton(
+        "OK",
+        DialogInterface.OnClickListener { dialog, which -> // send data from the AlertDialog to the Activity
+//            val editText = customLayout.findViewById<EditText>(R.id.editText)
+//            sendDialogDataToActivity(editText.text.toString())
+        })
+    // create and show the alert dialog
+    val dialog: AlertDialog = builder.create()
+    dialog.window?.setGravity(Gravity.TOP);
+
+    dialog.show()
 }

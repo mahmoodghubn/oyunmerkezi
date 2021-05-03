@@ -20,8 +20,7 @@ import com.google.gson.Gson
 import kotlinx.coroutines.*
 
 class NotificationTask {
-    val newGameNotificationId = "NEW_GAME_NOTIFICATION"
-    private val gameChannel = "GAME_CHANNEL"
+
     lateinit var context: Context
     private var job = Job()
     private val uiScope = CoroutineScope(Dispatchers.Main + job)
@@ -58,7 +57,6 @@ class NotificationTask {
             mPlaceRef[index].keepSynced(true)
         }
 
-        createChannel(newGameNotificationId, gameChannel, context)
     }
 
     private val mChildEventListener = object : ChildEventListener {
@@ -161,23 +159,4 @@ class NotificationTask {
         }
     }
 
-    private fun createChannel(channelId: String, channelName: String, context: Context) {
-
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-            val notificationChannel = NotificationChannel(
-                channelId,
-                channelName,
-                NotificationManager.IMPORTANCE_LOW
-            )
-
-            notificationChannel.enableLights(true)
-            notificationChannel.lightColor = Color.RED
-            notificationChannel.enableVibration(true)
-            notificationChannel.description = "Changes On Games"
-            val notificationManager = context.getSystemService(
-                NotificationManager::class.java
-            )
-            notificationManager.createNotificationChannel(notificationChannel)
-        }
-    }
 }

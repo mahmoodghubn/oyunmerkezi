@@ -82,4 +82,5 @@
     <string name="title_activity_good">GoodActivity</string>
     <string name="internet_status">internet status</string>
     <string name="stock_status">stock status</string>
+    <string name="chose_min_rating">chose minmum rate</string>
 </resources>

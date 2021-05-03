@@ -50,81 +50,25 @@ class FilterFragment : Fragment() {
         )
 
         binding.categoryTextView.setOnClickListener(View.OnClickListener {
-            val bottomSheet = BottomSheetDialog(this.requireContext())
-            val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
-                layoutInflater,
-                R.layout.bottom_sheet,
-                null,
-                false
-            )
-            listView = bindingSheet.categoryListView
-            val listItems = arrayListOf<String>()
-            for (item in Category.values()) {
-                listItems.add(item.name)
-            }
-
-            val adapter1 = CategoryAdapter(requireContext(), listItems)
-            listView.adapter = adapter1
-            bottomSheet.setContentView(bindingSheet.root)
-            bottomSheet.show()
-            listView.setOnItemClickListener { _, _, position, _ ->
-                val selectedCategory: String = listItems[position]
-                binding.chosenCategory.text = selectedCategory
-                category = Category.values()[position]
-                bottomSheet.hide()
-            }
+            setCategory()
         })
         binding.languageTextView.setOnClickListener(View.OnClickListener {
-            val bottomSheet = BottomSheetDialog(this.requireContext())
-            val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
-                layoutInflater,
-                R.layout.bottom_sheet,
-                null,
-                false
-            )
-            listView = bindingSheet.categoryListView
-            val listItems = arrayListOf<String>()
-            for (item in Language.values()) {
-                listItems.add(item.name)
-            }
-
-            val adapter1 = CategoryAdapter(requireContext(), listItems)
-            listView.adapter = adapter1
-            bottomSheet.setContentView(bindingSheet.root)
-            bottomSheet.show()
-            listView.setOnItemClickListener { _, _, position, _ ->
-                val selectedLanguage: String = listItems[position]
-                binding.chosenLanguage.text = selectedLanguage
-                language = Language.values()[position]
-                bottomSheet.hide()
-            }
+            setLanguage()
         })
 
-        binding.oderByTextView.setOnClickListener(View.OnClickListener {
-            val bottomSheet = BottomSheetDialog(this.requireContext())
-            val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
-                layoutInflater,
-                R.layout.bottom_sheet,
-                null,
-                false
-            )
-            listView = bindingSheet.categoryListView
-            val listItems: ArrayList<String> = resources.getStringArray(
-                R.array.filter
-            ).toCollection(ArrayList())
+        binding.orderByTextView.setOnClickListener(View.OnClickListener {
+            setOrder()
+        })
 
+        binding.categoryButton.setOnClickListener(View.OnClickListener {
+            setCategory()
+        })
+        binding.languageButton.setOnClickListener(View.OnClickListener {
+            setLanguage()
+        })
 
-            val adapter1 = CategoryAdapter(requireContext(), listItems)
-            listView.adapter = adapter1
-            bottomSheet.setContentView(bindingSheet.root)
-            bottomSheet.show()
-            listView.setOnItemClickListener { _, _, position, _ ->
-
-                val selectedOrder: String = listItems[position]
-                binding.chosenOrder.text = selectedOrder
-                orderBy = position
-                bottomSheet.hide()
-            }
+        binding.orderButton.setOnClickListener(View.OnClickListener {
+            setOrder()
         })
         radioGroup = binding.radioGroupDate
         radioGroup!!.setOnCheckedChangeListener(RadioGroup.OnCheckedChangeListener { _, checkedId ->
@@ -208,6 +152,85 @@ class FilterFragment : Fragment() {
         }
         setHasOptionsMenu(true)
         return binding.root
+    }
+
+    private fun setOrder() {
+        val bottomSheet = BottomSheetDialog(this.requireContext())
+        val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
+            layoutInflater,
+            R.layout.bottom_sheet,
+            null,
+            false
+        )
+        listView = bindingSheet.categoryListView
+        val listItems: ArrayList<String> = resources.getStringArray(
+            R.array.filter
+        ).toCollection(ArrayList())
+
+
+        val adapter1 = CategoryAdapter(requireContext(), listItems)
+        listView.adapter = adapter1
+        bottomSheet.setContentView(bindingSheet.root)
+        bottomSheet.show()
+        listView.setOnItemClickListener { _, _, position, _ ->
+
+            val selectedOrder: String = listItems[position]
+            binding.chosenOrder.text = selectedOrder
+            orderBy = position
+            bottomSheet.hide()
+        }
+    }
+
+    private fun setLanguage() {
+        val bottomSheet = BottomSheetDialog(this.requireContext())
+        val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
+            layoutInflater,
+            R.layout.bottom_sheet,
+            null,
+            false
+        )
+        listView = bindingSheet.categoryListView
+        val listItems = arrayListOf<String>()
+        for (item in Language.values()) {
+            listItems.add(item.name)
+        }
+
+        val adapter1 = CategoryAdapter(requireContext(), listItems)
+        listView.adapter = adapter1
+        bottomSheet.setContentView(bindingSheet.root)
+        bottomSheet.show()
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selectedLanguage: String = listItems[position]
+            binding.chosenLanguage.text = selectedLanguage
+            language = Language.values()[position]
+            bottomSheet.hide()
+        }
+    }
+
+    private fun setCategory() {
+        val bottomSheet = BottomSheetDialog(this.requireContext())
+        val bindingSheet = DataBindingUtil.inflate<BottomSheetBinding>(
+            layoutInflater,
+            R.layout.bottom_sheet,
+            null,
+            false
+        )
+        listView = bindingSheet.categoryListView
+        val listItems = arrayListOf<String>()
+        for (item in Category.values()) {
+            listItems.add(item.name)
+        }
+
+        val adapter1 = CategoryAdapter(requireContext(), listItems)
+        listView.adapter = adapter1
+        bottomSheet.setContentView(bindingSheet.root)
+        bottomSheet.show()
+        listView.setOnItemClickListener { _, _, position, _ ->
+            val selectedCategory: String = listItems[position]
+            binding.chosenCategory.text = selectedCategory
+            category = Category.values()[position]
+            bottomSheet.hide()
+        }
     }
 
     override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {

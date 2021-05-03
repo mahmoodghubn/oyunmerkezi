@@ -17,10 +17,8 @@ import com.example.oyunmerkezi3.database.*
 import com.example.oyunmerkezi3.databinding.ActivityDetailBinding
 import com.example.oyunmerkezi3.model.Comment
 import com.example.oyunmerkezi3.recycling.*
-import com.example.oyunmerkezi3.utils.ConnectionBroadcastReceiver
 import com.example.oyunmerkezi3.utils.Utils
 import com.example.oyunmerkezi3.utils.toText
-import com.google.android.material.snackbar.Snackbar
 import com.google.android.youtube.player.YouTubeInitializationResult
 import com.google.android.youtube.player.YouTubePlayer
 import com.google.android.youtube.player.YouTubePlayerFragment
@@ -51,19 +49,6 @@ class DetailActivity : AppCompatActivity() {
             this,
             R.layout.activity_detail
         )
-
-        //internet status
-        var firstCreation = true
-        ConnectionBroadcastReceiver.registerToActivityAndAutoUnregister(
-            this,
-            object : ConnectionBroadcastReceiver() {
-                override fun onConnectionChanged(hasConnection: Boolean) {
-                    if (!hasConnection || !firstCreation) {
-                        firstCreation = false
-                        showInternetStatus(hasConnection)
-                    }
-                }
-            })
 
         val detailActivityArgs by navArgs<DetailActivityArgs>()
         game = detailActivityArgs.game
@@ -103,17 +88,14 @@ class DetailActivity : AppCompatActivity() {
             user = Firebase.auth.currentUser
             for (item in dataSnapshot.children.withIndex()) {
                 val downloadedComment = item.value.getValue(Comment::class.java)!!
-//                if (commentList.none { it.userId == downloadedComment.userId }) {
-                    rateList[downloadedComment.gameRate - 1]++
-//                }
+                rateList[downloadedComment.gameRate - 1]++
 
                 if (downloadedComment.userId == user?.uid) {
                     userComment = downloadedComment
 
                 } else if (downloadedComment.message != "") {
                     comments[item.value.key!!] = downloadedComment
-//                    if (commentList.none { it.userId == downloadedComment.userId })
-                        commentList.add(item.value.getValue(Comment::class.java)!!)
+                    commentList.add(item.value.getValue(Comment::class.java)!!)
                 }
 
             }
@@ -285,18 +267,6 @@ class DetailActivity : AppCompatActivity() {
                     Log.e("Detail Activity", "Youtube Player View initialization failed")
                 }
             })
-    }
-
-    fun showInternetStatus(connected: Boolean) {
-        if (connected) {
-            val snackBar = Snackbar
-                .make(binding.root, "connected", Snackbar.LENGTH_LONG)
-            snackBar.show()
-        } else {
-            val snackBar = Snackbar
-                .make(binding.root, "disconnected", Snackbar.LENGTH_LONG)
-            snackBar.show()
-        }
     }
 
     private fun showPopup(v: View) {
